@@ -865,13 +865,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f4d117b0e6665649bd271044cf2ba25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panSpeed: 0.2
+  panSpeed: 0.5
   zoomSpeed: 0.1
   zoomSmoothness: 5
   minZoom: 2
   maxZoom: 20
-  rotationSpeed: 100
-  mapObject: {fileID: 531149672}
+  rotationSpeed: 1
+  mapObject: {fileID: 0}
   mapWidth: 0
   mapHeight: 0
 --- !u!4 &1733096521
