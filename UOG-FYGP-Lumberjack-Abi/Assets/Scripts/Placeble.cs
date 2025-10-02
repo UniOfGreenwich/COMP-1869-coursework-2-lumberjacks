@@ -4,6 +4,7 @@ public class Placeble : MonoBehaviour
 {
     public bool placed { get; private set; }
     public Vector3Int Size { get; private set; }
+    public Vector3[] Vertices { get; private set; }
 
     private Vector3[] localBottomCorners;
     private MeshRenderer renderer;
@@ -28,10 +29,14 @@ public class Placeble : MonoBehaviour
         // Cache collider corners
         CacheBottomCorners();
     }
-
     private void Start()
     {
-        // Delay until BuildingSystem.instance is ready
+        CalculateSize();
+    }
+    public void Rotate()
+    {
+        Debug.Log("Rotating: " + gameObject.name);
+        transform.Rotate(Vector3.up, 90f, Space.World); // global Y rotation
         CalculateSize();
     }
 

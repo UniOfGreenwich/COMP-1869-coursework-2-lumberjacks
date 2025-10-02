@@ -31,6 +31,11 @@ public class BuildingSystem : MonoBehaviour
             StartPlacement(housePrefab);
 
         if (objectToPlace == null) return;
+        if (Input.GetKeyDown(KeyCode.R) && objectToPlace != null)
+        {
+            objectToPlace.Rotate();
+        }
+
 
         // Snap ghost to grid
         Vector3 mousePos = GetMouseWorldPosition();
