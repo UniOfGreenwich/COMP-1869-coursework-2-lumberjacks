@@ -73,9 +73,9 @@ GameObject:
   - component: {fileID: 8218425429731594571}
   - component: {fileID: 7530295857437159416}
   - component: {fileID: 8863712681729365914}
+  - component: {fileID: 7539320314277850324}
+  - component: {fileID: 6224835356097909178}
   - component: {fileID: 3932883835329825991}
-  - component: {fileID: 2414195422704407583}
-  - component: {fileID: 2990806332526475934}
   m_Layer: 0
   m_Name: Machine 1
   m_TagString: Untagged
@@ -153,6 +153,36 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &7539320314277850324
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7401060857203048886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 875dd171a420faf409534a3b7d5a24ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6224835356097909178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7401060857203048886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27c06c70bc68a40438ebb4ea55dd033e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  processTime: 3
+  outputLifetime: 2
+  inputPrefab: {fileID: 29777240896897288, guid: d770df72d61dce6429fb964f816d032e, type: 3}
+  outputPrefab: {fileID: 826152773257510365, guid: fd94dad09862ce64d9c6713096ef7db6, type: 3}
+  inputPoint: {fileID: 8862364878862948811}
+  outputPoint: {fileID: 5694610840959144457}
 --- !u!65 &3932883835329825991
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -174,33 +204,3 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0.5, z: 0}
---- !u!114 &2414195422704407583
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7401060857203048886}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27c06c70bc68a40438ebb4ea55dd033e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  processTime: 3
-  outputLifetime: 2
-  inputPrefab: {fileID: 29777240896897288, guid: d770df72d61dce6429fb964f816d032e, type: 3}
-  outputPrefab: {fileID: 826152773257510365, guid: fd94dad09862ce64d9c6713096ef7db6, type: 3}
-  inputPoint: {fileID: 8862364878862948811}
-  outputPoint: {fileID: 5694610840959144457}
---- !u!114 &2990806332526475934
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7401060857203048886}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 875dd171a420faf409534a3b7d5a24ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
