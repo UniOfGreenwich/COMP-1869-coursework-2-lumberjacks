@@ -15,16 +15,18 @@ public class BuildingSystem : MonoBehaviour
     public GameObject housePrefab;
 
     private Placeble objectToPlace;
+    private int groundLayer;
 
     private void Awake()
     {
         instance = this;
         grid = gridLayout.gameObject.GetComponent<Grid>();
+        groundLayer = LayerMask.NameToLayer("Ground"); // Cache ground layer index
     }
 
     private void Update()
     {
-        // Example hotkey: start placing house
+        // To start placing house
         if (Input.GetKeyDown(KeyCode.H))
             StartPlacement(housePrefab);
 
@@ -74,8 +76,6 @@ public class BuildingSystem : MonoBehaviour
     public static Vector3 GetMouseWorldPosition()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        // raycast only against ground layer to avoid hitting the ghost itself
         int groundMask = LayerMask.GetMask("Ground");
         if (Physics.Raycast(ray, out RaycastHit hit, 1000f, groundMask))
             return hit.point;
@@ -121,16 +121,35 @@ public class BuildingSystem : MonoBehaviour
     {
         Vector3Int start = gridLayout.WorldToCell(placeble.GetStartPosition());
         BoundsInt area = new BoundsInt(start, placeble.Size);
-
+        // Check if over ground
+        if (!IsOverGround(placeble))
+        {
+            Debug.Log("[BuildingSystem] Cannot place — not over ground!");
+            return false;
+        }
+        // Check if the area is free (not occupied)
         TileBase[] baseArray = GetTilesBlock(area, MainTilemap);
         foreach (var b in baseArray)
         {
             if (b == OccupiedTile)
                 return false;
         }
+
         return true;
     }
+    private bool IsOverGround(Placeble placeble)
+    {
+        // Start ray a little above the pivot to avoid collider self-hit
+        Vector3 origin = placeble.transform.position + Vector3.up * 0.2f;
 
+        // Raycast straight down
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 5f))
+        {
+            return hit.collider.gameObject.layer == groundLayer;
+        }
+
+        return false;
+    }
     public void TakeArea(Vector3Int start, Vector3Int size)
     {
         // Mark occupied tiles ONCE when placed
