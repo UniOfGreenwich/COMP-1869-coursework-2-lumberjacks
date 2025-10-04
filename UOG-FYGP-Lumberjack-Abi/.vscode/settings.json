@@ -66,5 +66,5 @@
     "explorer.fileNesting.patterns": {
         "*.sln": "*.csproj"
     },
-    "dotnet.defaultSolution": "UOG-FYGP-Lumberjack.sln"
+    "dotnet.defaultSolution": "UOG-FYGP-Lumberjack-Abi.sln"
 }
