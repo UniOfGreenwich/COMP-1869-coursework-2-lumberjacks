@@ -42,7 +42,7 @@ public class BuildingSystem : MonoBehaviour
         Vector3 snappedPos = SnapCoordinateToGrid(mousePos);
         objectToPlace.transform.position = snappedPos;
 
-        // Confirm placement
+        // Confirm placement    
         if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
         {
             if (CanBePlaced(objectToPlace))
@@ -84,8 +84,6 @@ public class BuildingSystem : MonoBehaviour
         int groundMask = LayerMask.GetMask("Ground");
         if (Physics.Raycast(ray, out RaycastHit hit, 1000f, groundMask))
             return hit.point;
-
-        // fallback: flat plane at y=0
         float t = -ray.origin.y / ray.direction.y;
         return ray.origin + ray.direction * t;
     }
@@ -95,8 +93,6 @@ public class BuildingSystem : MonoBehaviour
         Vector3Int cellPos = gridLayout.WorldToCell(position);
         Vector3 center = grid.GetCellCenterWorld(cellPos);
         center.y = 0; // ground level
-
-        // Lift by half the object height if pivot is in the middle
         if (objectToPlace != null)
         {
             float height = objectToPlace.GetComponent<Renderer>().bounds.size.y;
@@ -105,8 +101,6 @@ public class BuildingSystem : MonoBehaviour
 
         return center;
     }
-
-
     private static TileBase[] GetTilesBlock(BoundsInt area, Tilemap tilemap)
     {
         TileBase[] array = new TileBase[area.size.x * area.size.y * area.size.z];
@@ -142,6 +136,24 @@ public class BuildingSystem : MonoBehaviour
 
         return true;
     }
+    public GameObject InitializeWithObject(GameObject prefab, Vector3 pos)
+    {
+        // Snap position to grid
+        Vector3 snappedPos = SnapCoordinateToGrid(pos);
+
+        // Instantiate
+        GameObject obj = Instantiate(prefab, snappedPos, Quaternion.identity);
+
+        // Ensure it has a Placeble component
+        Placeble temp = obj.GetComponentInChildren<Placeble>();
+        if (temp == null)
+        {
+            Debug.LogError(prefab.name + "missing a Placeble component.");
+        }
+
+        return obj;
+    }
+
     private bool IsOverGround(Placeble placeble)
     {
         // Start ray a little above the pivot to avoid collider self-hit

@@ -29,6 +29,12 @@ public class Placeble : MonoBehaviour
         // Cache collider corners
         CacheBottomCorners();
     }
+    public void Load()
+    {
+        placed = true;                     // mark as permanently placed
+        RestoreOriginalMaterial();         // use the normal material
+        Destroy(GetComponent<ObjectDrag>()); // remove dragging if present
+    }
     private void Start()
     {
         CalculateSize();
@@ -126,7 +132,6 @@ public class Placeble : MonoBehaviour
             ghostMaterial.color = color;
         }
     }
-
     private void RestoreOriginalMaterial()
     {
         if (renderer != null && originalMaterial != null)
