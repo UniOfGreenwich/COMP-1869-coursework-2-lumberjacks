@@ -13,6 +13,10 @@ public class RealWorldData : MonoBehaviour
     public float costCopper { get; private set; }
     public float costActualAverageCopper { get; private set; }
     public float costActualCopper { get; private set; }
+    [SerializeField] private float baseLumberPrice = 100f; //base price for lumber
+    [SerializeField] private float baseGoldPrice = 1500f; //base price for gold
+    [SerializeField] private float baseCopperPrice = 4f; //base price for copper
+    [SerializeField] private TMPro.TextMeshProUGUI lumberPriceText;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -20,10 +24,10 @@ public class RealWorldData : MonoBehaviour
     {
         /* 
         The prices of each resource will be based on real world data but not exactly the same instead it will be 
-        calculated as a base value subtract % difference from the daily average.
+        calculated as a base value * % difference from the daily average.
 
         - get last 24 hours of lumber, gold, and copper prices from an API
-        - average the price for each based on 5 min intervals (this will be costActualAverage variables)
+        - average the price for each based on 1 hour intervals (this will be costActualAverage variables)
         - get the most recent price for each (this will be costActual variables)
 
         */
@@ -57,20 +61,16 @@ public class RealWorldData : MonoBehaviour
         StartCoroutine(GetRequest("https://api.api-ninjas.com/v1/commoditypricehistorical?name=lumber&period=4h"));
         StartCoroutine(GetRequest("https://api.api-ninjas.com/v1/commoditypricehistorical?name=gold&period=4h"));
 
-        //example base prices
-        float baseLumberPrice = 100f; //base price for lumber
-        float baseGoldPrice = 1500f; //base price for gold
-        float baseCopperPrice = 4f; //base price for copper
-
         //calculate percentage difference from average
-        float lumberPriceDifference = (costActualAverageLumber - costActualLumber) / costActualAverageLumber;
-        float goldPriceDifference = (costActualAverageGold - costActualGold) / costActualAverageGold;
-        float copperPriceDifference = (costActualAverageCopper - costActualCopper) / costActualAverageCopper;
+        float lumberPriceDifference = costActualLumber / costActualAverageLumber;
+        float goldPriceDifference = costActualGold / costActualAverageGold;
+        float copperPriceDifference = costActualCopper / costActualAverageCopper;
 
         //adjust base prices based on percentage difference
-        costLumber = baseLumberPrice * (1 + lumberPriceDifference);
-        costGold = baseGoldPrice * (1 + goldPriceDifference);
-        costCopper = baseCopperPrice * (1 + copperPriceDifference);
+        costLumber = baseLumberPrice * lumberPriceDifference;
+        lumberPriceText.text = "Lumber Price: " + costLumber;
+        costGold = baseGoldPrice * goldPriceDifference;
+        costCopper = baseCopperPrice * copperPriceDifference;
     }
     //every 5 mins update prices to reflect real world data
 }
