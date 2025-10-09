@@ -57,9 +57,7 @@ public class RealWorldData : MonoBehaviour
     
     private void CalculatePrices()
     {
-        //example API calls
-        StartCoroutine(GetRequest("https://api.api-ninjas.com/v1/commoditypricehistorical?name=lumber&period=4h"));
-        StartCoroutine(GetRequest("https://api.api-ninjas.com/v1/commoditypricehistorical?name=gold&period=4h"));
+        StartCoroutine(GetRequest("https://api.api-ninjas.com/v1/commoditypricehistorical?name=lumber&period=1h"));
 
         //calculate percentage difference from average
         float lumberPriceDifference = costActualLumber / costActualAverageLumber;
@@ -72,5 +70,4 @@ public class RealWorldData : MonoBehaviour
         costGold = baseGoldPrice * goldPriceDifference;
         costCopper = baseCopperPrice * copperPriceDifference;
     }
-    //every 5 mins update prices to reflect real world data
 }
