@@ -1,57 +1,85 @@
 using UnityEngine;
-public class StorageBuilding : Placeble
+using UnityEngine.UI;
+
+public class StorageBuilding : MonoBehaviour
 {
-    private StorageUI storageUI;    
-    public string Name { get; private set; }
-    [SerializeField] private GameObject windowPrefab;
-    public void initialize(string name)
+    [Header("Assign in Inspector")]
+    [SerializeField] private GameObject windowPrefab;   // Your Storage UI window prefab
+    [SerializeField] private Canvas canvas;             // Drag your main Canvas
+    [SerializeField] private GameObject storageButtonPrefab; // Small "Storage" button prefab
+
+    private GameObject windowInstance;
+    private GameObject storageButtonInstance;
+
+    private void Start()
     {
+        // Ensure we have a reference to the Canvas
+        if (canvas == null)
+            canvas = FindObjectOfType<Canvas>();
+
+        // Spawn Storage UI (hidden at start)
+        if (windowPrefab != null && canvas != null)
         {
-            Name = name;
+            windowInstance = Instantiate(windowPrefab, canvas.transform);
+            windowInstance.SetActive(false);
+        }
+        else
+        {
+            Debug.LogWarning("[StorageBuilding] Missing windowPrefab or Canvas.");
+        }
+    }
 
-            if (GameManager.current == null || GameManager.current.canvas == null)
+    private void Update()
+    {
+        // Detect click manually (bypasses player movement)
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit))
             {
-                Debug.LogError("[StorageBuilding] GameManager or its Canvas is missing!");
-                return;
-            }
-
-            GameObject window = Instantiate(windowPrefab, GameManager.current.canvas.transform);
-            window.SetActive(false);
-
-            storageUI = window.GetComponent<StorageUI>();
-            if (storageUI != null)
-            {
-                storageUI.SetNameText(name);
-            }
-            else
-            {
-                Debug.LogError("[StorageBuilding] Window prefab has no StorageUI component!");
+                // If we clicked THIS object (the cylinder)
+                if (hit.collider.gameObject == gameObject)
+                {
+                    ShowStorageButton();
+                }
             }
         }
-
-        /* Name = name;
-         GameObject window = Instantiate(windowPrefab, GameManager.current.canvas.transform);
-         window.SetActive(false);
-         storageUI=window.GetComponent<StorageUI>();
-         storageUI.SetNameText(name);*/
-    }
-    public virtual void OnClick()
-    {
-        storageUI.gameObject.SetActive(true);
-    }
-    private void OnMouseUpAsButton()
-    {
-        OnClick();
-    }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
     }
 
-    // Update is called once per frame
-    void Update()
+    private void ShowStorageButton()
     {
-        
+        if (storageButtonInstance != null) return;
+
+        storageButtonInstance = Instantiate(storageButtonPrefab, canvas.transform);
+        RectTransform rect = storageButtonInstance.GetComponent<RectTransform>();
+        rect.anchoredPosition = Vector2.zero; // Center button on screen
+
+        // Set the button text to "Storage"
+        Text txt = storageButtonInstance.GetComponentInChildren<Text>();
+        if (txt != null) txt.text = "Storage";
+
+        // Add the click event
+        Button btn = storageButtonInstance.GetComponent<Button>();
+        btn.onClick.AddListener(OpenStorageUI);
+
+        Debug.Log("[StorageBuilding] Storage button created!");
+    }
+
+    private void OpenStorageUI()
+    {
+        if (windowInstance != null)
+        {
+            windowInstance.SetActive(true);
+            Debug.Log("[StorageBuilding] Storage UI opened!");
+        }
+
+        if (storageButtonInstance != null)
+            Destroy(storageButtonInstance);
+    }
+
+    public void CloseStorageUI()
+    {
+        if (windowInstance != null)
+            windowInstance.SetActive(false);
     }
 }
