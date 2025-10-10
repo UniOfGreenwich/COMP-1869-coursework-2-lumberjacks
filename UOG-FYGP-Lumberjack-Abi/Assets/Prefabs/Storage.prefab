@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   windowPrefab: {fileID: 4401943056102838622, guid: 9419eefd4aa77ba4e812af74b75952df, type: 3}
-  canvas: {fileID: 2809968935071792157, guid: bcc177806d9bdc849a2546d68c3b6351, type: 3}
+  canvas: {fileID: 0}
   storageButtonPrefab: {fileID: 2190049646325984489, guid: a3dcf769f63dc5d4dbbfdf75dc81f35c, type: 3}
 --- !u!208 &2689323150866346044
 NavMeshObstacle:

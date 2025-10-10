@@ -4,7 +4,6 @@ using TMPro;
 
 public class StorageUI : MonoBehaviour
 {
-    [Header("UI Elements")]
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private Button closeButton;
 
@@ -25,5 +24,8 @@ public class StorageUI : MonoBehaviour
     public void Close()
     {
         gameObject.SetActive(false);
+
+        // Resume player movement
+        PlayerController.IsInputLocked = false;
     }
 }
