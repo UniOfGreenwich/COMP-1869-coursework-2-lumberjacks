@@ -1,82 +1,99 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
 public class PlayerController : MonoBehaviour
 {
-    NavMeshAgent agent;
-    Animator animator;
+    private NavMeshAgent agent;
+    private Animator animator;
+    private Camera mainCamera;
 
-    [Header("Movement")]
-    [SerializeField] ParticleSystem clickEffect;
-    [SerializeField] LayerMask clickableLayers;
-    [SerializeField] float lookRotationSpeed = 8f;
-    [SerializeField] float maxTapMovement = 20f; // pixels allowed for it to still count as a tap
+    [Header("Movement Settings")]
+    [SerializeField] private ParticleSystem clickEffect;
+    [SerializeField] private float lookRotationSpeed = 8f;
+    [SerializeField] private float maxTapMovement = 20f;
 
     private Vector2 touchStartPos;
-    void Awake()
+    public static bool IsInputLocked = false;
+    private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
-    }
-    void Update()
-    {
-        ClickToMove();
-        FaceTarget();
-        SetAnimations();
+        mainCamera = Camera.main;
     }
 
-    void ClickToMove()
+    private void Update()
     {
-        RaycastHit hit;
+        if (IsInputLocked)
+        {
+            agent.isStopped = true; // stop moving
+            animator.Play("Idle");
+            return;
+        }
+        else
+        {
+            if (agent != null && agent.isStopped)
+                agent.isStopped = false;
+        }
+        HandleInput();
+        FaceTarget();
+        UpdateAnimationState();
+    }
+
+    private void HandleInput()
+    {
         if (Input.GetMouseButtonDown(0))
         {
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100, clickableLayers))
+            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit))
             {
-                MoveAgent(hit.point);
-            }
-        }
-        if (Input.touchCount > 0)
-        {
-            Touch touch = Input.GetTouch(0);
+                string hitLayer = LayerMask.LayerToName(hit.collider.gameObject.layer);
 
-            if (touch.phase == TouchPhase.Began)
-            {
-                touchStartPos = touch.position; // remember where finger started
-            }
+                // Ignore interactables
+                if (hitLayer == "Interactable") return;
 
-            if (touch.phase == TouchPhase.Ended)
-            {
-                // check if finger moved too much (ignore swipes/pans)
-                if (Vector2.Distance(touch.position, touchStartPos) <= maxTapMovement)
+                // Move on ground
+                if (hitLayer == "Ground")
                 {
-                    if (Physics.Raycast(Camera.main.ScreenPointToRay(touch.position), out hit, 100, clickableLayers))
-                    {
-                        MoveAgent(hit.point);
-                    }
+                    MoveAgent(hit.point);
+                    return;
                 }
             }
         }
     }
-    void MoveAgent(Vector3 point)
+
+    private void MoveAgent(Vector3 destination)
     {
-        agent.destination = point;
+        if (agent == null) return;
+
+        agent.SetDestination(destination);
 
         if (clickEffect != null)
-        {
-            Instantiate(clickEffect, point + Vector3.up * 0.1f, clickEffect.transform.rotation);
-        }
+            Instantiate(clickEffect, destination + Vector3.up * 0.1f, Quaternion.identity);
     }
-    void FaceTarget()
+
+    private void FaceTarget()
     {
-        Vector3 direction = (agent.destination - transform.position).normalized;
-        if (direction.sqrMagnitude > 0.001f)
-        {
-            Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * lookRotationSpeed);
-        }
+        if (agent == null) return;
+
+        Vector3 direction = (agent.destination - transform.position);
+        direction.y = 0;
+
+        if (direction.sqrMagnitude < 0.0001f)
+            return;
+
+        Quaternion lookRotation = Quaternion.LookRotation(direction);
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation,
+            lookRotation,
+            Time.deltaTime * lookRotationSpeed
+        );
     }
-    void SetAnimations()
+
+    private void UpdateAnimationState()
     {
+        if (animator == null || agent == null) return;
+
         if (agent.velocity.sqrMagnitude < 0.01f)
             animator.Play("Idle");
         else

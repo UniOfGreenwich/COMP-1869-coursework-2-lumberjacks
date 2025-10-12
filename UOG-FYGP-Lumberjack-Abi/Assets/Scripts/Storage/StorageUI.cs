@@ -1,47 +1,31 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class StorageUI : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI storageTypeText;
-    [SerializeField] private TextMeshProUGUI maxItemsText;
-    [SerializeField] private Slider maxItemsSlider;
+    [SerializeField] private TextMeshProUGUI titleText;
+    [SerializeField] private Button closeButton;
 
-    [SerializeField] private GameObject itemsView;
-    [SerializeField] private GameObject increaseView;
-
-    [SerializeField] private Transform itemsContent;
-    [SerializeField] private Transform increaseContent;
-
-    [SerializeField] private GameObject itemPrefab;
-
-    public void SetNameText(string name)
+    private void Start()
     {
-        storageTypeText.text = name;
+        if (closeButton != null)
+            closeButton.onClick.AddListener(Close);
+
+        if (titleText != null)
+            titleText.text = "STORAGE";
     }
-    public void CloseButton_()
+
+    public void Open()
+    {
+        gameObject.SetActive(true);
+    }
+
+    public void Close()
     {
         gameObject.SetActive(false);
-    }
-    public void Upgrade_()
-    {
-        increaseView.SetActive(true);
-    }
-    public void Back()
-    {
-        increaseView.SetActive(false);
-    }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        // Resume player movement
+        PlayerController.IsInputLocked = false;
     }
 }
-    

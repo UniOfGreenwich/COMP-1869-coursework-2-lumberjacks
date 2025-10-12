@@ -7,19 +7,19 @@ public class Placeble : MonoBehaviour
     public Vector3[] Vertices { get; private set; }
 
     private Vector3[] localBottomCorners;
-    private MeshRenderer renderer;
+    private MeshRenderer objectrenderer;
     private Material originalMaterial;
     private Material ghostMaterial;
 
     private void Awake()
     {
         // Cache MeshRenderer + Materials
-        renderer = GetComponent<MeshRenderer>();
-        if (renderer != null)
+        objectrenderer = GetComponent<MeshRenderer>();
+        if (objectrenderer != null)
         {
-            originalMaterial = renderer.material;
+            originalMaterial = objectrenderer.material;
             ghostMaterial = new Material(originalMaterial); // clone for tinting
-            renderer.material = ghostMaterial;
+            objectrenderer.material = ghostMaterial;
         }
         else
         {
@@ -134,9 +134,9 @@ public class Placeble : MonoBehaviour
     }
     private void RestoreOriginalMaterial()
     {
-        if (renderer != null && originalMaterial != null)
+        if (objectrenderer != null && originalMaterial != null)
         {
-            renderer.material = originalMaterial;
+            objectrenderer.material = originalMaterial;
         }
     }
 }

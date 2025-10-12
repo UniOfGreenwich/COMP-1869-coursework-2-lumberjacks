@@ -35,8 +35,6 @@ public class BuildingSystem : MonoBehaviour
         {
             objectToPlace.Rotate();
         }
-
-
         // Snap ghost to grid
         Vector3 mousePos = GetMouseWorldPosition();
         Vector3 snappedPos = SnapCoordinateToGrid(mousePos);

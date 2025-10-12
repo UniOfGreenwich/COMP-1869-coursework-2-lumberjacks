@@ -1,57 +1,86 @@
 using UnityEngine;
-public class StorageBuilding : Placeble
+using UnityEngine.UI;
+
+public class StorageBuilding : MonoBehaviour
 {
-    private StorageUI storageUI;    
-    public string Name { get; private set; }
-    [SerializeField] private GameObject windowPrefab;
-    public void initialize(string name)
+    [Header("Assign in Inspector")]
+    [SerializeField] private GameObject windowPrefab;        // Storage UI prefab
+    [SerializeField] private GameObject storageButtonPrefab; // "Storage" button prefab
+    [SerializeField] private Vector3 buttonOffset = new Vector3(0, 2f, 0); // how high above the building button appears
+
+    private Canvas canvas;
+    private GameObject windowInstance;
+    private GameObject storageButtonInstance;
+
+    private Camera mainCam;
+
+    private void Start()
     {
+        canvas = FindFirstObjectByType<Canvas>();
+        mainCam = Camera.main;
+
+        if (canvas == null)
         {
-            Name = name;
+            Debug.LogError("StorageBuilding: No Canvas found in scene!");
+            return;
+        }
 
-            if (GameManager.current == null || GameManager.current.canvas == null)
-            {
-                Debug.LogError("[StorageBuilding] GameManager or its Canvas is missing!");
-                return;
-            }
+        // Create the UI window (hidden by default)
+        if (windowPrefab != null)
+        {
+            windowInstance = Instantiate(windowPrefab, canvas.transform);
+            windowInstance.SetActive(false);
+        }
+    }
 
-            GameObject window = Instantiate(windowPrefab, GameManager.current.canvas.transform);
-            window.SetActive(false);
-
-            storageUI = window.GetComponent<StorageUI>();
-            if (storageUI != null)
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = mainCam.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit))
             {
-                storageUI.SetNameText(name);
-            }
-            else
-            {
-                Debug.LogError("[StorageBuilding] Window prefab has no StorageUI component!");
+                if (hit.collider.gameObject == gameObject)
+                    ShowStorageButton();
             }
         }
 
-        /* Name = name;
-         GameObject window = Instantiate(windowPrefab, GameManager.current.canvas.transform);
-         window.SetActive(false);
-         storageUI=window.GetComponent<StorageUI>();
-         storageUI.SetNameText(name);*/
-    }
-    public virtual void OnClick()
-    {
-        storageUI.gameObject.SetActive(true);
-    }
-    private void OnMouseUpAsButton()
-    {
-        OnClick();
-    }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
+        // Keep button positioned above storage in screen space
+        if (storageButtonInstance != null)
+        {
+            Vector3 screenPos = mainCam.WorldToScreenPoint(transform.position + buttonOffset);
+            RectTransform rect = storageButtonInstance.GetComponent<RectTransform>();
+            rect.position = screenPos;
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    private void ShowStorageButton()
     {
-        
+        if (storageButtonInstance != null || storageButtonPrefab == null) return;
+
+        storageButtonInstance = Instantiate(storageButtonPrefab, canvas.transform);
+        Button btn = storageButtonInstance.GetComponent<Button>();
+        btn.onClick.AddListener(OpenStorageUI);
+    }
+
+    private void OpenStorageUI()
+    {
+        if (windowInstance != null)
+            windowInstance.SetActive(true);
+
+        if (storageButtonInstance != null)
+            Destroy(storageButtonInstance);
+
+        // Stop player movement
+        PlayerController.IsInputLocked = true;
+    }
+
+    public void CloseStorageUI()
+    {
+        if (windowInstance != null)
+            windowInstance.SetActive(false);
+
+        // Resume player movement
+        PlayerController.IsInputLocked = false;
     }
 }
