@@ -4,7 +4,7 @@ using TMPro;
 
 public class StorageUI : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI titleText;
+   // [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private Button closeButton;
 
     private void Start()
@@ -12,8 +12,8 @@ public class StorageUI : MonoBehaviour
         if (closeButton != null)
             closeButton.onClick.AddListener(Close);
 
-        if (titleText != null)
-            titleText.text = "STORAGE";
+       // if (titleText != null)
+            //titleText.text = "STORAGE";
     }
 
     public void Open()
