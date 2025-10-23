@@ -35,12 +35,9 @@ public class BuildingSystem : MonoBehaviour
         {
             objectToPlace.Rotate();
         }
-        // Snap ghost to grid
         Vector3 mousePos = GetMouseWorldPosition();
         Vector3 snappedPos = SnapCoordinateToGrid(mousePos);
         objectToPlace.transform.position = snappedPos;
-
-        // Confirm placement    
         if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
         {
             if (CanBePlaced(objectToPlace))
@@ -63,7 +60,6 @@ public class BuildingSystem : MonoBehaviour
             objectToPlace = null;
         }
     }
-
     private void StartPlacement(GameObject prefab)
     {
         Vector3 mousePos = GetMouseWorldPosition();
