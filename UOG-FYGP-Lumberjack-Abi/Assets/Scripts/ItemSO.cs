@@ -1,16 +1,13 @@
 using UnityEngine;
 
-public class ItemSO : MonoBehaviour
-{
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+public enum ItemCategory { Utility, FinishedProduct }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+[CreateAssetMenu(menuName = "Utilities/Item", fileName = "Item_")]
+public class ItemSO : ScriptableObject
+{
+    public string id;                 
+    public string displayName;        
+    public Sprite icon;               
+    public ItemCategory category;     
+    [Min(1)] public int maxStack = 20;
 }
