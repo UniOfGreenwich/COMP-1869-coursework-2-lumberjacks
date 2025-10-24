@@ -1363,7 +1363,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   category: 0
   storageManager: {fileID: 0}
-  shelfSlotPrefab: {fileID: 4401943056102838622}
+  shelfSlotPrefab: {fileID: 2930934434365744640, guid: 53e90159a80c5354ab441de2c8351222, type: 3}
   anchors:
   - {fileID: 156103912010350553}
   - {fileID: 2125158524861592106}
