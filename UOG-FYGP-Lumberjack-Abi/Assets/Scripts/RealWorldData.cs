@@ -22,9 +22,9 @@ public class RealWorldData : MonoBehaviour
     [SerializeField] private float baseLumberPrice = 100f;
     [SerializeField] private float referenceLumberPrice = 600f;  // Average real lumber price baseline
     [SerializeField] private float sensitivity = 6f;             // How strongly the game reacts to real-world price changes
-    [SerializeField] private float volatility = 0.05f;           // Random short-term price movement range (±%)
+    [SerializeField] private float volatility = 0.05f;           // Random short-term price movement range 
     [SerializeField] private float cycleSpeed = 0.1f;            // Speed of sinusoidal market cycle
-    [SerializeField] private float cycleAmplitude = 0.3f;        // Magnitude of long-term cyclical swings (±%)
+    [SerializeField] private float cycleAmplitude = 0.3f;        
     public string marketMood { get; private set; }
 
     private const string API_KEY = "RkDmb6E5A+2W4WQZz0pBZQ==PO8NzoDX91iGM0ji";
