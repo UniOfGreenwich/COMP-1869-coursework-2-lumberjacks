@@ -4,8 +4,8 @@ using UnityEngine.UI;
 
 public class DraggableItemUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    [SerializeField] private Canvas rootCanvas;      
-    [SerializeField] private Image sourceIconImage;
+    [SerializeField] public Canvas rootCanvas;      
+    [SerializeField] public Image sourceIconImage;
     private RectTransform dragVisual;  
     private Image dragImage;
     private Transform originalParent;
