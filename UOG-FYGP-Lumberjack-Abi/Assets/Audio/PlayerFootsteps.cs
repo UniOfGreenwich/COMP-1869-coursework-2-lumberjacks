@@ -5,7 +5,7 @@ using UnityEngine.Audio;
 public class PlayerFootsteps : MonoBehaviour
 {
     [Header("Clips (randomised)")]
-    public AudioClip[] footstepClips;   // assign your 3 clips
+    public AudioClip[] footstepClips;   
 
     [Header("Sound Tuning")]
     [Range(0.9f, 1.1f)] public float minPitch = 0.97f;
@@ -16,7 +16,7 @@ public class PlayerFootsteps : MonoBehaviour
     public float minInterval = 0.08f;
 
     [Header("Routing (optional)")]
-    public AudioMixerGroup sfxGroup;    // e.g., MainMixer/SFX
+    public AudioMixerGroup sfxGroup;    
 
     private AudioSource src;
     private float lastPlayTime = -999f;
@@ -34,7 +34,7 @@ public class PlayerFootsteps : MonoBehaviour
    
     public void onFootstep(string foot = "")
     {
-        // Debounce (protect against blends or duplicate events)
+        // protect against blends or duplicate events
         if (Time.time - lastPlayTime < minInterval) return;
 
         if (footstepClips == null || footstepClips.Length == 0) return;
