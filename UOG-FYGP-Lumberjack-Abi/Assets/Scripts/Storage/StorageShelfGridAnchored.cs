@@ -5,34 +5,31 @@ using UnityEngine;
 
 public class StorageShelfGridAnchored : MonoBehaviour, IRebuildRequester
 {
-    [Header("Which page is this?")]
-    public ItemCategory category;            // Utility or FinishedProduct
-
-    [Header("Plumbing")]
+    [Header("Page")]
+    public ItemCategory category;            
     public StorageManager storageManager;
     public GameObject shelfSlotPrefab;
-
-    [Header("Anchors (place over the shelf art)")]
-    public List<RectTransform> anchors = new(); // 8 anchors, left→right
+    public List<RectTransform> anchors = new(); 
     public bool stretchToAnchor = true;
 
     private readonly List<StorageShelfSlot> slots = new();
     private Coroutine rebuildCo;
 
+    private List<ItemSO> _order = new();
+    private int _pinIndex = -1;
+    private ItemSO _pinItem = null;
     void OnEnable()
     {
         if (!storageManager) storageManager = FindFirstObjectByType<StorageManager>();
         BuildOrReuseSlots();
         Rebuild();
     }
-
     public void RequestRebuildSoon()
     {
         if (rebuildCo != null) return;
         rebuildCo = StartCoroutine(RebuildNextFrame());
     }
     private IEnumerator RebuildNextFrame() { yield return null; rebuildCo = null; Rebuild(); }
-
     private void BuildOrReuseSlots()
     {
         slots.Clear();
@@ -48,8 +45,6 @@ public class StorageShelfGridAnchored : MonoBehaviour, IRebuildRequester
                 var go = Object.Instantiate(shelfSlotPrefab, anchor);
                 go.name = $"ShelfSlot_{i + 1}";
                 slot = go.GetComponent<StorageShelfSlot>();
-
-                // fit to anchor rect
                 var rt = go.GetComponent<RectTransform>();
                 if (stretchToAnchor)
                 {
@@ -65,23 +60,35 @@ public class StorageShelfGridAnchored : MonoBehaviour, IRebuildRequester
             slots.Add(slot);
         }
     }
-
+    public void PinItemAt(StorageShelfSlot slot, ItemSO item)
+    {
+        _pinIndex = slots.IndexOf(slot);
+        _pinItem = item;
+    }
     public void Rebuild()
     {
         if (slots.Count == 0 || storageManager == null) return;
-
-        // items of this category with count > 0
-        var items = storageManager
+        var available = storageManager
             .AllItems()
             .Where(kv => kv.Key && kv.Value > 0 && kv.Key.category == category)
-            .OrderBy(kv => kv.Key.displayName) // change if you want custom order
             .Select(kv => kv.Key)
             .ToList();
-
+        var ordered = _order.Where(it => it && available.Contains(it)).ToList();
+        if (_pinItem && available.Contains(_pinItem))
+        {
+            ordered.Remove(_pinItem);
+            int idx = Mathf.Clamp(_pinIndex, 0, Mathf.Min(slots.Count - 1, ordered.Count));
+            ordered.Insert(idx, _pinItem);
+        }
+        foreach (var it in available) if (!ordered.Contains(it)) ordered.Add(it);
         for (int i = 0; i < slots.Count; i++)
         {
-            if (i < items.Count) slots[i].Bind(items[i], this);
+            if (i < ordered.Count) slots[i].Bind(ordered[i], this);
             else slots[i].ClearVisuals();
         }
+        _order = ordered;
+        _pinIndex = -1;
+        _pinItem = null;
     }
+
 }

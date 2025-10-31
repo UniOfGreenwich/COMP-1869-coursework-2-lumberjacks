@@ -86,15 +86,34 @@ public class BuildingSystem : MonoBehaviour
     {
         Vector3Int cellPos = gridLayout.WorldToCell(position);
         Vector3 center = grid.GetCellCenterWorld(cellPos);
-        center.y = 0; // ground level
+
+        // Ground level
+        center.y = 0f;
+
         if (objectToPlace != null)
         {
-            float height = objectToPlace.GetComponent<Renderer>().bounds.size.y;
-            center.y += height / 2f;
+            float bottomLocalY = 0f;
+
+            // Use collider so it works with any pivot (center or bottom)
+            var col = objectToPlace.GetComponent<BoxCollider>();
+            if (col)
+            {
+                bottomLocalY = col.center.y - col.size.y * 0.5f; // local Y of the bottom
+            }
+            else
+            {
+                // Fallback to renderer if there’s no collider
+                var r = objectToPlace.GetComponentInChildren<Renderer>();
+                if (r) bottomLocalY = -r.bounds.extents.y;
+            }
+
+            // Lift so the collider bottom sits exactly on the ground
+            center.y -= bottomLocalY;
         }
 
         return center;
     }
+
     private static TileBase[] GetTilesBlock(BoundsInt area, Tilemap tilemap)
     {
         TileBase[] array = new TileBase[area.size.x * area.size.y * area.size.z];

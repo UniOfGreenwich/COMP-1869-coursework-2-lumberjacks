@@ -157,7 +157,15 @@ MonoBehaviour:
   category: 1
   storageManager: {fileID: 0}
   shelfSlotPrefab: {fileID: 2930934434365744640, guid: 53e90159a80c5354ab441de2c8351222, type: 3}
-  anchors: []
+  anchors:
+  - {fileID: 8919524079201061251}
+  - {fileID: 8098092970061510072}
+  - {fileID: 5320163317432541102}
+  - {fileID: 1073610039609673977}
+  - {fileID: 1435345949601472653}
+  - {fileID: 2783007919691216995}
+  - {fileID: 2177637951890341289}
+  - {fileID: 1843073109116692436}
   stretchToAnchor: 1
 --- !u!1 &2861055378289808511
 GameObject:
