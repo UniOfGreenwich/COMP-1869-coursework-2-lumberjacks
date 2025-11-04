@@ -414,6 +414,7 @@ GameObject:
   - component: {fileID: 660056853614024044}
   - component: {fileID: 972402510270571466}
   - component: {fileID: 1582944757615205049}
+  - component: {fileID: 1879124704356219296}
   m_Layer: 5
   m_Name: StorageUIPanel
   m_TagString: Untagged
@@ -494,6 +495,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   closeButton: {fileID: 5335759874846155457}
+--- !u!114 &1879124704356219296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4401943056102838622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88a3b448612187245a03c2b36d923ff7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blurOverlay: {fileID: 3270565735493428616, guid: bfa033015271d8c44bc6305a8436da3b, type: 3}
 --- !u!1 &4836454658646438827
 GameObject:
   m_ObjectHideFlags: 0
