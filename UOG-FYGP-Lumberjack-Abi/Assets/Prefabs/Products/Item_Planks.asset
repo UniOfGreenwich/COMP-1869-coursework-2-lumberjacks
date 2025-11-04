@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a2470d903904dd41a61957d0b8c82db, type: 3}
   m_Name: Item_Planks
   m_EditorClassIdentifier: 
-  id: 
-  displayName: 
-  icon: {fileID: 0}
+  id: Plank
+  displayName: Planks
+  icon: {fileID: 1001273644, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
   category: 0
   maxStack: 20
