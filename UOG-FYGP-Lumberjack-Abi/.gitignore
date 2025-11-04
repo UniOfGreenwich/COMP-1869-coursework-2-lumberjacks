@@ -64,6 +64,10 @@ sysinfo.txt
 *.unitypackage.meta
 *.app
 
+*.psd
+*.psd.meta
+
+
 # Crashlytics generated file
 crashlytics-build.properties
 
