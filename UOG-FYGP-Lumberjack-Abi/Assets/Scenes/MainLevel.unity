@@ -2578,8 +2578,8 @@ MonoBehaviour:
   timerSpinSpeed: 180
   timerDockToBlimp: 1
   timerLocalOffset: {x: 0.28, y: 0, z: 0}
-  overlayCanvas: {fileID: 560696727}
-  storageAnchor: {fileID: 777999504}
+  overlayCanvas: {fileID: 0}
+  storageAnchor: {fileID: 0}
   outputIcon: {fileID: 1001273644, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
   flyIconSize: {x: 36, y: 36}
   flyDuration: 0.7
