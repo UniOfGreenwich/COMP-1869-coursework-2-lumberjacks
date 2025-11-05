@@ -213,9 +213,9 @@ MonoBehaviour:
   secondsPerLog: 0.75
   inputPoint: {fileID: 5114539126829572315}
   outputPoint: {fileID: 7313073407695220808}
-  inputVfxPrefab: {fileID: 826152773257510365, guid: fd94dad09862ce64d9c6713096ef7db6, type: 3}
-  outputVfxPrefab: {fileID: 29777240896897288, guid: d770df72d61dce6429fb964f816d032e, type: 3}
-  vfxLifetime: 1.5
+  inputEffectPrefab: {fileID: 826152773257510365, guid: fd94dad09862ce64d9c6713096ef7db6, type: 3}
+  outputEffectPrefab: {fileID: 29777240896897288, guid: d770df72d61dce6429fb964f816d032e, type: 3}
+  effectLifetime: 1.5
   dropZoneWorldSize: 1
   showDropZone: 1
   promptPanel: {fileID: 0}
@@ -227,8 +227,30 @@ MonoBehaviour:
   enableBlimp: 1
   blimpHeight: 1.6
   blimpSize: {x: 140, y: 90}
-  blimpSprite: {fileID: 2111746380, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
-  debugLogs: 1
+  blimpBackgroundSprite: {fileID: 2111746380, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
+  showTimer: 1
+  hourglassSprite: {fileID: 1077147801, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
+  timerHeight: 1.4
+  timerSize: {x: 64, y: 64}
+  timerSpinSpeed: 180
+  timerDockToBlimp: 1
+  timerLocalOffset: {x: 0.28, y: 0, z: 0}
+  overlayCanvas: {fileID: 0}
+  storageAnchor: {fileID: 0}
+  plankIcon: {fileID: 1001273644, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
+  flyIconSize: {x: 36, y: 36}
+  flyDuration: 0.7
+  flyBurst: 6
+  flyCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  autoFindStorageUI: 1
+  overlayCanvasTag: OverlayCanvas
+  storageAnchorName: StorageAnchor
+  uiProbeInterval: 0.5
 --- !u!4 &4233846940026717251 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 7f72175e15c54054b865ffa839b985d0, type: 3}
