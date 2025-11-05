@@ -15,5 +15,5 @@ MonoBehaviour:
   id: Chair
   displayName: Wooden Chair
   icon: {fileID: -1033900102, guid: af2a582422717d84b90e41e6f90b55d8, type: 3}
-  category: 0
+  category: 1
   maxStack: 20
