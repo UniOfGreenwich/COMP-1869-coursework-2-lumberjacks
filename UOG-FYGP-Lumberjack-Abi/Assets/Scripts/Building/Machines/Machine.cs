@@ -64,6 +64,10 @@ public class Machine : MonoBehaviour, IDropHandler
     public string storageAnchorName = "StorageAnchor"; // child rect name
     public float uiProbeInterval = 0.5f;         // search cadence seconds
 
+    [Header("Animation")]
+    [SerializeField] private Animator tableSawAnimator;
+    [SerializeField] private string animBoolParameter = "IsCutting";
+
     // state caches here
     private StorageManager storage;
     private Placeble placeble;
@@ -97,6 +101,9 @@ public class Machine : MonoBehaviour, IDropHandler
 
         // immediate auto wire try
         TryAutoWireStorage();
+
+        if (!tableSawAnimator)
+            tableSawAnimator = GetComponentInChildren<Animator>(true);
     }
 
     void Update()
@@ -166,6 +173,11 @@ public class Machine : MonoBehaviour, IDropHandler
         busy = true;
         SetTimer(true);
 
+        // Start the saw animation
+        if (tableSawAnimator)
+            tableSawAnimator.SetBool(animBoolParameter, true);
+
+
         for (int i = 0; i < logs; i++)
         {
             if (inputEffectPrefab && inputPoint)
@@ -185,6 +197,10 @@ public class Machine : MonoBehaviour, IDropHandler
                 if (effectLifetime > 0) Destroy(fxOut, effectLifetime);
             }
         }
+
+        // Stop the saw animation
+        if (tableSawAnimator)
+            tableSawAnimator.SetBool(animBoolParameter, false);
 
         busy = false;
         SetTimer(false);
