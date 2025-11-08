@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 2789493348281870791}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.25, y: 1.2, z: 0}
+  m_LocalPosition: {x: -0.35, y: 1.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -56,7 +56,7 @@ Transform:
   m_GameObject: {fileID: 8109571421998664250}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.25, y: 1.2, z: 0}
+  m_LocalPosition: {x: 0.25, y: 1.2, z: -0.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -297,7 +297,7 @@ MonoBehaviour:
   inputPoint: {fileID: 5114539126829572315}
   outputPoint: {fileID: 7313073407695220808}
   inputEffectPrefab: {fileID: 919132149155446097, guid: d5cbccd86bf8afc469d433dd010029f7, type: 3}
-  outputEffectPrefab: {fileID: 29777240896897288, guid: d770df72d61dce6429fb964f816d032e, type: 3}
+  outputEffectPrefab: {fileID: 919132149155446097, guid: 5cc09c377d20eef478cee5be9e26ea69, type: 3}
   effectLifetime: 1.5
   dropZoneWorldSize: 1
   showDropZone: 1

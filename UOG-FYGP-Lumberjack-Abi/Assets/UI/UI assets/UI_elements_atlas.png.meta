@@ -593,7 +593,7 @@ TextureImporter:
         width: 267
         height: 184
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -602,6 +602,28 @@ TextureImporter:
       bones: []
       spriteID: f30191dd252591a49918465ab1b2bf24
       internalID: -942766337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_elements_atlas_22
+      rect:
+        serializedVersion: 2
+        x: 1223
+        y: 612
+        width: 319
+        height: 166
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 367686d1a2ea391488d8589b302a2212
+      internalID: -1065557938
       vertices: []
       indices: 
       edges: []
@@ -635,6 +657,7 @@ TextureImporter:
       UI_elements_atlas_2: 1898170929
       UI_elements_atlas_20: 1286093010
       UI_elements_atlas_21: -942766337
+      UI_elements_atlas_22: -1065557938
       UI_elements_atlas_3: 712203545
       UI_elements_atlas_4: 1002080573
       UI_elements_atlas_5: 2111746380
