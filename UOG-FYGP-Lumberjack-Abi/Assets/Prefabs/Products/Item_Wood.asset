@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: wood
   displayName: WoodPlank
-  icon: {fileID: 1002080573, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
+  icon: {fileID: -942766337, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
   category: 0
   maxStack: 20
