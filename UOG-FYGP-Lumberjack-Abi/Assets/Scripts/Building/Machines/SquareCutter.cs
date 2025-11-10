@@ -20,11 +20,11 @@ public class SquareCutter : MonoBehaviour, IDropHandler
     [System.Serializable]
     public struct Recipe
     {
-        [Min(1)] public int width;
-        [Min(1)] public int height;
-        public ItemSO outputItem;
-        [Min(1)] public int planksCost;
-        [Min(0.1f)] public float seconds;
+        [Min(1)] public int width;            // recipe width here
+        [Min(1)] public int height;           // recipe height here
+        public ItemSO outputItem;             // output item asset
+        [Min(0)] public int planksCost;       // 0 uses default
+        [Min(0f)] public float seconds;       // 0 uses scaling
     }
 
     [Header("Processing (time rule)")]
@@ -39,6 +39,9 @@ public class SquareCutter : MonoBehaviour, IDropHandler
     [Header("Drop Zone (World-Space)")]
     [Min(0.2f)] public float dropZoneWorldSize = 1.2f;
     public bool showDropZone = true;
+    public Vector3 dropZoneLocalOffset = new Vector3(0f, 1.6f, 0f); // move zone vertically
+    public Sprite dropZoneSprite;                                  // optional sprite art
+    public Color dropZoneColor = new Color(0f, 1f, 0f, 0.25f);     // zone tint color
 
     [Header("Blimp + Timer (same behaviour as Plank Machine)")]
     public bool enableBlimp = true;
@@ -69,15 +72,20 @@ public class SquareCutter : MonoBehaviour, IDropHandler
     public string storageAnchorName = "StorageAnchor";
     public float uiProbeInterval = 0.5f;
 
-    [Header("Dimension UI (auto-find by name or tag 'DimensionUI')")]
+    [Header("Dimension UI")]
     public GameObject dimensionPanel;
     public TMP_InputField widthField;
     public TMP_InputField heightField;
     public TextMeshProUGUI dimSummary;
     public Button dimOkButton;
     public Button dimCancelButton;
-    [Tooltip("Keep the last chosen dimension for the next run.")]
     public bool rememberLastDimension = true;
+
+    [Header("Limits")]
+    [Min(1)] public int maxDimension = 8;
+
+    [Header("Diagnostics")]
+    public bool debugLogs = false;
 
     private StorageManager storage;
     private Placeble placeble;
@@ -93,96 +101,104 @@ public class SquareCutter : MonoBehaviour, IDropHandler
     private int pendingCount;
     private MachineBlimp blimp;
     private Transform blimpRoot;
+    private TextMeshProUGUI blimpCountText;
 
     private Canvas timerCanvas;
     private RectTransform timerRect;
 
     private float _nextProbeTime;
+    private ItemSO lastPendingItem;
 
     private void Awake()
     {
-        storage = FindFirstObjectByType<StorageManager>();
-        placeble = GetComponent<Placeble>();
+        storage = FindFirstObjectByType<StorageManager>(); // find storage manager
+        placeble = GetComponent<Placeble>();                // find placeable flag
 
-        EnsureDropZone();
-        EnsureBlimp();
-        EnsureTimer();
-        SetupDimensionUI();
+        EnsureDropZone();                                   // build drop zone
+        EnsureBlimp();                                      // build blimp ui
+        EnsureTimer();                                      // build timer ui
+        SetupDimensionUI();                                 // wire dimension ui
 
         if (flyCurve == null || flyCurve.keys.Length == 0)
             flyCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
-        TryAutoWireStorage();
-        ComputeDimensionParams();
+        TryAutoWireStorage();                               // locate overlay ui
+        ComputeDimensionParams();                           // compute first summary
     }
 
     private void Update()
     {
         if (dropCanvas)
         {
-            dropCanvas.enabled = placeble == null || placeble.placed;
-            if (dropCanvas.worldCamera == null) dropCanvas.worldCamera = Camera.main;
+            dropCanvas.enabled = placeble == null || placeble.placed; // show when placed
+            if (dropCanvas.worldCamera == null) dropCanvas.worldCamera = Camera.main; // set camera
         }
 
         if (autoFindStorageUI && Time.unscaledTime >= _nextProbeTime)
         {
-            _nextProbeTime = Time.unscaledTime + uiProbeInterval;
-            TryAutoWireStorage();
+            _nextProbeTime = Time.unscaledTime + uiProbeInterval; // next probe tick
+            TryAutoWireStorage();                                  // probe again here
         }
 
         if (timerCanvas && timerDockToBlimp)
         {
             Vector3 anchor = blimpRoot ? blimpRoot.localPosition : new Vector3(0, blimpHeight, 0);
-            timerCanvas.transform.localPosition = anchor + timerLocalOffset;
+            timerCanvas.transform.localPosition = anchor + timerLocalOffset; // follow blimp pos
         }
 
-        if (blimp) blimp.FaceCamera(Camera.main);
+        if (blimp) blimp.FaceCamera(Camera.main); // billboard toward camera
         if (timerCanvas && timerCanvas.gameObject.activeSelf)
         {
-            FaceCanvas(timerCanvas.transform, Camera.main);
-            if (timerRect) timerRect.Rotate(0f, 0f, -timerSpinSpeed * Time.deltaTime);
+            FaceCanvas(timerCanvas.transform, Camera.main); // face the camera
+            if (timerRect) timerRect.Rotate(0f, 0f, -timerSpinSpeed * Time.deltaTime); // spin icon
         }
-        if (dropHint) dropHint.gameObject.SetActive(waitingForDrop && !busy);
+        if (dropHint) dropHint.gameObject.SetActive(waitingForDrop && !busy); // show hint gate
     }
 
     private void OnMouseDown()
     {
-        if (busy) return;
-        if (placeble && !placeble.placed) return;
-        OpenDimensionUI();
+        if (busy) return;                  // ignore when busy
+        if (placeble && !placeble.placed) return; // ignore when unplaced
+        OpenDimensionUI();                 // open the panel
     }
 
     public void OnDrop(PointerEventData e)
     {
-        if (!waitingForDrop || busy) return;
-        if (placeble && !placeble.placed) return;
+        if (!waitingForDrop || busy) return;       // drop gate check
+        if (placeble && !placeble.placed) return;  // must be placed
 
         var drag = e.pointerDrag ? e.pointerDrag.GetComponent<DraggableItemUI>() : null;
-        if (!drag) return;
+        if (!drag) return;                          // not a draggable
 
-        var payload = drag.TakePayload();
+        var payload = drag.TakePayload();           // take payload now
         if (payload.IsEmpty || payload.item != plankItem)
         {
-            drag.ReturnRemainder(payload);
+            drag.ReturnRemainder(payload);          // return wrong item
             return;
         }
-        int pieces = costPlanks > 0 ? payload.count / costPlanks : 0;
+
+        int pieces = costPlanks > 0 ? payload.count / costPlanks : 0; // craftable pieces
         if (pieces <= 0)
         {
-            drag.ReturnRemainder(payload);
+            drag.ReturnRemainder(payload);          // not enough planks
             return;
         }
-        int used = pieces * costPlanks;
-        payload.count -= used;
-        drag.ReturnRemainder(payload);
-        waitingForDrop = false;
-        StartCoroutine(ProcessPieces(pieces));
+
+        int original = payload.count;               // original dropped count
+        int used = pieces * costPlanks;             // used plank amount
+        payload.count -= used;                      // compute remainder
+        drag.ReturnRemainder(payload);              // return leftover now
+        waitingForDrop = false;                     // stop waiting now
+
+        if (debugLogs) Debug.Log($"[SquareCutter] Dropped={original} cost={costPlanks} pieces={pieces} used={used} return={original - used}");
+
+        StartCoroutine(ProcessPieces(pieces));      // process pieces now
     }
 
     private IEnumerator ProcessPieces(int pieces)
     {
-        busy = true;
-        SetTimer(true);
+        busy = true;                      // mark busy now
+        SetTimer(true);                   // show timer now
 
         for (int i = 0; i < pieces; i++)
         {
@@ -192,9 +208,9 @@ public class SquareCutter : MonoBehaviour, IDropHandler
                 if (effectLifetime > 0) Destroy(fxIn, effectLifetime);
             }
 
-            yield return new WaitForSeconds(secondsPerPiece);
-            pendingCount++;
-            UpdateBlimpUI();
+            yield return new WaitForSeconds(secondsPerPiece); // wait per piece
+            pendingCount++;                                   // increment count
+            UpdateBlimpUI();                                  // refresh blimp ui
 
             if (outputEffectPrefab && outputPoint)
             {
@@ -203,29 +219,29 @@ public class SquareCutter : MonoBehaviour, IDropHandler
             }
         }
 
-        SetTimer(false);
-        busy = false;
-        if (dropHint) dropHint.text = $"Drop {costPlanks} planks";
+        SetTimer(false);                 // hide timer now
+        busy = false;                    // mark idle now
+        if (dropHint) dropHint.text = $"Drop {costPlanks} planks"; // refresh hint text
     }
 
     private void ComputeDimensionParams()
     {
-        Recipe? match = null;
+        Recipe? match = null;                                   // matched recipe ref
         foreach (var r in recipes)
         {
             bool same = (r.width == selW && r.height == selH) || (r.width == selH && r.height == selW);
-            if (same) { match = r; break; }
+            if (same) { match = r; break; }                     // store match now
         }
 
         currentOutput = match.HasValue && match.Value.outputItem ? match.Value.outputItem : (defaultSquareItem ? defaultSquareItem : plankItem);
         costPlanks = match.HasValue && match.Value.planksCost > 0 ? match.Value.planksCost : Mathf.Max(1, planksPerPiece);
 
         if (match.HasValue && match.Value.seconds > 0f)
-            secondsPerPiece = match.Value.seconds;
+            secondsPerPiece = match.Value.seconds;              // recipe override time
         else
         {
-            float area = Mathf.Max(1, selW * selH);
-            secondsPerPiece = secondsForThreeByThree * (area / 9f);
+            float area = Mathf.Max(1, selW * selH);             // piece area here
+            secondsPerPiece = secondsForThreeByThree * (area / 9f); // scaled by area
         }
 
         if (dimSummary)
@@ -233,6 +249,8 @@ public class SquareCutter : MonoBehaviour, IDropHandler
 
         if (dropHint)
             dropHint.text = $"Drop {costPlanks} planks";
+
+        if (debugLogs) Debug.Log($"[SquareCutter] Dim {selW}x{selH} cost={costPlanks} secs={secondsPerPiece:0.##}");
     }
 
     private void OpenDimensionUI()
@@ -240,82 +258,75 @@ public class SquareCutter : MonoBehaviour, IDropHandler
         if (!dimensionPanel)
         {
             Debug.LogWarning("[SquareCutter] Dimension UI panel not found. (Name it 'DimensionUI' or tag it 'DimensionUI')");
-            waitingForDrop = true;
+            waitingForDrop = true;        // still allow dropping
             return;
         }
 
-        if (widthField) widthField.text = selW.ToString();
-        if (heightField) heightField.text = selH.ToString();
-        ComputeDimensionParams();
-
-        dimensionPanel.SetActive(true);
+        if (widthField) widthField.text = selW.ToString();   // seed W text now
+        if (heightField) heightField.text = selH.ToString(); // seed H text now
+        ComputeDimensionParams();                             // update summary now
+        dimensionPanel.SetActive(true);                       // show panel now
     }
 
     private void CloseDimensionUI(bool confirmed)
     {
-        if (!dimensionPanel) return;
+        if (!dimensionPanel) return;     // no panel early
 
         if (confirmed)
         {
-            int w = ParseField(widthField, selW);
-            int h = ParseField(heightField, selH);
-            selW = Mathf.Max(1, w);
-            selH = Mathf.Max(1, h);
-            ComputeDimensionParams();
+            int w = ParseField(widthField, selW);            // parse W field now
+            int h = ParseField(heightField, selH);           // parse H field now
+            selW = Mathf.Clamp(w, 1, maxDimension);          // clamp W value now
+            selH = Mathf.Clamp(h, 1, maxDimension);          // clamp H value now
+            ComputeDimensionParams();                        // recompute summary
             if (pendingCount > 0 && currentOutput != lastPendingItem)
-                CollectBlimp();
-
-            lastPendingItem = currentOutput;
-
-            waitingForDrop = true;
+                CollectBlimp();                              // collect mismatched
+            lastPendingItem = currentOutput;                 // update last item
+            waitingForDrop = true;                           // wait next drop now
         }
 
-        dimensionPanel.SetActive(false);
+        dimensionPanel.SetActive(false); // hide panel now
     }
 
     private static int ParseField(TMP_InputField f, int fallback)
     {
-        if (!f || string.IsNullOrWhiteSpace(f.text)) return fallback;
-        if (int.TryParse(f.text, out int v)) return v;
-        return fallback;
+        if (!f || string.IsNullOrWhiteSpace(f.text)) return fallback; // empty fallback
+        if (int.TryParse(f.text, out int v)) return v;                 // parsed number ok
+        return fallback;                                               // fallback again
     }
-
-    private ItemSO lastPendingItem;
 
     private void UpdateBlimpUI()
     {
-        if (!enableBlimp || !blimp) return;
-        blimp.gameObject.SetActive(pendingCount > 0);
-        blimp.SetCount(pendingCount);
+        if (!enableBlimp) return;               // feature gate here
+        if (blimp) blimp.gameObject.SetActive(pendingCount > 0); // toggle blimp shown
+        if (blimpCountText) blimpCountText.text = $"x{pendingCount}"; // set label text
     }
 
     internal void CollectBlimp()
     {
         if (pendingCount <= 0 || !storage) { pendingCount = 0; UpdateBlimpUI(); return; }
 
-        Vector3 startWorld = transform.position + new Vector3(0f, blimpHeight, 0f);
-        if (blimp) startWorld = blimp.transform.position;
+        Vector3 startWorld = transform.position + new Vector3(0f, blimpHeight, 0f); // default start
+        if (blimp) startWorld = blimp.transform.position;                           // use blimp pos
 
-        int collected = pendingCount;
-        storage.Put(currentOutput, collected);
-        pendingCount = 0;
-        UpdateBlimpUI();
+        int collected = pendingCount;                 // snapshot collection size
+        storage.Put(currentOutput, collected);        // push into storage now
+        pendingCount = 0;                             // reset pending count
+        UpdateBlimpUI();                              // refresh blimp view
 
-        if (!overlayCanvas || !storageAnchor) TryAutoWireStorage();
+        if (!overlayCanvas || !storageAnchor) TryAutoWireStorage(); // ensure wiring
         if (overlayCanvas && storageAnchor && (outputIcon != null))
-            StartCoroutine(FlyToStorageRoutine(startWorld, collected));
+            StartCoroutine(FlyToStorageRoutine(startWorld, collected)); // play flight
     }
 
     private void EnsureDropZone()
     {
         var forwarderExisting = GetComponentInChildren<MachineDropForwarder>(true);
-        if (forwarderExisting)
-        {
-            forwarderExisting.target = null;
-        }
+        if (forwarderExisting) forwarderExisting.target = null;    // clear forwarder target
 
         var canvasObj = new GameObject("SquareDropCanvas", typeof(Canvas), typeof(GraphicRaycaster));
-        canvasObj.transform.SetParent(transform, false);
+        canvasObj.transform.SetParent(transform, false);           // parent to machine
+        canvasObj.transform.localPosition = dropZoneLocalOffset;   // apply local offset
         dropCanvas = canvasObj.GetComponent<Canvas>();
         dropCanvas.renderMode = RenderMode.WorldSpace;
         dropCanvas.worldCamera = Camera.main;
@@ -336,7 +347,9 @@ public class SquareCutter : MonoBehaviour, IDropHandler
         zoneRc.localPosition = Vector3.zero;
 
         var img = zoneObj.GetComponent<Image>();
-        img.color = showDropZone ? new Color(0f, 1f, 0f, 0.18f) : new Color(1f, 1f, 1f, 0.001f);
+        img.sprite = dropZoneSprite;
+        img.type = Image.Type.Sliced;
+        img.color = showDropZone ? dropZoneColor : new Color(1f, 1f, 1f, 0.001f);
 
         var fwd = zoneObj.GetComponent<MachineDropForwarder>();
         fwd.target = null;
@@ -408,6 +421,7 @@ public class SquareCutter : MonoBehaviour, IDropHandler
         blimp = canvasObj.AddComponent<MachineBlimp>();
         blimp.InitForSquare(this, countText, btnObj.GetComponent<Button>());
 
+        blimpCountText = countText;   // cache label reference
         blimpRoot = canvasObj.transform;
         canvasObj.SetActive(false);
     }
@@ -449,9 +463,18 @@ public class SquareCutter : MonoBehaviour, IDropHandler
 
     private void SetTimer(bool on)
     {
-        if (!showTimer || !timerCanvas) return;
-        timerCanvas.gameObject.SetActive(on);
-        if (timerRect) timerRect.localRotation = Quaternion.identity;
+        if (!showTimer || !timerCanvas) return;  // guard for timer
+        timerCanvas.gameObject.SetActive(on);     // toggle timer on/off
+        if (timerRect) timerRect.localRotation = Quaternion.identity; // reset angle
+    }
+
+    private void OnDimChanged()
+    {
+        int w = ParseField(widthField, selW);   // read typed width
+        int h = ParseField(heightField, selH);  // read typed height
+        selW = Mathf.Clamp(w, 1, maxDimension); // clamp width value
+        selH = Mathf.Clamp(h, 1, maxDimension); // clamp height value
+        ComputeDimensionParams();               // refresh summary now
     }
 
     private void SetupDimensionUI()
@@ -490,6 +513,17 @@ public class SquareCutter : MonoBehaviour, IDropHandler
                 dimCancelButton.onClick.RemoveAllListeners();
                 dimCancelButton.onClick.AddListener(() => CloseDimensionUI(false));
             }
+        }
+
+        if (widthField)
+        {
+            widthField.contentType = TMP_InputField.ContentType.IntegerNumber;
+            widthField.onValueChanged.AddListener(_ => OnDimChanged());
+        }
+        if (heightField)
+        {
+            heightField.contentType = TMP_InputField.ContentType.IntegerNumber;
+            heightField.onValueChanged.AddListener(_ => OnDimChanged());
         }
     }
 
@@ -557,14 +591,14 @@ public class SquareCutter : MonoBehaviour, IDropHandler
 
     private static Vector2 QuadraticBezier(Vector2 a, Vector2 b, Vector2 c, float t)
     {
-        float u = 1f - t;
+        float u = 1f - t;                 // compute u value
         return u * u * a + 2f * u * t * b + t * t * c;
     }
 
     private IEnumerator PulseStorageAnchor()
     {
-        float up = 0.1f;
-        float down = 0.1f;
+        float up = 0.1f;                  // scale up time
+        float down = 0.1f;                // scale down time
         Vector3 baseScale = storageAnchor.localScale;
         Vector3 bigScale = baseScale * 1.12f;
 
@@ -595,7 +629,9 @@ public class SquareCutter : MonoBehaviour, IDropHandler
         {
             foreach (var c in Resources.FindObjectsOfTypeAll<Canvas>())
             {
-                if (!string.IsNullOrEmpty(overlayCanvasTag) && c.CompareTag(overlayCanvasTag)) { overlayCanvas = c; break; }
+                if (!c || !c.gameObject.scene.IsValid()) continue;
+                if (!string.IsNullOrEmpty(overlayCanvasTag) && c.gameObject.tag == overlayCanvasTag)
+                { overlayCanvas = c; break; }
             }
             if (overlayCanvas == null)
             {
@@ -632,15 +668,15 @@ public class SquareCutter : MonoBehaviour, IDropHandler
 
     public void WireStorageUI(Canvas canvas, RectTransform anchor)
     {
-        overlayCanvas = canvas;
-        storageAnchor = anchor;
+        overlayCanvas = canvas;           // assign overlay here
+        storageAnchor = anchor;           // assign anchor here
     }
 
     private void FaceCanvas(Transform t, Camera cam)
     {
-        if (!cam) return;
+        if (!cam) return;                 // guard missing camera
         var dir = t.position - cam.transform.position;
-        dir.y = 0f;
+        dir.y = 0f;                       // flatten y axis
         if (dir.sqrMagnitude > 0.0001f) t.rotation = Quaternion.LookRotation(dir);
     }
 }
@@ -657,19 +693,17 @@ public static class MachineBlimpExtensions
     {
         var f = new _SquareBlimpForwarder { cutter = cutter };
         blimp.gameObject.AddComponent<_SquareBlimpForwarderHolder>().forwarder = f;
-
-        var btn = button;
-        if (btn) btn.onClick.AddListener(() => f.Collect());
+        if (button) button.onClick.AddListener(() => f.Collect());
     }
 
     class _SquareBlimpForwarder
     {
-        public SquareCutter cutter;
+        public SquareCutter cutter;       // cutter reference here
         public void Collect() { if (cutter) cutter.CollectBlimp(); }
     }
 
     class _SquareBlimpForwarderHolder : MonoBehaviour
     {
-        public _SquareBlimpForwarder forwarder;
+        public _SquareBlimpForwarder forwarder; // serialized holder here
     }
 }
