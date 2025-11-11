@@ -7536,6 +7536,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   candleSticks: []
   timePeriod: 12
+  positionOffset: 500
 --- !u!114 &1115342067
 MonoBehaviour:
   m_ObjectHideFlags: 0
