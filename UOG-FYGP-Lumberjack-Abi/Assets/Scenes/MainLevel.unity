@@ -4029,7 +4029,7 @@ Transform:
   m_GameObject: {fileID: 513346900}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 1.786, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4567,9 +4567,329 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   plankItem: {fileID: 11400000, guid: 9fa7d8845649900449c74ac02b04aa97, type: 2}
   defaultSquareItem: {fileID: 11400000, guid: bdf3a093f52cd134fa7d33c65a9163ed, type: 2}
-  planksPerPiece: 4
-  recipes: []
-  secondsForThreeByThree: 30
+  planksPerPiece: 2
+  recipes:
+  - width: 1
+    height: 1
+    outputItem: {fileID: 0}
+    planksCost: 1
+    seconds: 3.3333333
+  - width: 1
+    height: 2
+    outputItem: {fileID: 0}
+    planksCost: 1
+    seconds: 6.6666665
+  - width: 1
+    height: 3
+    outputItem: {fileID: 0}
+    planksCost: 1
+    seconds: 10
+  - width: 1
+    height: 4
+    outputItem: {fileID: 0}
+    planksCost: 2
+    seconds: 13.333333
+  - width: 1
+    height: 5
+    outputItem: {fileID: 0}
+    planksCost: 2
+    seconds: 16.666666
+  - width: 1
+    height: 6
+    outputItem: {fileID: 0}
+    planksCost: 3
+    seconds: 20
+  - width: 1
+    height: 7
+    outputItem: {fileID: 0}
+    planksCost: 3
+    seconds: 23.333334
+  - width: 1
+    height: 8
+    outputItem: {fileID: 0}
+    planksCost: 4
+    seconds: 26.666666
+  - width: 2
+    height: 1
+    outputItem: {fileID: 0}
+    planksCost: 1
+    seconds: 6.6666665
+  - width: 2
+    height: 2
+    outputItem: {fileID: 0}
+    planksCost: 2
+    seconds: 13.333333
+  - width: 2
+    height: 3
+    outputItem: {fileID: 0}
+    planksCost: 3
+    seconds: 20
+  - width: 2
+    height: 4
+    outputItem: {fileID: 0}
+    planksCost: 4
+    seconds: 26.666666
+  - width: 2
+    height: 5
+    outputItem: {fileID: 0}
+    planksCost: 4
+    seconds: 33.333332
+  - width: 2
+    height: 6
+    outputItem: {fileID: 0}
+    planksCost: 5
+    seconds: 40
+  - width: 2
+    height: 7
+    outputItem: {fileID: 0}
+    planksCost: 6
+    seconds: 46.666668
+  - width: 2
+    height: 8
+    outputItem: {fileID: 0}
+    planksCost: 7
+    seconds: 53.333332
+  - width: 3
+    height: 1
+    outputItem: {fileID: 0}
+    planksCost: 1
+    seconds: 10
+  - width: 3
+    height: 2
+    outputItem: {fileID: 0}
+    planksCost: 3
+    seconds: 20
+  - width: 3
+    height: 3
+    outputItem: {fileID: 0}
+    planksCost: 4
+    seconds: 30
+  - width: 3
+    height: 4
+    outputItem: {fileID: 0}
+    planksCost: 5
+    seconds: 40
+  - width: 3
+    height: 5
+    outputItem: {fileID: 0}
+    planksCost: 7
+    seconds: 50
+  - width: 3
+    height: 6
+    outputItem: {fileID: 0}
+    planksCost: 8
+    seconds: 60
+  - width: 3
+    height: 7
+    outputItem: {fileID: 0}
+    planksCost: 9
+    seconds: 70
+  - width: 3
+    height: 8
+    outputItem: {fileID: 0}
+    planksCost: 11
+    seconds: 80
+  - width: 4
+    height: 1
+    outputItem: {fileID: 0}
+    planksCost: 2
+    seconds: 13.333333
+  - width: 4
+    height: 2
+    outputItem: {fileID: 0}
+    planksCost: 4
+    seconds: 26.666666
+  - width: 4
+    height: 3
+    outputItem: {fileID: 0}
+    planksCost: 5
+    seconds: 40
+  - width: 4
+    height: 4
+    outputItem: {fileID: 0}
+    planksCost: 7
+    seconds: 53.333332
+  - width: 4
+    height: 5
+    outputItem: {fileID: 0}
+    planksCost: 9
+    seconds: 66.666664
+  - width: 4
+    height: 6
+    outputItem: {fileID: 0}
+    planksCost: 11
+    seconds: 80
+  - width: 4
+    height: 7
+    outputItem: {fileID: 0}
+    planksCost: 12
+    seconds: 93.333336
+  - width: 4
+    height: 8
+    outputItem: {fileID: 0}
+    planksCost: 14
+    seconds: 106.666664
+  - width: 5
+    height: 1
+    outputItem: {fileID: 0}
+    planksCost: 2
+    seconds: 16.666666
+  - width: 5
+    height: 2
+    outputItem: {fileID: 0}
+    planksCost: 4
+    seconds: 33.333332
+  - width: 5
+    height: 3
+    outputItem: {fileID: 0}
+    planksCost: 7
+    seconds: 50
+  - width: 5
+    height: 4
+    outputItem: {fileID: 0}
+    planksCost: 9
+    seconds: 66.666664
+  - width: 5
+    height: 5
+    outputItem: {fileID: 0}
+    planksCost: 11
+    seconds: 83.333336
+  - width: 5
+    height: 6
+    outputItem: {fileID: 0}
+    planksCost: 13
+    seconds: 100
+  - width: 5
+    height: 7
+    outputItem: {fileID: 0}
+    planksCost: 16
+    seconds: 116.666664
+  - width: 5
+    height: 8
+    outputItem: {fileID: 0}
+    planksCost: 18
+    seconds: 133.33333
+  - width: 6
+    height: 1
+    outputItem: {fileID: 0}
+    planksCost: 3
+    seconds: 20
+  - width: 6
+    height: 2
+    outputItem: {fileID: 0}
+    planksCost: 5
+    seconds: 40
+  - width: 6
+    height: 3
+    outputItem: {fileID: 0}
+    planksCost: 8
+    seconds: 60
+  - width: 6
+    height: 4
+    outputItem: {fileID: 0}
+    planksCost: 11
+    seconds: 80
+  - width: 6
+    height: 5
+    outputItem: {fileID: 0}
+    planksCost: 13
+    seconds: 100
+  - width: 6
+    height: 6
+    outputItem: {fileID: 0}
+    planksCost: 16
+    seconds: 120
+  - width: 6
+    height: 7
+    outputItem: {fileID: 0}
+    planksCost: 19
+    seconds: 140
+  - width: 6
+    height: 8
+    outputItem: {fileID: 0}
+    planksCost: 21
+    seconds: 160
+  - width: 7
+    height: 1
+    outputItem: {fileID: 0}
+    planksCost: 3
+    seconds: 23.333334
+  - width: 7
+    height: 2
+    outputItem: {fileID: 0}
+    planksCost: 6
+    seconds: 46.666668
+  - width: 7
+    height: 3
+    outputItem: {fileID: 0}
+    planksCost: 9
+    seconds: 70
+  - width: 7
+    height: 4
+    outputItem: {fileID: 0}
+    planksCost: 12
+    seconds: 93.333336
+  - width: 7
+    height: 5
+    outputItem: {fileID: 0}
+    planksCost: 16
+    seconds: 116.666664
+  - width: 7
+    height: 6
+    outputItem: {fileID: 0}
+    planksCost: 19
+    seconds: 140
+  - width: 7
+    height: 7
+    outputItem: {fileID: 0}
+    planksCost: 22
+    seconds: 163.33333
+  - width: 7
+    height: 8
+    outputItem: {fileID: 0}
+    planksCost: 25
+    seconds: 186.66667
+  - width: 8
+    height: 1
+    outputItem: {fileID: 0}
+    planksCost: 4
+    seconds: 26.666666
+  - width: 8
+    height: 2
+    outputItem: {fileID: 0}
+    planksCost: 7
+    seconds: 53.333332
+  - width: 8
+    height: 3
+    outputItem: {fileID: 0}
+    planksCost: 11
+    seconds: 80
+  - width: 8
+    height: 4
+    outputItem: {fileID: 0}
+    planksCost: 14
+    seconds: 106.666664
+  - width: 8
+    height: 5
+    outputItem: {fileID: 0}
+    planksCost: 18
+    seconds: 133.33333
+  - width: 8
+    height: 6
+    outputItem: {fileID: 0}
+    planksCost: 21
+    seconds: 160
+  - width: 8
+    height: 7
+    outputItem: {fileID: 0}
+    planksCost: 25
+    seconds: 186.66667
+  - width: 8
+    height: 8
+    outputItem: {fileID: 0}
+    planksCost: 28
+    seconds: 213.33333
+  secondsForThreeByThree: 4
   inputPoint: {fileID: 513346901}
   outputPoint: {fileID: 812423805}
   inputEffectPrefab: {fileID: 826152773257510365, guid: fd94dad09862ce64d9c6713096ef7db6, type: 3}
@@ -4578,8 +4898,8 @@ MonoBehaviour:
   dropZoneWorldSize: 1.2
   showDropZone: 1
   dropZoneLocalOffset: {x: 0, y: 1.6, z: 0}
-  dropZoneSprite: {fileID: 0}
-  dropZoneColor: {r: 0, g: 1, b: 0, a: 0.25}
+  dropZoneSprite: {fileID: 1065727424, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
+  dropZoneColor: {r: 0.21960786, g: 0.21960786, b: 0.21960786, a: 1}
   enableBlimp: 1
   blimpHeight: 1.6
   blimpSize: {x: 140, y: 90}
@@ -4615,6 +4935,9 @@ MonoBehaviour:
   dimCancelButton: {fileID: 1846488401}
   rememberLastDimension: 1
   maxDimension: 8
+  costMode: 1
+  areaExponent: 1
+  generateOnAwakeIfEmpty: 1
   debugLogs: 1
 --- !u!136 &563313648
 CapsuleCollider:
@@ -5913,7 +6236,7 @@ Transform:
   m_GameObject: {fileID: 812423804}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -2.67, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7631,7 +7954,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1048353152}
-  - component: {fileID: 1048353153}
   m_Layer: 5
   m_Name: ROWWH
   m_TagString: Untagged
