@@ -4572,323 +4572,183 @@ MonoBehaviour:
   - width: 1
     height: 1
     outputItem: {fileID: 11400000, guid: c414ef228f0bdf24fa96a35e3f508159, type: 2}
-    planksCost: 1
-    seconds: 0.44444445
+    planksCost: 0
+    seconds: 0
   - width: 1
     height: 2
     outputItem: {fileID: 11400000, guid: 17a8abd7b8023fa459f94796a0e85eda, type: 2}
-    planksCost: 1
-    seconds: 0.8888889
+    planksCost: 0
+    seconds: 0
   - width: 1
     height: 3
     outputItem: {fileID: 11400000, guid: bf33100e780295049816cfae7ba7693c, type: 2}
-    planksCost: 1
-    seconds: 1.3333334
+    planksCost: 0
+    seconds: 0
   - width: 1
     height: 4
     outputItem: {fileID: 11400000, guid: e8e4a159e6da59c4697fcc2065ba4ae5, type: 2}
-    planksCost: 1
-    seconds: 1.7777778
+    planksCost: 0
+    seconds: 0
   - width: 1
     height: 5
     outputItem: {fileID: 11400000, guid: c35b035e3dd525a42b5c1becd038fc85, type: 2}
-    planksCost: 1
-    seconds: 2.2222223
+    planksCost: 0
+    seconds: 0
   - width: 1
     height: 6
     outputItem: {fileID: 11400000, guid: ee7ae79c32d63ff438c60412ad877ae0, type: 2}
-    planksCost: 1
-    seconds: 2.6666667
+    planksCost: 0
+    seconds: 0
   - width: 1
     height: 7
     outputItem: {fileID: 11400000, guid: 8011b6bf3db87d34fbae77be9c44d776, type: 2}
-    planksCost: 2
-    seconds: 3.1111112
+    planksCost: 0
+    seconds: 0
   - width: 1
     height: 8
     outputItem: {fileID: 11400000, guid: 6c99b5500428fb64a83d7ce49ff558e6, type: 2}
-    planksCost: 2
-    seconds: 3.5555556
-  - width: 2
-    height: 1
-    outputItem: {fileID: 11400000, guid: 17a8abd7b8023fa459f94796a0e85eda, type: 2}
-    planksCost: 1
-    seconds: 0.8888889
+    planksCost: 0
+    seconds: 0
   - width: 2
     height: 2
     outputItem: {fileID: 11400000, guid: 15363ab8f52bbf9458e8281dbe90f6e2, type: 2}
-    planksCost: 1
-    seconds: 1.7777778
+    planksCost: 0
+    seconds: 0
   - width: 2
     height: 3
     outputItem: {fileID: 11400000, guid: d69f857f7af65814a8ab4b808ce4138f, type: 2}
-    planksCost: 1
-    seconds: 2.6666667
+    planksCost: 0
+    seconds: 0
   - width: 2
     height: 4
     outputItem: {fileID: 11400000, guid: 3f8778f184ac6db4485f80942f4bf2f8, type: 2}
-    planksCost: 2
-    seconds: 3.5555556
+    planksCost: 0
+    seconds: 0
   - width: 2
     height: 5
     outputItem: {fileID: 11400000, guid: 19feb19a628e64942a5ed69c542ed31b, type: 2}
-    planksCost: 2
-    seconds: 4.4444447
+    planksCost: 0
+    seconds: 0
   - width: 2
     height: 6
     outputItem: {fileID: 11400000, guid: 8fd2bb7c005113e4e85903567395f984, type: 2}
-    planksCost: 3
-    seconds: 5.3333335
+    planksCost: 0
+    seconds: 0
   - width: 2
     height: 7
     outputItem: {fileID: 11400000, guid: e3329f24d75f61342be12a5a18fd2e92, type: 2}
-    planksCost: 3
-    seconds: 6.2222223
+    planksCost: 0
+    seconds: 0
   - width: 2
     height: 8
     outputItem: {fileID: 11400000, guid: ff19bf7226186694880bc3abc99b8f62, type: 2}
-    planksCost: 4
-    seconds: 7.111111
-  - width: 3
-    height: 1
-    outputItem: {fileID: 11400000, guid: bf33100e780295049816cfae7ba7693c, type: 2}
-    planksCost: 1
-    seconds: 1.3333334
-  - width: 3
-    height: 2
-    outputItem: {fileID: 11400000, guid: d69f857f7af65814a8ab4b808ce4138f, type: 2}
-    planksCost: 1
-    seconds: 2.6666667
+    planksCost: 0
+    seconds: 0
   - width: 3
     height: 3
     outputItem: {fileID: 11400000, guid: bbc2ecb2138265148b3fedbef789800f, type: 2}
-    planksCost: 2
-    seconds: 4
+    planksCost: 0
+    seconds: 0
   - width: 3
     height: 4
     outputItem: {fileID: 11400000, guid: 69b59b621da8fd346bda91b9b99aefab, type: 2}
-    planksCost: 3
-    seconds: 5.3333335
+    planksCost: 0
+    seconds: 0
   - width: 3
     height: 5
     outputItem: {fileID: 11400000, guid: a07224cde4e554d4297897d3bff1c932, type: 2}
-    planksCost: 3
-    seconds: 6.6666665
+    planksCost: 0
+    seconds: 0
   - width: 3
     height: 6
     outputItem: {fileID: 11400000, guid: 6c7b9652621a60341b4fec626a2b0ac8, type: 2}
-    planksCost: 4
-    seconds: 8
+    planksCost: 0
+    seconds: 0
   - width: 3
     height: 7
     outputItem: {fileID: 11400000, guid: 625ab7fbbb1d3a9408a5bfa0a919302b, type: 2}
-    planksCost: 5
-    seconds: 9.333333
+    planksCost: 0
+    seconds: 0
   - width: 3
     height: 8
     outputItem: {fileID: 11400000, guid: 8560ddbbd66ffde4cbbce21acc35acb5, type: 2}
-    planksCost: 5
-    seconds: 10.666667
-  - width: 4
-    height: 1
-    outputItem: {fileID: 11400000, guid: e8e4a159e6da59c4697fcc2065ba4ae5, type: 2}
-    planksCost: 1
-    seconds: 1.7777778
-  - width: 4
-    height: 2
-    outputItem: {fileID: 11400000, guid: 3f8778f184ac6db4485f80942f4bf2f8, type: 2}
-    planksCost: 2
-    seconds: 3.5555556
-  - width: 4
-    height: 3
-    outputItem: {fileID: 11400000, guid: 69b59b621da8fd346bda91b9b99aefab, type: 2}
-    planksCost: 3
-    seconds: 5.3333335
+    planksCost: 0
+    seconds: 0
   - width: 4
     height: 4
     outputItem: {fileID: 11400000, guid: 21f128e874ff26540a28c522f935ae0d, type: 2}
-    planksCost: 4
-    seconds: 7.111111
+    planksCost: 0
+    seconds: 0
   - width: 4
     height: 5
     outputItem: {fileID: 11400000, guid: a662614344e63ba4cbcaaecf27fb8371, type: 2}
-    planksCost: 4
-    seconds: 8.888889
+    planksCost: 0
+    seconds: 0
   - width: 4
     height: 6
     outputItem: {fileID: 11400000, guid: 23b747c4da37f74488215fd53cbf17d2, type: 2}
-    planksCost: 5
-    seconds: 10.666667
+    planksCost: 0
+    seconds: 0
   - width: 4
     height: 7
     outputItem: {fileID: 11400000, guid: 7297a8516bffbb14eb3d15bcecff6789, type: 2}
-    planksCost: 6
-    seconds: 12.444445
+    planksCost: 0
+    seconds: 0
   - width: 4
     height: 8
     outputItem: {fileID: 11400000, guid: f3f546b9102237548a3985f9ab06ee37, type: 2}
-    planksCost: 7
-    seconds: 14.222222
-  - width: 5
-    height: 1
-    outputItem: {fileID: 11400000, guid: c35b035e3dd525a42b5c1becd038fc85, type: 2}
-    planksCost: 1
-    seconds: 2.2222223
-  - width: 5
-    height: 2
-    outputItem: {fileID: 11400000, guid: 19feb19a628e64942a5ed69c542ed31b, type: 2}
-    planksCost: 2
-    seconds: 4.4444447
-  - width: 5
-    height: 3
-    outputItem: {fileID: 11400000, guid: a07224cde4e554d4297897d3bff1c932, type: 2}
-    planksCost: 3
-    seconds: 6.6666665
-  - width: 5
-    height: 4
-    outputItem: {fileID: 11400000, guid: a662614344e63ba4cbcaaecf27fb8371, type: 2}
-    planksCost: 4
-    seconds: 8.888889
+    planksCost: 0
+    seconds: 0
   - width: 5
     height: 5
     outputItem: {fileID: 11400000, guid: 38c365de646ceb0468be228fda355ea9, type: 2}
-    planksCost: 6
-    seconds: 11.111111
+    planksCost: 0
+    seconds: 0
   - width: 5
     height: 6
     outputItem: {fileID: 11400000, guid: 1c788b331cad20c45916103740ec6ee8, type: 2}
-    planksCost: 7
-    seconds: 13.333333
+    planksCost: 0
+    seconds: 0
   - width: 5
     height: 7
     outputItem: {fileID: 11400000, guid: 2b2b73d6b453f5a4d815e4e9b78f267d, type: 2}
-    planksCost: 8
-    seconds: 15.555555
+    planksCost: 0
+    seconds: 0
   - width: 5
     height: 8
     outputItem: {fileID: 11400000, guid: e83cbeddb5b5ecf45a346c1eee53ebf5, type: 2}
-    planksCost: 9
-    seconds: 17.777779
-  - width: 6
-    height: 1
-    outputItem: {fileID: 11400000, guid: ee7ae79c32d63ff438c60412ad877ae0, type: 2}
-    planksCost: 1
-    seconds: 2.6666667
-  - width: 6
-    height: 2
-    outputItem: {fileID: 11400000, guid: 8fd2bb7c005113e4e85903567395f984, type: 2}
-    planksCost: 3
-    seconds: 5.3333335
-  - width: 6
-    height: 3
-    outputItem: {fileID: 11400000, guid: 6c7b9652621a60341b4fec626a2b0ac8, type: 2}
-    planksCost: 4
-    seconds: 8
-  - width: 6
-    height: 4
-    outputItem: {fileID: 11400000, guid: 23b747c4da37f74488215fd53cbf17d2, type: 2}
-    planksCost: 5
-    seconds: 10.666667
-  - width: 6
-    height: 5
-    outputItem: {fileID: 11400000, guid: 1c788b331cad20c45916103740ec6ee8, type: 2}
-    planksCost: 7
-    seconds: 13.333333
+    planksCost: 0
+    seconds: 0
   - width: 6
     height: 6
     outputItem: {fileID: 11400000, guid: 78b84d2fad32f4644aaffbd6eb08750d, type: 2}
-    planksCost: 8
-    seconds: 16
+    planksCost: 0
+    seconds: 0
   - width: 6
     height: 7
     outputItem: {fileID: 11400000, guid: 7396c1bae8b680247a17ee224436d970, type: 2}
-    planksCost: 9
-    seconds: 18.666666
+    planksCost: 0
+    seconds: 0
   - width: 6
     height: 8
     outputItem: {fileID: 11400000, guid: ec845b07626f346448e606b81f6a507d, type: 2}
-    planksCost: 11
-    seconds: 21.333334
-  - width: 7
-    height: 1
-    outputItem: {fileID: 11400000, guid: 8011b6bf3db87d34fbae77be9c44d776, type: 2}
-    planksCost: 2
-    seconds: 3.1111112
-  - width: 7
-    height: 2
-    outputItem: {fileID: 11400000, guid: e3329f24d75f61342be12a5a18fd2e92, type: 2}
-    planksCost: 3
-    seconds: 6.2222223
-  - width: 7
-    height: 3
-    outputItem: {fileID: 11400000, guid: 625ab7fbbb1d3a9408a5bfa0a919302b, type: 2}
-    planksCost: 5
-    seconds: 9.333333
-  - width: 7
-    height: 4
-    outputItem: {fileID: 11400000, guid: 7297a8516bffbb14eb3d15bcecff6789, type: 2}
-    planksCost: 6
-    seconds: 12.444445
-  - width: 7
-    height: 5
-    outputItem: {fileID: 11400000, guid: 2b2b73d6b453f5a4d815e4e9b78f267d, type: 2}
-    planksCost: 8
-    seconds: 15.555555
-  - width: 7
-    height: 6
-    outputItem: {fileID: 11400000, guid: 7396c1bae8b680247a17ee224436d970, type: 2}
-    planksCost: 9
-    seconds: 18.666666
+    planksCost: 0
+    seconds: 0
   - width: 7
     height: 7
     outputItem: {fileID: 11400000, guid: 326b58b2e337c4c4b94adf90495c90bc, type: 2}
-    planksCost: 11
-    seconds: 21.777779
+    planksCost: 0
+    seconds: 0
   - width: 7
     height: 8
     outputItem: {fileID: 11400000, guid: 59831d0ff2177924fbf519f36716a37e, type: 2}
-    planksCost: 12
-    seconds: 24.88889
-  - width: 8
-    height: 1
-    outputItem: {fileID: 11400000, guid: 6c99b5500428fb64a83d7ce49ff558e6, type: 2}
-    planksCost: 2
-    seconds: 3.5555556
-  - width: 8
-    height: 2
-    outputItem: {fileID: 11400000, guid: ff19bf7226186694880bc3abc99b8f62, type: 2}
-    planksCost: 4
-    seconds: 7.111111
-  - width: 8
-    height: 3
-    outputItem: {fileID: 11400000, guid: 8560ddbbd66ffde4cbbce21acc35acb5, type: 2}
-    planksCost: 5
-    seconds: 10.666667
-  - width: 8
-    height: 4
-    outputItem: {fileID: 11400000, guid: f3f546b9102237548a3985f9ab06ee37, type: 2}
-    planksCost: 7
-    seconds: 14.222222
-  - width: 8
-    height: 5
-    outputItem: {fileID: 11400000, guid: e83cbeddb5b5ecf45a346c1eee53ebf5, type: 2}
-    planksCost: 9
-    seconds: 17.777779
-  - width: 8
-    height: 6
-    outputItem: {fileID: 11400000, guid: ec845b07626f346448e606b81f6a507d, type: 2}
-    planksCost: 11
-    seconds: 21.333334
-  - width: 8
-    height: 7
-    outputItem: {fileID: 11400000, guid: 59831d0ff2177924fbf519f36716a37e, type: 2}
-    planksCost: 12
-    seconds: 24.88889
+    planksCost: 0
+    seconds: 0
   - width: 8
     height: 8
     outputItem: {fileID: 11400000, guid: 4cd9d4d92c3ee1547a9404fc09e5d932, type: 2}
-    planksCost: 14
-    seconds: 28.444445
+    planksCost: 0
+    seconds: 0
   secondsForThreeByThree: 4
   inputPoint: {fileID: 513346901}
   outputPoint: {fileID: 812423805}
