@@ -4574,183 +4574,183 @@ MonoBehaviour:
   - width: 1
     height: 1
     outputItem: {fileID: 11400000, guid: 73c50da72533dff438fdd80ba22e6e4e, type: 2}
-    planksCost: 1
-    seconds: 0.75
+    planksCost: 0
+    seconds: 0
   - width: 1
     height: 2
     outputItem: {fileID: 11400000, guid: fcab010550e32e14aa6cff0276944f74, type: 2}
-    planksCost: 1
-    seconds: 1.5
+    planksCost: 0
+    seconds: 0
   - width: 1
     height: 3
     outputItem: {fileID: 11400000, guid: 5e2802db9fa875640a19f4a8e4f1ce8e, type: 2}
-    planksCost: 1
-    seconds: 2.25
+    planksCost: 0
+    seconds: 0
   - width: 1
     height: 4
     outputItem: {fileID: 11400000, guid: 9f047f96d8503cc4db9acc59f6bc2961, type: 2}
-    planksCost: 1
-    seconds: 3
+    planksCost: 0
+    seconds: 0
   - width: 1
     height: 5
     outputItem: {fileID: 11400000, guid: da38753299d90d94b8c61fd08ef321e6, type: 2}
-    planksCost: 1
-    seconds: 3.75
+    planksCost: 0
+    seconds: 0
   - width: 1
     height: 6
     outputItem: {fileID: 11400000, guid: faabf8b0aed58454d9581d7e072714b6, type: 2}
-    planksCost: 1
-    seconds: 4.5
+    planksCost: 0
+    seconds: 0
   - width: 1
     height: 7
     outputItem: {fileID: 11400000, guid: 7e57a1fd040250d499467ff686da2cfa, type: 2}
-    planksCost: 1
-    seconds: 5.25
+    planksCost: 0
+    seconds: 0
   - width: 1
     height: 8
     outputItem: {fileID: 11400000, guid: 18ae1ae68a3017846983c521861cc94a, type: 2}
-    planksCost: 1
-    seconds: 6
+    planksCost: 0
+    seconds: 0
   - width: 2
     height: 2
     outputItem: {fileID: 11400000, guid: 8a4b3f6bb66d2d248a772de8155adf3f, type: 2}
-    planksCost: 2
-    seconds: 3
+    planksCost: 0
+    seconds: 0
   - width: 2
     height: 3
     outputItem: {fileID: 11400000, guid: ba6b8e9da94b7584fbf0b002640b239d, type: 2}
-    planksCost: 2
-    seconds: 4.5
+    planksCost: 0
+    seconds: 0
   - width: 2
     height: 4
     outputItem: {fileID: 11400000, guid: 1e9bb6350449feb488df4889860ccee6, type: 2}
-    planksCost: 2
-    seconds: 6
+    planksCost: 0
+    seconds: 0
   - width: 2
     height: 5
     outputItem: {fileID: 11400000, guid: 19008a7df336b6d49958fb1f567474bf, type: 2}
-    planksCost: 2
-    seconds: 7.5
+    planksCost: 0
+    seconds: 0
   - width: 2
     height: 6
     outputItem: {fileID: 11400000, guid: 50bd291d60ea148458ed5baaabe87808, type: 2}
-    planksCost: 2
-    seconds: 9
+    planksCost: 0
+    seconds: 0
   - width: 2
     height: 7
     outputItem: {fileID: 11400000, guid: c982facff1996944f81a06b1ad38040c, type: 2}
-    planksCost: 2
-    seconds: 10.5
+    planksCost: 0
+    seconds: 0
   - width: 2
     height: 8
     outputItem: {fileID: 11400000, guid: be875679128c49c41867607cf81d92bc, type: 2}
-    planksCost: 2
-    seconds: 12
+    planksCost: 0
+    seconds: 0
   - width: 3
     height: 3
     outputItem: {fileID: 11400000, guid: 4c1e954922c811d4c850e2ee09f7c78c, type: 2}
-    planksCost: 3
-    seconds: 6.75
+    planksCost: 0
+    seconds: 0
   - width: 3
     height: 4
     outputItem: {fileID: 11400000, guid: 4ad360b0fc46dc047a150e24a60efad9, type: 2}
-    planksCost: 3
-    seconds: 9
+    planksCost: 0
+    seconds: 0
   - width: 3
     height: 5
     outputItem: {fileID: 11400000, guid: fa09366dddc816b46b80a1fc5ada4b4f, type: 2}
-    planksCost: 3
-    seconds: 11.25
+    planksCost: 0
+    seconds: 0
   - width: 3
     height: 6
     outputItem: {fileID: 11400000, guid: 36bca611b36da5446879086d6738cfe9, type: 2}
-    planksCost: 3
-    seconds: 13.5
+    planksCost: 0
+    seconds: 0
   - width: 3
     height: 7
     outputItem: {fileID: 11400000, guid: 537366446eb438848a75de0d1913966a, type: 2}
-    planksCost: 3
-    seconds: 15.75
+    planksCost: 0
+    seconds: 0
   - width: 3
     height: 8
     outputItem: {fileID: 11400000, guid: aa208d2da1c01c945aab035b04280259, type: 2}
-    planksCost: 3
-    seconds: 18
+    planksCost: 0
+    seconds: 0
   - width: 4
     height: 4
     outputItem: {fileID: 11400000, guid: abc0623b948f75b438892a6c71fa0125, type: 2}
-    planksCost: 4
-    seconds: 12
+    planksCost: 0
+    seconds: 0
   - width: 4
     height: 5
     outputItem: {fileID: 11400000, guid: b60e2866f05ffa347a4d5f808e8fea0c, type: 2}
-    planksCost: 4
-    seconds: 15
+    planksCost: 0
+    seconds: 0
   - width: 4
     height: 6
     outputItem: {fileID: 11400000, guid: 711afe51096c0ff46b99b6dca1a3def9, type: 2}
-    planksCost: 4
-    seconds: 18
+    planksCost: 0
+    seconds: 0
   - width: 4
     height: 7
     outputItem: {fileID: 11400000, guid: d8dd33c29c5f1e74587af1acfad53b7b, type: 2}
-    planksCost: 4
-    seconds: 21
+    planksCost: 0
+    seconds: 0
   - width: 4
     height: 8
     outputItem: {fileID: 11400000, guid: b8fc7bc584fd46944872e58df7f1700f, type: 2}
-    planksCost: 4
-    seconds: 24
+    planksCost: 0
+    seconds: 0
   - width: 5
     height: 5
     outputItem: {fileID: 11400000, guid: 9c15b112836ba6240ae0945e28148ac9, type: 2}
-    planksCost: 5
-    seconds: 18.75
+    planksCost: 0
+    seconds: 0
   - width: 5
     height: 6
     outputItem: {fileID: 11400000, guid: 90e800dc25e153f48837feefa577a1c8, type: 2}
-    planksCost: 5
-    seconds: 22.5
+    planksCost: 0
+    seconds: 0
   - width: 5
     height: 7
     outputItem: {fileID: 11400000, guid: b4bbbfa278ebb994da4365df2ef36089, type: 2}
-    planksCost: 5
-    seconds: 26.25
+    planksCost: 0
+    seconds: 0
   - width: 5
     height: 8
     outputItem: {fileID: 11400000, guid: 1bf9c87ea1e576d4eb3490a738dd5490, type: 2}
-    planksCost: 5
-    seconds: 30
+    planksCost: 0
+    seconds: 0
   - width: 6
     height: 6
     outputItem: {fileID: 11400000, guid: 4ea38bcf84a3638428332b518d155bd2, type: 2}
-    planksCost: 6
-    seconds: 27
+    planksCost: 0
+    seconds: 0
   - width: 6
     height: 7
     outputItem: {fileID: 11400000, guid: 45708a106a272e840b66cbff6114cc48, type: 2}
-    planksCost: 6
-    seconds: 31.5
+    planksCost: 0
+    seconds: 0
   - width: 6
     height: 8
     outputItem: {fileID: 11400000, guid: f526636d509a5924082192606ec308cc, type: 2}
-    planksCost: 6
-    seconds: 36
+    planksCost: 0
+    seconds: 0
   - width: 7
     height: 7
     outputItem: {fileID: 11400000, guid: 26e7773941f44e44b8bec88d21bf3443, type: 2}
-    planksCost: 7
-    seconds: 36.75
+    planksCost: 0
+    seconds: 0
   - width: 7
     height: 8
     outputItem: {fileID: 11400000, guid: c43d3fc6b6937e343a3dc77fd895ea46, type: 2}
-    planksCost: 7
-    seconds: 42
+    planksCost: 0
+    seconds: 0
   - width: 8
     height: 8
     outputItem: {fileID: 11400000, guid: ada0bbc92d374f248831e978117eeb38, type: 2}
-    planksCost: 8
-    seconds: 48
+    planksCost: 0
+    seconds: 0
   inputPoint: {fileID: 513346901}
   outputPoint: {fileID: 812423805}
   inputEffectPrefab: {fileID: 826152773257510365, guid: fd94dad09862ce64d9c6713096ef7db6, type: 3}
@@ -6294,10 +6294,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   realWorldData: {fileID: 0}
   inventory: {fileID: 0}
+  usingSimulatedData: 1
   amountToSellUI: {fileID: 1979810848}
-  totalPriceSell: {fileID: 2102137362}
-  amountToPurchaseUI: {fileID: 1680554639}
-  totalPriceBuy: {fileID: 1402604833}
+  totalPriceSellUI: {fileID: 0}
+  amountToSell: 0
+  amountToBuyUI: {fileID: 0}
+  totalPriceBuyUI: {fileID: 0}
+  amountToBuy: 0
   moneyUI: {fileID: 0}
   lumberUI: {fileID: 0}
 --- !u!114 &823728724
