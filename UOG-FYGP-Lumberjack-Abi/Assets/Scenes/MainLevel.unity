@@ -1345,7 +1345,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -175, y: -175}
+  m_AnchoredPosition: {x: -175, y: -200}
   m_SizeDelta: {x: 200, y: 27.5634}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &158060964
@@ -4756,11 +4756,25 @@ MonoBehaviour:
   inputEffectPrefab: {fileID: 919132149155446097, guid: 5cc09c377d20eef478cee5be9e26ea69, type: 3}
   outputEffectPrefab: {fileID: 288696377338972224, guid: 6bebe7150b887c24cb7745c530ed9d1c, type: 3}
   effectLifetime: 1.5
-  dropZoneWorldSize: 1.2
+  dropZoneWorldSize: 1.6
   showDropZone: 1
   dropZoneLocalOffset: {x: 0, y: 1.6, z: 0}
-  dropZoneSprite: {fileID: 546309245, guid: 5bf62e6323e7c3f45ab09ddec0f337c3, type: 3}
-  dropZoneColor: {r: 1, g: 1, b: 1, a: 0.78431374}
+  dropZoneSprite: {fileID: 1019893325, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
+  dropZoneColor: {r: 1, g: 1, b: 1, a: 1}
+  dropZoneUISize: {x: 1090, y: 274}
+  dropZoneScaleMultiplier: 2
+  dropHintAnchorMin: {x: 0.5, y: 0}
+  dropHintAnchorMax: {x: 0.5, y: 0}
+  dropHintPivot: {x: 0.5, y: 0}
+  dropHintOffset: {x: -45, y: 66}
+  dropHintSize: {x: 800, y: 150}
+  dropHintFont: {fileID: 11400000, guid: f7c9d17a01f8e334d99201182ab9d1c6, type: 2}
+  dropHintBold: 1
+  dropHintTextColor: {r: 0, g: 0, b: 0, a: 1}
+  dropHintAutoSize: 1
+  dropHintFontSize: 90
+  dropHintFontSizeMin: 72
+  dropHintFontSizeMax: 120
   enableBlimp: 1
   blimpHeight: 1.6
   blimpSize: {x: 140, y: 90}
@@ -7817,7 +7831,7 @@ GameObject:
   - component: {fileID: 1034843467}
   - component: {fileID: 1034843466}
   m_Layer: 5
-  m_Name: Choose (1)
+  m_Name: Details
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
