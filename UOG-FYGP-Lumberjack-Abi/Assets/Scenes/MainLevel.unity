@@ -4029,7 +4029,7 @@ Transform:
   m_GameObject: {fileID: 513346900}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.786, y: 0, z: 0}
+  m_LocalPosition: {x: 1, y: -0.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4754,8 +4754,8 @@ MonoBehaviour:
   inputPoint: {fileID: 513346901}
   outputPoint: {fileID: 812423805}
   inputEffectPrefab: {fileID: 919132149155446097, guid: 5cc09c377d20eef478cee5be9e26ea69, type: 3}
-  outputEffectPrefab: {fileID: 288696377338972224, guid: 6bebe7150b887c24cb7745c530ed9d1c, type: 3}
-  effectLifetime: 1.5
+  outputEffectPrefab: {fileID: 919132149155446097, guid: 00f39a9f5aabf544ca4cc1bb76017beb, type: 3}
+  effectLifetime: 3
   dropZoneWorldSize: 1.6
   showDropZone: 1
   dropZoneLocalOffset: {x: 0, y: 1.6, z: 0}
@@ -4772,28 +4772,54 @@ MonoBehaviour:
   dropHintBold: 1
   dropHintTextColor: {r: 0, g: 0, b: 0, a: 1}
   dropHintAutoSize: 1
-  dropHintFontSize: 90
-  dropHintFontSizeMin: 72
+  dropHintFontSize: 120
+  dropHintFontSizeMin: 90
   dropHintFontSizeMax: 120
   enableBlimp: 1
-  blimpHeight: 1.6
-  blimpSize: {x: 140, y: 90}
-  blimpBackgroundSprite: {fileID: -1057957095, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
+  blimpHeight: 2
+  blimpSize: {x: 90, y: 45}
+  blimpBackgroundSprite: {fileID: 1065727424, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
+  blimpScale: 0.03
   showTimer: 1
-  hourglassSprite: {fileID: 1077147801, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
-  timerSize: {x: 64, y: 64}
-  timerSpinSpeed: 180
+  hourglassSprite: {fileID: -1323787500, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
+  timerSize: {x: 90, y: 120}
+  timerSpinSpeed: 90
   timerDockToBlimp: 1
-  timerLocalOffset: {x: 0.28, y: 0, z: 0}
+  timerLocalOffset: {x: 0.5, y: 0, z: 0}
+  blimpFont: {fileID: 11400000, guid: f7c9d17a01f8e334d99201182ab9d1c6, type: 2}
+  blimpBold: 1
+  blimpTextColor: {r: 0, g: 0, b: 0, a: 1}
+  blimpAutoSize: 1
+  blimpFontSizeMin: 8
+  blimpFontSizeMax: 28
+  blimpFontSize: 12
   overlayCanvas: {fileID: 560696727}
   storageAnchor: {fileID: 2146245986561863478}
   outputIcon: {fileID: 1001273644, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
   flyIconSize: {x: 36, y: 36}
-  flyDuration: 0.7
+  flyDuration: 1
   flyBurst: 6
   flyCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -6106,7 +6132,7 @@ Transform:
   m_GameObject: {fileID: 812423804}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.67, y: 0, z: 0}
+  m_LocalPosition: {x: -1, y: -0.9, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14231,7 +14257,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.21960786, g: 0.21960786, b: 0.21960786, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
