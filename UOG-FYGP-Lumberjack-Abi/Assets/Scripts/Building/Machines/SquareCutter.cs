@@ -245,7 +245,7 @@ public class SquareCutter : MonoBehaviour, IDropHandler
             ? match.Value.seconds
             : ComputeSecondsFor(selW, selH);
 
-        if (dimSummary) dimSummary.text = $"{selW}x{selH} -> Need {costPlanks} planks - {secondsPerPiece:0.#}s";
+        if (dimSummary) dimSummary.text = $"W: {selW} x H: {selH} -> REQUIRES {costPlanks} PLANKS AND {secondsPerPiece:0.#} SECONDS";
         if (dropHint) dropHint.text = $"Drop {costPlanks} planks";
 
         if (debugLogs)
@@ -385,13 +385,13 @@ public class SquareCutter : MonoBehaviour, IDropHandler
         hintRc.anchorMin = new Vector2(0.5f, 0f);
         hintRc.anchorMax = new Vector2(0.5f, 0f);
         hintRc.pivot = new Vector2(0.5f, 0f);
-        hintRc.anchoredPosition = new Vector2(0, 10f);
+        hintRc.anchoredPosition = new Vector2(0, 0);
         hintRc.sizeDelta = new Vector2(280f, 60f);
 
         dropHint = hintObj.GetComponent<TextMeshProUGUI>();
         dropHint.alignment = TextAlignmentOptions.Center;
         dropHint.enableAutoSizing = true;
-        dropHint.fontSizeMin = 20;
+        dropHint.fontSizeMin = 24;
         dropHint.fontSizeMax = 32;
         dropHint.color = Color.black;
         dropHint.text = $"Drop {planksPerWidthUnit * selW} planks";
