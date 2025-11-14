@@ -19,14 +19,13 @@ public class SimulatedRealWorldDataSet : MonoBehaviour
     void Start()
     {
         tradeData[0, 0] = Random.Range(500, 700);
-        tradeData[0, 1] = tradeData[0, 0] + Random.Range(-50, 50);
+        tradeData[0, 1] = tradeData[0, 0] + Random.Range(-10, 10);
 
         for (int i = 1; i < tradeData.GetLength(0); i++)
         {
             tradeData[i, 0] = tradeData[i - 1, 1];
             tradeData[i, 1] = tradeData[i, 0] + Random.Range(-10, 10);
         }
-        print(tradeData);
     }
 
 }
