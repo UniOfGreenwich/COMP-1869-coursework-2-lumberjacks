@@ -5,16 +5,19 @@ public class StockMarket : MonoBehaviour
 {
     [SerializeField] RealWorldData realWorldData;
     [SerializeField] Inventory inventory;
+    [SerializeField] private bool usingSimulatedData = true;
     
     [Header("Sell Panel")]
     [SerializeField] TMP_Text amountToSellUI;
     [SerializeField] TMP_Text totalPriceSell;
-    private int amountToSell = 0;
+    [SerializeField] private int amountToSell = 0;
+    [SerializeField] private int maxSell;
 
     [Header("Buy Panel")]
     [SerializeField] TMP_Text amountToPurchaseUI;
     [SerializeField] TMP_Text totalPriceBuy;
-    private int amountToPurchase = 0;
+    [SerializeField] private int amountToPurchase = 0;
+    [SerializeField] private int maxBuy;
 
     [Header("HUD")]
     [SerializeField] TMP_Text moneyUI;
@@ -25,6 +28,16 @@ public class StockMarket : MonoBehaviour
     {
         amountToPurchaseUI.text = amountToPurchase.ToString();
         amountToSellUI.text = amountToSell.ToString();
+        maxSell = //get wood amount
+        if(usingSimulatedData)
+        {
+            maxBuy = Mathf.FloorToInt(Inventory.money/ tradeData[tradeData.GetLength[0]-1, 1]);  //get amount of money/price of wood rounded down
+        }
+        else
+        {
+            maxBuy = Mathf.FloorToInt(Inventory.money/costLumber);  //get amount of money/price of wood rounded down
+        }
+        
     }
 
     //Sell Panel
