@@ -7,14 +7,13 @@ public class StockMarket : MonoBehaviour
     [SerializeField] private Inventory inventory;
     [SerializeField] private bool usingSimulatedData = true;
 
-    // Optional simulated trade data (time, price)
-    [SerializeField] private float[,] tradeData;
-
     [Header("Sell Panel")]
     [SerializeField] private TMP_Text amountToSellUI;
     [SerializeField] private TMP_Text totalPriceSellUI;
     [SerializeField] private int amountToSell = 0;
     private int maxSell;
+    private float lumberLastPrice;
+
 
     [Header("Buy Panel")]
     [SerializeField] private TMP_Text amountToBuyUI;
@@ -33,17 +32,18 @@ public class StockMarket : MonoBehaviour
         amountToSellUI.text = amountToSell.ToString();
 
         // Max sell = current lumber
-        maxSell = inventory != null ? inventory.lumber : 0;
+        maxSell = inventory.lumber;
 
         // Max buy = money / price
-        if (usingSimulatedData && tradeData != null && tradeData.GetLength(0) > 0)
+        if (usingSimulatedData)
         {
-            float lastPrice = tradeData[tradeData.GetLength(0) - 1, 1];
-            maxBuy = Mathf.FloorToInt(inventory.money / lastPrice);
+            lumberLastPrice = SimulatedRealWorldDataSet.tradeData[SimulatedRealWorldDataSet.tradeData.GetLength(0) - 1, 1];
+            maxBuy = Mathf.FloorToInt(inventory.money / lumberLastPrice);
         }
         else if (realWorldData != null)
         {
-            maxBuy = Mathf.FloorToInt(inventory.money / realWorldData.costLumber);
+            lumberLastPrice = realWorldData.costLumber;
+            maxBuy = Mathf.FloorToInt(inventory.money / lumberLastPrice);
         }
         else
         {
@@ -70,15 +70,14 @@ public class StockMarket : MonoBehaviour
 
     private void UpdateTotalPriceSell()
     {
-        if (realWorldData != null)
-            totalPriceSellUI.text = (amountToSell * realWorldData.costLumber).ToString();
+        totalPriceSellUI.text = (amountToSell * lumberLastPrice).ToString();
     }
 
     public void ExecuteSell()
     {
-        if (inventory != null && amountToSell > 0 && inventory.lumber >= amountToSell)
+        if (inventory.lumber >= amountToSell)
         {
-            inventory.money += amountToSell * realWorldData.costLumber;
+            inventory.money += amountToSell * lumberLastPrice;
             inventory.lumber -= amountToSell;
             amountToSell = 0;
             UpdateHUD();
@@ -103,15 +102,14 @@ public class StockMarket : MonoBehaviour
 
     private void UpdateTotalPriceBuy()
     {
-        if (realWorldData != null)
-            totalPriceBuyUI.text = (amountToBuy * realWorldData.costLumber).ToString();
+        totalPriceBuyUI.text = (amountToBuy * lumberLastPrice).ToString();
     }
 
     public void ExecuteBuy()
     {
-        if (inventory != null && amountToBuy > 0)
+        if (amountToBuy > 0)
         {
-            int totalCost = Mathf.RoundToInt(amountToBuy * realWorldData.costLumber);
+            int totalCost = Mathf.RoundToInt(amountToBuy * lumberLastPrice);
             if (inventory.money >= totalCost)
             {
                 inventory.money -= totalCost;
@@ -125,9 +123,9 @@ public class StockMarket : MonoBehaviour
 
     private void UpdateHUD()
     {
-        if (moneyUI != null) moneyUI.text = inventory.money.ToString();
-        if (lumberUI != null) lumberUI.text = inventory.lumber.ToString();
-        if (amountToBuyUI != null) amountToBuyUI.text = amountToBuy.ToString();
-        if (amountToSellUI != null) amountToSellUI.text = amountToSell.ToString();
+        moneyUI.text = inventory.money.ToString();
+        lumberUI.text = inventory.lumber.ToString();
+        amountToBuyUI.text = amountToBuy.ToString();
+        amountToSellUI.text = amountToSell.ToString();
     }
 }

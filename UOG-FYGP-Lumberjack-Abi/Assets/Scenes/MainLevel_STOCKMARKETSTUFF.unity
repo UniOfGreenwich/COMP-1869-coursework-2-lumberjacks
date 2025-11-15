@@ -1050,12 +1050,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb77e5852fbe85d41b8a47a3d7b6caf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  realWorldData: {fileID: 0}
+  realWorldData: {fileID: 2062837425}
   inventory: {fileID: 0}
+  usingSimulatedData: 1
   amountToSellUI: {fileID: 533601919}
-  totalPriceSell: {fileID: 1541628545}
-  amountToPurchaseUI: {fileID: 1603123784}
-  totalPriceBuy: {fileID: 952229451}
+  totalPriceSellUI: {fileID: 1541628545}
+  amountToSell: 0
+  amountToBuyUI: {fileID: 1603123784}
+  totalPriceBuyUI: {fileID: 952229451}
+  amountToBuy: 0
   moneyUI: {fileID: 259763067}
   lumberUI: {fileID: 1312746507}
 --- !u!114 &183995753
@@ -2901,7 +2904,7 @@ GameObject:
   - component: {fileID: 393486447}
   - component: {fileID: 393486446}
   m_Layer: 5
-  m_Name: CostToPurchase
+  m_Name: CostToBuy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13239,7 +13242,7 @@ GameObject:
   - component: {fileID: 2090312306}
   - component: {fileID: 2090312305}
   m_Layer: 5
-  m_Name: AmountToPurchase
+  m_Name: AmountToBuy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
