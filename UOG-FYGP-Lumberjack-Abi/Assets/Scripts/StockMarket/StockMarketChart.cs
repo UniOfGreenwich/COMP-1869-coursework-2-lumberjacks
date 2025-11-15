@@ -36,7 +36,6 @@ public class StockMarketChart : MonoBehaviour
             candleStick.transform.localScale = Vector3.one;
             candleStick.transform.localPosition = Vector3.zero;
             Image image = candleStick.AddComponent<Image>();
-            RectTransform rectTransform = candleStick.GetComponent<RectTransform>();
             candleSticks.Add(image);
 
             height = SimulatedRealWorldDataSet.tradeData[startTime+i, 1] - SimulatedRealWorldDataSet.tradeData[startTime+i, 0];

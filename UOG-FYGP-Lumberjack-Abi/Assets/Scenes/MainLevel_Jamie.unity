@@ -4390,8 +4390,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 560696728}
     m_Modifications:
     - target: {fileID: 1360552596007498421, guid: e9c8667a7b232874b9a59fcbd7e58e1b, type: 3}
+      propertyPath: timePeriod
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 1360552596007498421, guid: e9c8667a7b232874b9a59fcbd7e58e1b, type: 3}
       propertyPath: positionOffset
-      value: -500
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 1409650899521510659, guid: e9c8667a7b232874b9a59fcbd7e58e1b, type: 3}
       propertyPath: m_Name
@@ -5800,8 +5804,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5199f9874383714587933aa1f5c7112, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moneyUI: {fileID: 0}
-  lumberUI: {fileID: 0}
+  moneyUI: {fileID: 1893352890}
+  lumberUI: {fileID: 738418163}
 --- !u!1 &2101325192
 GameObject:
   m_ObjectHideFlags: 0

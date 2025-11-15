@@ -37,22 +37,7 @@ public class StockMarket : MonoBehaviour
         // Max sell = current lumber
         maxSell = inventory.lumber;
 
-        // Max buy = money / price
-        if (usingSimulatedData)
-        {
-            lumberLastPrice = SimulatedRealWorldDataSet.tradeData[SimulatedRealWorldDataSet.tradeData.GetLength(0) - 1, 1];
-            maxBuy = Mathf.FloorToInt(inventory.money / lumberLastPrice);
-        }
-        else if (realWorldData != null)
-        {
-            lumberLastPrice = realWorldData.costLumber;
-            maxBuy = Mathf.FloorToInt(inventory.money / lumberLastPrice);
-        }
-        else
-        {
-            maxBuy = 0;
-        }
-
+        UpdateMaxBuy();
         UpdateHUD();
     }
 
@@ -83,7 +68,9 @@ public class StockMarket : MonoBehaviour
             inventory.money += amountToSell * lumberLastPrice;
             inventory.lumber -= amountToSell;
             amountToSell = 0;
-            UpdateHUD();
+            UpdateMaxSell();
+            UpdateMaxBuy();
+            UpdateHUD();   
         }
     }
     #endregion
@@ -118,6 +105,8 @@ public class StockMarket : MonoBehaviour
                 inventory.money -= totalCost;
                 inventory.lumber += amountToBuy;
                 amountToBuy = 0;
+                UpdateMaxSell();
+                UpdateMaxBuy();
                 UpdateHUD();
             }
         }
@@ -130,6 +119,30 @@ public class StockMarket : MonoBehaviour
         lumberUI.text = inventory.lumber.ToString();
         amountToBuyUI.text = amountToBuy.ToString();
         amountToSellUI.text = amountToSell.ToString();
+    }
+
+    private void UpdateMaxSell()
+    {
+        maxSell = inventory.lumber;
+    }
+
+    private void UpdateMaxBuy()
+    {
+        // Max buy = money / price
+        if (usingSimulatedData)
+        {
+            lumberLastPrice = SimulatedRealWorldDataSet.tradeData[SimulatedRealWorldDataSet.tradeData.GetLength(0) - 1, 1];
+            maxBuy = Mathf.FloorToInt(inventory.money / lumberLastPrice);
+        }
+        else if (realWorldData != null)
+        {
+            lumberLastPrice = realWorldData.costLumber;
+            maxBuy = Mathf.FloorToInt(inventory.money / lumberLastPrice);
+        }
+        else
+        {
+            maxBuy = 0;
+        }
     }
 
     public void toggleStockMarketUI()

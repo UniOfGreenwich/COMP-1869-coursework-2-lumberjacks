@@ -16,7 +16,7 @@ public class SimulatedRealWorldDataSet : MonoBehaviour
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
         tradeData[0, 0] = Random.Range(500, 700);
         tradeData[0, 1] = tradeData[0, 0] + Random.Range(-10, 10);
@@ -24,7 +24,7 @@ public class SimulatedRealWorldDataSet : MonoBehaviour
         for (int i = 1; i < tradeData.GetLength(0); i++)
         {
             tradeData[i, 0] = tradeData[i - 1, 1];
-            tradeData[i, 1] = tradeData[i, 0] + Random.Range(-10, 10);
+            tradeData[i, 1] = Mathf.Clamp(tradeData[i, 0] + Random.Range(-10, 10), 0, 5000);
         }
     }
 
