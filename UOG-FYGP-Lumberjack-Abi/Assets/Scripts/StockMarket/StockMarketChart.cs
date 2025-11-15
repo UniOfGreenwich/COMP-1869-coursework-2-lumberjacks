@@ -27,12 +27,6 @@ public class StockMarketChart : MonoBehaviour
         GenerateCandleSticks();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     void GenerateCandleSticks()
     {   
         for(int i=0;i < timePeriod; i++)

@@ -7,13 +7,16 @@ public class StockMarket : MonoBehaviour
     [SerializeField] private Inventory inventory;
     [SerializeField] private bool usingSimulatedData = true;
 
+    [Header("Stock Market Panel")]
+    [SerializeField] private GameObject stockMarketUIPanel;
+    private bool panelOpen = false;
+
     [Header("Sell Panel")]
     [SerializeField] private TMP_Text amountToSellUI;
     [SerializeField] private TMP_Text totalPriceSellUI;
     [SerializeField] private int amountToSell = 0;
     private int maxSell;
     private float lumberLastPrice;
-
 
     [Header("Buy Panel")]
     [SerializeField] private TMP_Text amountToBuyUI;
@@ -127,5 +130,19 @@ public class StockMarket : MonoBehaviour
         lumberUI.text = inventory.lumber.ToString();
         amountToBuyUI.text = amountToBuy.ToString();
         amountToSellUI.text = amountToSell.ToString();
+    }
+
+    public void toggleStockMarketUI()
+    {
+        if(panelOpen) 
+        {
+            stockMarketUIPanel.SetActive(false);
+            panelOpen = false;
+        }
+        else
+        {
+            stockMarketUIPanel.SetActive(true);
+            panelOpen = true;
+        }
     }
 }
