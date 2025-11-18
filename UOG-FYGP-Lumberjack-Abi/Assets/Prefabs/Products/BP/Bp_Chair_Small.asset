@@ -12,4 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9a23293e22f11e47ae0363413687f2f, type: 3}
   m_Name: Bp_Chair_Small
   m_EditorClassIdentifier: 
-  asciiLayout: 
+  asciiLayout: '.......
+
+    .......
+
+    ...XXX.
+
+    ...XXX.
+
+    ...XXX.
+
+    .......
+
+    .......'
