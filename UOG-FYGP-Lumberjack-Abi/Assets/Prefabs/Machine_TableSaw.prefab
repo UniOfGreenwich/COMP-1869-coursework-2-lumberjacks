@@ -310,17 +310,17 @@ MonoBehaviour:
   enableBlimp: 1
   blimpHeight: 1.6
   blimpSize: {x: 140, y: 90}
-  blimpBackgroundSprite: {fileID: 2111746380, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
+  blimpBackgroundSprite: {fileID: -164169895, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
   showTimer: 1
-  hourglassSprite: {fileID: 1077147801, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
-  timerHeight: 1.4
-  timerSize: {x: 64, y: 64}
-  timerSpinSpeed: 180
+  hourglassSprite: {fileID: -1323787500, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
+  timerHeight: 1.6
+  timerSize: {x: 90, y: 120}
+  timerSpinSpeed: 90
   timerDockToBlimp: 1
-  timerLocalOffset: {x: 0.28, y: 0, z: 0}
+  timerLocalOffset: {x: 0.5, y: 0, z: 0}
   overlayCanvas: {fileID: 0}
   storageAnchor: {fileID: 0}
-  plankIcon: {fileID: 1001273644, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
+  plankIcon: {fileID: -1065557938, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
   flyIconSize: {x: 36, y: 36}
   flyDuration: 0.7
   flyBurst: 6
