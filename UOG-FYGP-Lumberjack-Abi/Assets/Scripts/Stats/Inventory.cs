@@ -12,7 +12,7 @@ public class Inventory : MonoBehaviour
     [SerializeField] TMP_Text lumberUI;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
         moneyUI.text = money.ToString();
         lumberUI.text = lumber.ToString();

@@ -37,7 +37,7 @@ public class StockMarket : MonoBehaviour
         // Max sell = current lumber
         maxSell = inventory.lumber;
 
-        UpdateMaxBuy();
+        UpdatePanelValues();
         UpdateHUD();
     }
 
@@ -46,19 +46,14 @@ public class StockMarket : MonoBehaviour
     {
         amountToSell = Mathf.Clamp(amountToSell + amount, 0, maxSell);
         amountToSellUI.text = amountToSell.ToString();
-        UpdateTotalPriceSell();
+        UpdatePanelValues();
     }
 
     public void SubtractAmountSell(int amount)
     {
         amountToSell = Mathf.Max(amountToSell - amount, 0);
         amountToSellUI.text = amountToSell.ToString();
-        UpdateTotalPriceSell();
-    }
-
-    private void UpdateTotalPriceSell()
-    {
-        totalPriceSellUI.text = (amountToSell * lumberLastPrice).ToString();
+        UpdatePanelValues();
     }
 
     public void ExecuteSell()
@@ -68,8 +63,7 @@ public class StockMarket : MonoBehaviour
             inventory.money += amountToSell * lumberLastPrice;
             inventory.lumber -= amountToSell;
             amountToSell = 0;
-            UpdateMaxSell();
-            UpdateMaxBuy();
+            UpdatePanelValues();
             UpdateHUD();   
         }
     }
@@ -80,19 +74,14 @@ public class StockMarket : MonoBehaviour
     {
         amountToBuy = Mathf.Clamp(amountToBuy + amount, 0, maxBuy);
         amountToBuyUI.text = amountToBuy.ToString();
-        UpdateTotalPriceBuy();
+        UpdatePanelValues();
     }
 
     public void SubtractAmountBuy(int amount)
     {
         amountToBuy = Mathf.Max(amountToBuy - amount, 0);
         amountToBuyUI.text = amountToBuy.ToString();
-        UpdateTotalPriceBuy();
-    }
-
-    private void UpdateTotalPriceBuy()
-    {
-        totalPriceBuyUI.text = (amountToBuy * lumberLastPrice).ToString();
+        UpdatePanelValues();
     }
 
     public void ExecuteBuy()
@@ -105,8 +94,7 @@ public class StockMarket : MonoBehaviour
                 inventory.money -= totalCost;
                 inventory.lumber += amountToBuy;
                 amountToBuy = 0;
-                UpdateMaxSell();
-                UpdateMaxBuy();
+                UpdatePanelValues();
                 UpdateHUD();
             }
         }
@@ -121,13 +109,12 @@ public class StockMarket : MonoBehaviour
         amountToSellUI.text = amountToSell.ToString();
     }
 
-    private void UpdateMaxSell()
+    private void UpdatePanelValues()
     {
         maxSell = inventory.lumber;
-    }
-
-    private void UpdateMaxBuy()
-    {
+        totalPriceSellUI.text = (amountToSell * lumberLastPrice).ToString();
+        totalPriceBuyUI.text = (amountToBuy * lumberLastPrice).ToString();
+        
         // Max buy = money / price
         if (usingSimulatedData)
         {
