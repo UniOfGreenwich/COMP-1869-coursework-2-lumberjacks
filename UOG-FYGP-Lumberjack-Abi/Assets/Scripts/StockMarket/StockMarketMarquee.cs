@@ -4,23 +4,24 @@ using TMPro;
 public class StockMarketMarquee : MonoBehaviour
 {
     [SerializeField] private TMP_Text lumberPrice;
-    private RealWorldData realWorldData;
-    private Vector3 startPos;
-    private Vector3 endPos;
     [SerializeField] private float lerpDuration = 2f;
+
+    private GameObject gameManager;
+    private RealWorldData realWorldData;
+    private Vector3 startPos, endPos;
     private float lerpTime;
-    [SerializeField] private bool usingSimulatedData = true;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        realWorldData = GameObject.FindWithTag("GameController").GetComponent<RealWorldData>();
+        gameManager = GameObject.FindWithTag("GameController");
+        realWorldData = gameManager.GetComponent<RealWorldData>();
         startPos = new Vector3(-100, 940, 0);
         endPos = new Vector3(2020, 940, 0);
         lumberPrice.transform.position = startPos;
         lerpTime = 0f;
 
-        if (usingSimulatedData)
+        if (gameManager.GetComponent<GameManager>().usingSimulatedData)
         {
             lumberPrice.text = "LUMBER $" + SimulatedRealWorldDataSet.tradeData[SimulatedRealWorldDataSet.tradeData.GetLength(0) - 1, 1].ToString();
         }
