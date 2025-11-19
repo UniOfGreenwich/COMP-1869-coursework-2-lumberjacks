@@ -3,9 +3,9 @@ using TMPro;
 public class StockMarket : MonoBehaviour
 {
     [Header("Data Sources")]
-    [SerializeField] private RealWorldData realWorldData;
-    [SerializeField] private Inventory inventory;
-    [SerializeField] private bool usingSimulatedData = true;
+    private GameObject gameManager;
+    private RealWorldData realWorldData;
+    private Inventory inventory;
 
     [Header("Stock Market Panel")]
     [SerializeField] private GameObject stockMarketUIPanel;
@@ -30,6 +30,10 @@ public class StockMarket : MonoBehaviour
 
     private void Start()
     {
+        gameManager = GameObject.FindWithTag("GameController");
+        realWorldData = gameManager.GetComponent<RealWorldData>();
+        inventory = gameManager.GetComponent<Inventory>();
+
         // Initialize UI
         amountToBuyUI.text = amountToBuy.ToString();
         amountToSellUI.text = amountToSell.ToString();
@@ -116,7 +120,7 @@ public class StockMarket : MonoBehaviour
         totalPriceBuyUI.text = (amountToBuy * lumberLastPrice).ToString();
         
         // Max buy = money / price
-        if (usingSimulatedData)
+        if (gameManager.GetComponent<GameManager>().usingSimulatedData)
         {
             lumberLastPrice = SimulatedRealWorldDataSet.tradeData[SimulatedRealWorldDataSet.tradeData.GetLength(0) - 1, 1];
             maxBuy = Mathf.FloorToInt(inventory.money / lumberLastPrice);
