@@ -9,23 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c9a23293e22f11e47ae0363413687f2f, type: 3}
-  m_Name: Bp_Chair_Big
+  m_Script: {fileID: 11500000, guid: 5e3a9f86b94436e44bc85486453f318c, type: 3}
+  m_Name: Recipe_Cupboard_Small
   m_EditorClassIdentifier: 
-  asciiLayout: '.........
-
-    ..BBBB...
-
-    ..BBBB...
-
-    ..BBBB...
-
-    ..SSSS...
-
-    ..SSSS...
-
-    .L....L..
-
-    .L....L..
-
-'
+  id: 
+  displayName: 
+  finishedProduct: {fileID: 0}
+  blueprint: {fileID: 0}
+  slots: []
