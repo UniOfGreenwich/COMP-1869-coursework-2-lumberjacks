@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Recipe_Chair_Big
   m_EditorClassIdentifier: 
   id: Chair_Big
-  displayName: Chair(Small)
+  displayName: Chair(Big)
   finishedProduct: {fileID: 0}
   blueprint: {fileID: 11400000, guid: 45d28cc3cec7aca4ab9270a8605bb289, type: 2}
   slots:

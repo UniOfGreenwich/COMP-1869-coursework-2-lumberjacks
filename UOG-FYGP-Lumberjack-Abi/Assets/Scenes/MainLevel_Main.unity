@@ -4364,9 +4364,8 @@ GameObject:
   - component: {fileID: 439634428}
   - component: {fileID: 439634427}
   - component: {fileID: 439634426}
-  - component: {fileID: 439634425}
-  - component: {fileID: 439634430}
   - component: {fileID: 439634429}
+  - component: {fileID: 439634431}
   m_Layer: 0
   m_Name: ProductionMachine
   m_TagString: Untagged
@@ -4374,29 +4373,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!136 &439634425
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 439634424}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &439634426
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4477,21 +4453,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc1e1156d06132b41be27376c1cdcff8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiPrefab: {fileID: 824010059}
+  ui: {fileID: 824010063}
   recipes:
   - {fileID: 11400000, guid: f325ea2baf8171d4b9670bca7588de46, type: 2}
---- !u!114 &439634430
-MonoBehaviour:
+  - {fileID: 11400000, guid: e38abd9888ea0a343b386451a2701b49, type: 2}
+--- !u!65 &439634431
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 439634424}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 875dd171a420faf409534a3b7d5a24ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  serializedVersion: 3
+  m_Size: {x: 1, y: 2, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &446412043
 GameObject:
   m_ObjectHideFlags: 0
@@ -8113,7 +8099,7 @@ MonoBehaviour:
   productButtonContainer: {fileID: 728170933}
   productButtonPrefab: {fileID: 7385726480313603254, guid: cb89166141016474fae785ac32e40819, type: 3}
   titleText: {fileID: 1212170566}
-  errorText: {fileID: 0}
+  errorText: {fileID: 406174319}
   assembleButton: {fileID: 416203863}
   closeButton: {fileID: 492759658}
 --- !u!1 &829642795
