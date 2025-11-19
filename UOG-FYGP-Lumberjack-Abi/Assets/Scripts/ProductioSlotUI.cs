@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -13,11 +14,18 @@ public class ProductioSlotUI : MonoBehaviour, IDropHandler
     public ItemSO CurrentItem { get; private set; }
 
     StorageManager storage;
+    Color baseOutlineColor;
+    Coroutine flashRoutine;
 
     void Awake()
     {
         storage = Object.FindAnyObjectByType<StorageManager>();
+
+        if (outlineImage != null)
+            baseOutlineColor = outlineImage.color;
+
         ClearPiece();
+        ResetVisual();
     }
 
     public void Configure(string id, string label)
@@ -25,6 +33,7 @@ public class ProductioSlotUI : MonoBehaviour, IDropHandler
         slotId = id;
         if (labelText != null) labelText.text = label;
         ClearPiece();
+        ResetVisual();
     }
 
     public void ClearPiece()
@@ -35,6 +44,18 @@ public class ProductioSlotUI : MonoBehaviour, IDropHandler
             pieceIcon.enabled = false;
             pieceIcon.sprite = null;
         }
+    }
+
+    public void ResetVisual()
+    {
+        if (flashRoutine != null)
+        {
+            StopCoroutine(flashRoutine);
+            flashRoutine = null;
+        }
+
+        if (outlineImage != null)
+            outlineImage.color = baseOutlineColor;
     }
 
     public void OnDrop(PointerEventData eventData)
@@ -69,5 +90,34 @@ public class ProductioSlotUI : MonoBehaviour, IDropHandler
             pieceIcon.enabled = true;
             pieceIcon.sprite = item.icon;
         }
+
+        ResetVisual();
+    }
+
+    public void ShowResult(bool isCorrect)
+    {
+        if (outlineImage == null) return;
+
+        if (flashRoutine != null)
+            StopCoroutine(flashRoutine);
+
+        Color target = isCorrect ? Color.green : Color.red;
+        flashRoutine = StartCoroutine(FlashOutline(target));
+    }
+
+    IEnumerator FlashOutline(Color target)
+    {
+        outlineImage.color = target;
+
+        float t = 0f;
+        while (t < 1f)
+        {
+            t += Time.deltaTime * 4f;
+            outlineImage.color = Color.Lerp(target, baseOutlineColor, t);
+            yield return null;
+        }
+
+        outlineImage.color = baseOutlineColor;
+        flashRoutine = null;
     }
 }

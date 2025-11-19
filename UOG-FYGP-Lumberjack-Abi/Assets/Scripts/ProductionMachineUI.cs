@@ -5,9 +5,6 @@ using UnityEngine.UI;
 
 public class ProductionMachineUI : MonoBehaviour
 {
-    [Header("Grid")]
-    public GridManager gridManager;
-
     [Header("Slots Pool")]
     public ProductioSlotUI[] slots;
 
@@ -41,6 +38,7 @@ public class ProductionMachineUI : MonoBehaviour
 
         WireButtons();
         BuildProductButtons();
+
         if (recipes.Count > 0)
         {
             SelectRecipe(recipes[0]);
@@ -91,15 +89,7 @@ public class ProductionMachineUI : MonoBehaviour
         currentRecipe = recipe;
 
         if (titleText != null)
-        {
             titleText.text = recipe != null ? recipe.displayName : string.Empty;
-        }
-
-        if (gridManager != null)
-        {
-            gridManager.blueprint = recipe != null ? recipe.blueprint : null;
-            gridManager.Generate();
-        }
 
         ConfigureSlots(recipe);
         UpdateErrorLabel(0);
@@ -146,18 +136,21 @@ public class ProductionMachineUI : MonoBehaviour
         if (currentRecipe == null) return 0;
 
         int errors = 0;
+
         for (int i = 0; i < currentRecipe.slots.Count; i++)
         {
             var req = currentRecipe.slots[i];
             ProductioSlotUI slot = GetSlotById(req.slotId);
             errors += SlotError(slot, req.requiredWidth, req.requiredHeight);
         }
+
         return errors;
     }
 
     ProductioSlotUI GetSlotById(string slotId)
     {
         if (slots == null) return null;
+
         for (int i = 0; i < slots.Length; i++)
         {
             var slot = slots[i];
@@ -168,14 +161,21 @@ public class ProductionMachineUI : MonoBehaviour
 
     int SlotError(ProductioSlotUI slot, int reqW, int reqH)
     {
-        if (slot == null) return 1;
+        if (slot == null)
+            return 1;
+
         ItemSO item = slot.CurrentItem;
-        if (item == null) return 1;
+        if (item == null)
+        {
+            slot.ShowResult(false);
+            return 1;
+        }
 
         int w = Mathf.Max(1, item.gridWidth);
         int h = Mathf.Max(1, item.gridHeight);
 
         bool match = (w == reqW && h == reqH) || (w == reqH && h == reqW);
+        slot.ShowResult(match);
         return match ? 0 : 1;
     }
 
