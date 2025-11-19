@@ -42,17 +42,58 @@ public class SquareCutter : MonoBehaviour, IDropHandler
     public Sprite dropZoneSprite;                     // zone sprite
     public Color dropZoneColor = new(0f, 1f, 0f, 0.25f); // zone color
 
+    // NEW: customizable drop zone UI options
+    [Header("Drop Zone Layout")]
+    public Vector2 dropZoneUISize = new(300f, 300f);      // UI rect size
+    [Tooltip("Extra scale multiplier for the whole drop zone UI (on top of world size logic).")]
+    public float dropZoneScaleMultiplier = 1f;
+
+    [Tooltip("Anchors for the hint text inside the DropZone rect.")]
+    public Vector2 dropHintAnchorMin = new(0.5f, 0f);
+    public Vector2 dropHintAnchorMax = new(0.5f, 0f);
+    public Vector2 dropHintPivot = new(0.5f, 0f);
+
+    [Tooltip("Offset of the hint text inside the DropZone rect.")]
+    public Vector2 dropHintOffset = new(0f, 10f);
+    public Vector2 dropHintSize = new(280f, 60f);
+
+    [Tooltip("Optional custom font for the hint text.")]
+    public TMP_FontAsset dropHintFont;
+    public bool dropHintBold = false;
+
+    public Color dropHintTextColor = Color.black;
+    public bool dropHintAutoSize = true;
+    public float dropHintFontSize = 28f;
+    public int dropHintFontSizeMin = 20;
+    public int dropHintFontSizeMax = 32;
+
     [Header("Blimp And Timer")]
     public bool enableBlimp = true;                   // enable blimp
     public float blimpHeight = 1.6f;                  // blimp height
     public Vector2 blimpSize = new(140, 90);          // blimp size
-    public Sprite blimpBackgroundSprite;              // blimp sprite
+    public Sprite blimpBackgroundSprite;
+    public float blimpScale = 1f; // blimp sprite
     public bool showTimer = true;                     // enable timer
     public Sprite hourglassSprite;                    // timer sprite
     public Vector2 timerSize = new(64, 64);           // timer size
     public float timerSpinSpeed = 180f;               // timer spin
     public bool timerDockToBlimp = true;              // dock timer
     public Vector3 timerLocalOffset = new(0.28f, 0f, 0f); // timer offset
+
+    [Header("Blimp Text")]
+    public TMP_FontAsset blimpFont;
+    public bool blimpBold = false;
+    public Color blimpTextColor = Color.black;
+
+    // Auto-size options
+    public bool blimpAutoSize = true;
+    public int blimpFontSizeMin = 20;
+    public int blimpFontSizeMax = 40;
+
+    // Manual font size if auto-size is off
+    public float blimpFontSize = 28f;
+
+
 
     [Header("Fly To Storage")]
     public Canvas overlayCanvas;                      // overlay canvas
@@ -216,7 +257,7 @@ public class SquareCutter : MonoBehaviour, IDropHandler
 
         SetTimer(false);
         busy = false;
-        if (dropHint) dropHint.text = $"Drop {costPlanks} planks";
+        if (dropHint) dropHint.text = $"Drop {costPlanks} planks here";
         if (debugLogs) Debug.Log("[SquareCutter] Piece completed.");
     }
 
@@ -245,8 +286,10 @@ public class SquareCutter : MonoBehaviour, IDropHandler
             ? match.Value.seconds
             : ComputeSecondsFor(selW, selH);
 
-        if (dimSummary) dimSummary.text = $"{selW}x{selH} -> Need {costPlanks} planks - {secondsPerPiece:0.#}s";
-        if (dropHint) dropHint.text = $"Drop {costPlanks} planks";
+        if (dimSummary)
+            dimSummary.text = $"W: {selW} x H: {selH} -> REQUIRES {costPlanks} PLANKS AND {secondsPerPiece:0.#} SECONDS";
+        if (dropHint)
+            dropHint.text = $"Drop {costPlanks} planks here";
 
         if (debugLogs)
         {
@@ -321,7 +364,7 @@ public class SquareCutter : MonoBehaviour, IDropHandler
     {
         if (!enableBlimp) return;
         if (blimp) blimp.gameObject.SetActive(pendingCount > 0);
-        if (blimpCountText) blimpCountText.text = $"x{pendingCount}";
+        if (blimpCountText) blimpCountText.text = $"COLLECT: x{pendingCount}";
     }
 
     internal void CollectBlimp()
@@ -359,15 +402,19 @@ public class SquareCutter : MonoBehaviour, IDropHandler
 
         var rc = dropCanvas.GetComponent<RectTransform>();
         rc.anchorMin = rc.anchorMax = rc.pivot = new Vector2(0.5f, 0.5f);
-        rc.sizeDelta = new Vector2(300f, 300f);
-        float scale = Mathf.Max(0.001f, dropZoneWorldSize / rc.sizeDelta.x);
-        dropCanvas.transform.localScale = new Vector3(scale, scale, scale);
+        rc.sizeDelta = dropZoneUISize;
 
+        // base scale from world size, then allow artist to tweak with multiplier
+        float baseScale = Mathf.Max(0.001f, dropZoneWorldSize / rc.sizeDelta.x);
+        float finalScale = baseScale * Mathf.Max(0.001f, dropZoneScaleMultiplier);
+        dropCanvas.transform.localScale = new Vector3(finalScale, finalScale, finalScale);
+
+        // Drop zone image
         var zoneObj = new GameObject("DropZone", typeof(RectTransform), typeof(Image));
         zoneObj.transform.SetParent(canvasObj.transform, false);
         var zoneRc = zoneObj.GetComponent<RectTransform>();
         zoneRc.anchorMin = zoneRc.anchorMax = zoneRc.pivot = new Vector2(0.5f, 0.5f);
-        zoneRc.sizeDelta = rc.sizeDelta;
+        zoneRc.sizeDelta = dropZoneUISize;
         zoneRc.localPosition = Vector3.zero;
 
         var img = zoneObj.GetComponent<Image>();
@@ -379,22 +426,40 @@ public class SquareCutter : MonoBehaviour, IDropHandler
         var proxy = zoneObj.AddComponent<SquareDropProxy>();
         proxy.square = this;
 
+        // Hint text
         var hintObj = new GameObject("DropHint", typeof(RectTransform), typeof(TextMeshProUGUI));
         hintObj.transform.SetParent(zoneObj.transform, false);
         var hintRc = hintObj.GetComponent<RectTransform>();
-        hintRc.anchorMin = new Vector2(0.5f, 0f);
-        hintRc.anchorMax = new Vector2(0.5f, 0f);
-        hintRc.pivot = new Vector2(0.5f, 0f);
-        hintRc.anchoredPosition = new Vector2(0, 10f);
-        hintRc.sizeDelta = new Vector2(280f, 60f);
+        hintRc.anchorMin = dropHintAnchorMin;
+        hintRc.anchorMax = dropHintAnchorMax;
+        hintRc.pivot = dropHintPivot;
+        hintRc.anchoredPosition = dropHintOffset;
+        hintRc.sizeDelta = dropHintSize;
 
         dropHint = hintObj.GetComponent<TextMeshProUGUI>();
         dropHint.alignment = TextAlignmentOptions.Center;
-        dropHint.enableAutoSizing = true;
-        dropHint.fontSizeMin = 20;
-        dropHint.fontSizeMax = 32;
-        dropHint.color = Color.black;
-        dropHint.text = $"Drop {planksPerWidthUnit * selW} planks";
+
+        dropHint.fontStyle = dropHintBold ? FontStyles.Bold : FontStyles.Normal;
+
+
+        if (dropHintFont != null)
+            dropHint.font = dropHintFont;
+
+        dropHint.color = dropHintTextColor;
+        dropHint.enableAutoSizing = dropHintAutoSize;
+
+        if (dropHintAutoSize)
+        {
+            dropHint.fontSizeMin = dropHintFontSizeMin;
+            dropHint.fontSizeMax = dropHintFontSizeMax;
+        }
+        else
+        {
+            dropHint.fontSize = dropHintFontSize;
+        }
+
+        // initial placeholder; correct value comes from ComputeDimensionParams()
+        dropHint.text = "Drop planks here";
     }
 
     private void EnsureBlimp()
@@ -413,8 +478,7 @@ public class SquareCutter : MonoBehaviour, IDropHandler
         var rc = c.GetComponent<RectTransform>();
         rc.anchorMin = rc.anchorMax = rc.pivot = new Vector2(0.5f, 0.5f);
         rc.sizeDelta = blimpSize;
-        float scale = 0.6f / Mathf.Max(1f, blimpSize.x);
-        c.transform.localScale = new Vector3(scale, scale, scale);
+        c.transform.localScale = Vector3.one * blimpScale;
 
         var btnObj = new GameObject("Blimp", typeof(RectTransform), typeof(Image), typeof(Button));
         btnObj.transform.SetParent(canvasObj.transform, false);
@@ -439,12 +503,31 @@ public class SquareCutter : MonoBehaviour, IDropHandler
         textRc.sizeDelta = new Vector2(blimpSize.x, 28f);
 
         var countText = textObj.GetComponent<TextMeshProUGUI>();
-        countText.text = "x0";
+        countText.text = "COLLECT: x0";
         countText.alignment = TextAlignmentOptions.Center;
-        countText.enableAutoSizing = true;
-        countText.fontSizeMin = 26;
-        countText.fontSizeMax = 36;
-        countText.color = Color.black;
+       
+        // Font
+        if (blimpFont != null)
+            countText.font = blimpFont;
+
+        // Bold
+        countText.fontStyle = blimpBold ? FontStyles.Bold : FontStyles.Normal;
+
+        // Colour
+        countText.color = blimpTextColor;
+
+        // Auto-size logic
+        countText.enableAutoSizing = blimpAutoSize;
+
+        if (blimpAutoSize)
+        {
+            countText.fontSizeMin = blimpFontSizeMin;
+            countText.fontSizeMax = blimpFontSizeMax;
+        }
+        else
+        {
+            countText.fontSize = blimpFontSize;
+        }
 
         blimp = canvasObj.AddComponent<MachineBlimp>();
         blimp.InitForSquare(this, btnObj.GetComponent<Button>());
