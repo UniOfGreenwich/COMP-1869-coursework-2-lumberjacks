@@ -12,25 +12,25 @@ public class ProductioSlotUI : MonoBehaviour, IDropHandler
 
     public ItemSO CurrentItem { get; private set; }
 
-    private StorageManager storage;
+    StorageManager storage;
 
     void Awake()
     {
-        storage = FindFirstObjectByType<StorageManager>();
+        storage = Object.FindAnyObjectByType<StorageManager>();
         ClearPiece();
     }
 
-    public void Configure(ProductionRecipeSO.SlotRequirement requirement)
+    public void Configure(string id, string label)
     {
-        slotId = requirement.slotId;
-        if (labelText) labelText.text = requirement.label;
+        slotId = id;
+        if (labelText != null) labelText.text = label;
         ClearPiece();
     }
 
     public void ClearPiece()
     {
         CurrentItem = null;
-        if (pieceIcon)
+        if (pieceIcon != null)
         {
             pieceIcon.enabled = false;
             pieceIcon.sprite = null;
@@ -42,17 +42,20 @@ public class ProductioSlotUI : MonoBehaviour, IDropHandler
         var drag = eventData.pointerDrag ? eventData.pointerDrag.GetComponent<DraggableItemUI>() : null;
         if (drag == null) return;
 
-        var payload = drag.TakePayload();
+        NoOfItems payload = drag.TakePayload();
         if (payload.IsEmpty)
         {
             drag.ReturnRemainder(payload);
             return;
         }
 
-        var item = payload.item;
-        int useCount = Mathf.Min(1, payload.count);
-        payload.count -= useCount;
-        drag.ReturnRemainder(payload);
+        ItemSO item = payload.item;
+
+        if (payload.count > 1)
+        {
+            payload.count -= 1;
+            drag.ReturnRemainder(payload);
+        }
 
         if (CurrentItem != null && storage != null)
         {
@@ -60,7 +63,8 @@ public class ProductioSlotUI : MonoBehaviour, IDropHandler
         }
 
         CurrentItem = item;
-        if (pieceIcon)
+
+        if (pieceIcon != null)
         {
             pieceIcon.enabled = true;
             pieceIcon.sprite = item.icon;

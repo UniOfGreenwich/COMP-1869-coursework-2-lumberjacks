@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Production/Product Recipe", fileName = "ProductRecipe_")]
+[CreateAssetMenu(menuName = "Production/Recipe", fileName = "Recipe_")]
 public class ProductionRecipeSO : ScriptableObject
 {
     public string id;
@@ -15,6 +15,7 @@ public class ProductionRecipeSO : ScriptableObject
     {
         public string slotId;
         public string label;
-        public ItemSO expectedPiece;
+        [Min(1)] public int requiredWidth = 1;
+        [Min(1)] public int requiredHeight = 1;
     }
 }
