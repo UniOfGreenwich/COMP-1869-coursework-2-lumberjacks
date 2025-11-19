@@ -12,8 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e3a9f86b94436e44bc85486453f318c, type: 3}
   m_Name: Recipe_Chair_Small
   m_EditorClassIdentifier: 
-  id: 
-  displayName: 
-  finishedProduct: {fileID: 0}
+  id: dw
+  displayName: fef
+  finishedProduct: {fileID: 11400000, guid: f311d6627e17d20419101a8823e10a02, type: 2}
   blueprint: {fileID: 0}
-  slots: []
+  slots:
+  - slotId: ef
+    label: fef
+    requiredWidth: 2
+    requiredHeight: 2
