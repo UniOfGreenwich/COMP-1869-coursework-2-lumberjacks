@@ -31,25 +31,11 @@ public class StorageBuilding : MonoBehaviour
 #else
         var canvases = Object.FindObjectsOfType<Canvas>(true); // legacy canvases find
 #endif
-        // Prefer an active screen-space canvas
         foreach (var c in canvases)
         {
-            if (!c || !c.gameObject) continue;
-            if (!c.gameObject.activeInHierarchy) continue;
             if (c.renderMode == RenderMode.ScreenSpaceOverlay || c.renderMode == RenderMode.ScreenSpaceCamera)
-            { canvas = c; break; } // choose active screen canvas
+            { canvas = c; break; } // choose screen canvas
         }
-        // fallback to any active canvas
-        if (!canvas)
-        {
-            foreach (var c in canvases)
-            {
-                if (!c || !c.gameObject) continue;
-                if (!c.gameObject.activeInHierarchy) continue;
-                canvas = c; break;
-            }
-        }
-        // last resort: take the first canvas found
         if (!canvas && canvases.Length > 0) canvas = canvases[0]; // fallback first
 
         if (!canvas)
@@ -76,7 +62,6 @@ public class StorageBuilding : MonoBehaviour
         // click spawns button
         if (Input.GetMouseButtonDown(0))
         {
-            // If pointer is over UI, ignore as before
             if (EventSystem.current && EventSystem.current.IsPointerOverGameObject()) return; // ignore ui hits
 
             var ray = mainCam ? mainCam.ScreenPointToRay(Input.mousePosition) : new Ray(Vector3.zero, Vector3.forward); // build ray now
@@ -88,9 +73,10 @@ public class StorageBuilding : MonoBehaviour
         }
 
         // track screen position
-        if (storageButtonRect && mainCam && canvas)
+        if (storageButtonRect && mainCam)
         {
-            UpdateStorageButtonPosition();
+            Vector3 screenPos = mainCam.WorldToScreenPoint(transform.position + buttonOffset); // compute screen pos
+            storageButtonRect.position = screenPos; // update button pos
         }
     }
 
@@ -107,20 +93,7 @@ public class StorageBuilding : MonoBehaviour
             ? Instantiate(storageButtonPrefab, canvas.transform)                    // use prefab path
             : BuildFallbackButton(canvas.transform);                                // build fallback path
 
-        if (!storageButtonInstance)
-        {
-            Debug.LogWarning("StorageBuilding: Failed to create storage button instance.");
-            return;
-        }
-
         storageButtonRect = storageButtonInstance.GetComponent<RectTransform>();     // cache rect now
-
-        // Make sure the button is visible on top
-        storageButtonInstance.transform.SetAsLastSibling();
-        storageButtonInstance.SetActive(true);
-
-        // position for canvas type (works for Overlay / ScreenSpaceCamera / WorldSpace)
-        UpdateStorageButtonPosition();
 
         EnsureReadableLabel(storageButtonInstance, "Open Storage");                   // force visible text
         var btn = storageButtonInstance.GetComponent<Button>();                       // fetch button ref
@@ -129,27 +102,14 @@ public class StorageBuilding : MonoBehaviour
 
     private void OpenStorageUI()
     {
-        bool opened = false;
-        if (windowInstance)
-        {
-            windowInstance.SetActive(true); // open window now
-            opened = true;
-        }
+        if (windowInstance) windowInstance.SetActive(true); // open window now
         if (storageButtonInstance)
         {
             Destroy(storageButtonInstance); // remove button now
             storageButtonInstance = null;   // clear instance ref
             storageButtonRect = null;       // clear rect ref
         }
-
-        if (opened)
-        {
-            PlayerController.IsInputLocked = true; // lock player input only when a window was actually opened
-        }
-        else
-        {
-            Debug.LogWarning("StorageBuilding: Attempted to open storage but no window instance exists.");
-        }
+        PlayerController.IsInputLocked = true; // lock player input
     }
 
     public void CloseStorageUI()
@@ -226,35 +186,5 @@ public class StorageBuilding : MonoBehaviour
         if (EventSystem.current) return; // already exists guard
         var es = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule)); // create system now
         DontDestroyOnLoad(es); // persist across scenes
-    }
-
-    // Helper: safely position the button using RectTransformUtility so it works with CanvasScaler / camera
-    private void UpdateStorageButtonPosition()
-    {
-        if (storageButtonRect == null || canvas == null) return;
-
-        // Ensure we have a camera reference for world->screen conversion
-        if (!mainCam) mainCam = Camera.main;
-        if (!mainCam) return;
-
-        Vector3 screenPos = mainCam.WorldToScreenPoint(transform.position + buttonOffset);
-        var canvasRect = canvas.transform as RectTransform;
-        if (canvasRect == null)
-        {
-            storageButtonRect.position = screenPos; // fallback
-            return;
-        }
-
-        Vector2 localPoint;
-        // use canvas.worldCamera when appropriate (null is fine for ScreenSpaceOverlay)
-        if (RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPos, canvas.worldCamera, out localPoint))
-        {
-            storageButtonRect.anchoredPosition = localPoint;
-        }
-        else
-        {
-            // fallback to world pos
-            storageButtonRect.position = screenPos;
-        }
     }
 }
