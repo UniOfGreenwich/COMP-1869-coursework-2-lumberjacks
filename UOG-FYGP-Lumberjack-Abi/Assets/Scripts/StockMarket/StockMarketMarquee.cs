@@ -3,21 +3,36 @@ using TMPro;
 
 public class StockMarketMarquee : MonoBehaviour
 {
-    [SerializeField] private TMP_Text lumber;
-    private Vector3 startPos;
-    private Vector3 endPos;
+    [SerializeField] private TMP_Text lumberPrice;
     [SerializeField] private float lerpDuration = 2f;
+
+    private GameObject gameManager;
+    private RealWorldData realWorldData;
+    private Vector3 startPos, endPos;
     private float lerpTime;
-    [SerializeField] RealWorldData prices;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        startPos = new Vector3(-100, 440, 0);
-        endPos = new Vector3(1000, 440, 0);
-        lumber.transform.position = startPos;
+        gameManager = GameObject.FindWithTag("GameController");
+        realWorldData = gameManager.GetComponent<RealWorldData>();
+        startPos = new Vector3(-100, 940, 0);
+        endPos = new Vector3(2020, 940, 0);
+        lumberPrice.transform.position = startPos;
         lerpTime = 0f;
-        lumber.text = "LUMBER: $" + prices.costLumber.ToString();
+
+        if (gameManager.GetComponent<GameManager>().usingSimulatedData)
+        {
+            lumberPrice.text = "LUMBER $" + SimulatedRealWorldDataSet.tradeData[SimulatedRealWorldDataSet.tradeData.GetLength(0) - 1, 1].ToString();
+        }
+        else if (realWorldData != null)
+        {
+            lumberPrice.text = "LUMBER $" + realWorldData.costLumber.ToString();
+        }
+        else
+        {
+            lumberPrice.text = "LUMBER $0";
+        }
     }
 
     // Update is called once per frame
@@ -28,11 +43,11 @@ public class StockMarketMarquee : MonoBehaviour
         {
             lerpTime += Time.deltaTime;
             float t = lerpTime / lerpDuration;
-            lumber.transform.position = Vector3.Lerp(startPos, endPos, t);
+            lumberPrice.transform.position = Vector3.Lerp(startPos, endPos, t);
         }
         else
         {
-            lumber.transform.position = startPos;
+            lumberPrice.transform.position = startPos;
             lerpTime = 0f;
         }
     }

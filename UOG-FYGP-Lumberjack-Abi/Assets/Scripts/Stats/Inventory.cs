@@ -3,7 +3,7 @@ using TMPro;
 
 public class Inventory : MonoBehaviour
 {
-    public float money { get; set; } = 100;
+    public float money { get; set; } = 5000;
     public int lumber { get; set; }
     public int gold { get; set; }
     public int copper { get; set; }
@@ -12,9 +12,9 @@ public class Inventory : MonoBehaviour
     [SerializeField] TMP_Text lumberUI;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
-        moneyUI.text = (money).ToString();
-        lumberUI.text = (lumber).ToString();
+        moneyUI.text = money.ToString();
+        lumberUI.text = lumber.ToString();
     }
 }

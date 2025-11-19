@@ -4,6 +4,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager current;
     public Canvas canvas;
+    public bool usingSimulatedData = true;
 
     private void Awake()
     {
