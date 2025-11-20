@@ -4947,6 +4947,14 @@ PrefabInstance:
       propertyPath: m_VerticalAlignment
       value: 512
       objectReference: {fileID: 0}
+    - target: {fileID: 5716884639371741646, guid: f5febf8a32892934ba2b594040108ca5, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -38176839, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
+    - target: {fileID: 5716884639371741646, guid: f5febf8a32892934ba2b594040108ca5, type: 3}
+      propertyPath: m_PreserveAspect
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5825859701360908804, guid: f5febf8a32892934ba2b594040108ca5, type: 3}
       propertyPath: countText
       value: 
@@ -5130,6 +5138,22 @@ PrefabInstance:
     - target: {fileID: 7802569452234711126, guid: f5febf8a32892934ba2b594040108ca5, type: 3}
       propertyPath: m_ChildAlignment
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8053094986208534967, guid: f5febf8a32892934ba2b594040108ca5, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 8053094986208534967, guid: f5febf8a32892934ba2b594040108ca5, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 8053094986208534967, guid: f5febf8a32892934ba2b594040108ca5, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 8053094986208534967, guid: f5febf8a32892934ba2b594040108ca5, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 125
       objectReference: {fileID: 0}
     - target: {fileID: 8072977508421374585, guid: f5febf8a32892934ba2b594040108ca5, type: 3}
       propertyPath: m_Color.a
@@ -7037,11 +7061,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea78da6b8eb103444aa8c3a51cf92320, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 8
-  height: 8
-  cellPrefab: {fileID: 4656492137791506016, guid: 63d1b051ed03d334a81f0e9a8e12941a, type: 3}
-  gridParent: {fileID: 2144360413}
-  blueprint: {fileID: 11400000, guid: 59946afe18765e74dbdf79585e1b55e2, type: 2}
 --- !u!114 &4978527499374805
 MonoBehaviour:
   m_ObjectHideFlags: 0

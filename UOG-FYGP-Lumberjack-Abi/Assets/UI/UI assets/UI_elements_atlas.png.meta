@@ -672,6 +672,28 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: UI_elements_atlas_25
+      rect:
+        serializedVersion: 2
+        x: 1818
+        y: 3
+        width: 400
+        height: 400
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: febae82d0d669d4468e976794ac08f5f
+      internalID: -38176839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -704,6 +726,7 @@ TextureImporter:
       UI_elements_atlas_22: -1065557938
       UI_elements_atlas_23: -1323787500
       UI_elements_atlas_24: 459548766
+      UI_elements_atlas_25: -38176839
       UI_elements_atlas_3: 712203545
       UI_elements_atlas_4: 1002080573
       UI_elements_atlas_5: 2111746380
