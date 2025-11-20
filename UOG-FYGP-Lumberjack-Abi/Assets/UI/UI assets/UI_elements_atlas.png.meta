@@ -588,10 +588,10 @@ TextureImporter:
       name: UI_elements_atlas_21
       rect:
         serializedVersion: 2
-        x: 902
-        y: 581
-        width: 300
-        height: 200
+        x: 940
+        y: 565
+        width: 240
+        height: 240
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -610,10 +610,10 @@ TextureImporter:
       name: UI_elements_atlas_22
       rect:
         serializedVersion: 2
-        x: 1240
-        y: 582
+        x: 1234
+        y: 544
         width: 300
-        height: 200
+        height: 300
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -659,7 +659,7 @@ TextureImporter:
         width: 82
         height: 82
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
