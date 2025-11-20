@@ -17,3 +17,5 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: f475a276decd65c4aa720bb289547fc6, type: 3}
   category: 0
   maxStack: 20
+  gridWidth: 1
+  gridHeight: 1
