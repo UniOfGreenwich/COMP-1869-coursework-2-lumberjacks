@@ -1,59 +1,128 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Audio;
+using System.Linq;
 
 public class SettingsMenu : MonoBehaviour
 {
-    [Header("Panel & Buttons")]
-    [SerializeField] private GameObject panel;        
-    [SerializeField] private Button openButton;       
-    [SerializeField] private Button closeButton;     
-    [SerializeField] private KeyCode toggleKey = KeyCode.Escape; 
+    [Header("Prefab (from Project)")]
+    [SerializeField] private GameObject settingsPanelPrefab;   // Drag Settings_Panel prefab here
+    [SerializeField] private Transform panelParentOverride;    // Optional override
+
+    [Header("Buttons")]
+    [SerializeField] private Button openButton;
+    [SerializeField] private KeyCode toggleKey = KeyCode.Escape;
 
     [Header("Audio Mixer")]
-    [SerializeField] private AudioMixer mixer;        
+    [SerializeField] private AudioMixer mixer;
     [SerializeField] private string musicParam = "MusicVol";
     [SerializeField] private string sfxParam = "SFXVol";
-
-    [Header("Sliders")]
-    [SerializeField] private Slider musicSlider;      
-    [SerializeField] private Slider sfxSlider;        
 
     [Header("Behaviour")]
     [SerializeField] private bool pauseOnOpen = false;
     [SerializeField] private bool lockPlayerInputOnOpen = true;
 
-    // PlayerPrefs keys
+    // runtime
+    private GameObject panelInstance;
+    private Slider musicSlider;
+    private Slider sfxSlider;
+    private Button closeButton;
+
     private string MusicKey => $"VOL_{musicParam}";
     private string SfxKey => $"VOL_{sfxParam}";
 
-    private bool _isOpen;
-
     private void Awake()
     {
-        // Safe defaults for sliders
-        if (musicSlider != null) { musicSlider.minValue = 0f; musicSlider.maxValue = 1f; }
-        if (sfxSlider != null) { sfxSlider.minValue = 0f; sfxSlider.maxValue = 1f; }
+        Debug.Log("[SettingsMenu] Awake");
 
-        // Wire UI
-        if (openButton != null) openButton.onClick.AddListener(Open);
-        if (closeButton != null) closeButton.onClick.AddListener(Close);
+        if (settingsPanelPrefab == null)
+        {
+            Debug.LogError("[SettingsMenu] NO settings panel prefab assigned!");
+            return;
+        }
 
-        if (musicSlider != null) musicSlider.onValueChanged.AddListener(SetMusicVolumeFromSlider);
-        if (sfxSlider != null) sfxSlider.onValueChanged.AddListener(SetSfxVolumeFromSlider);
+        // Find parent canvas
+        Transform parent = panelParentOverride;
+        if (parent == null)
+        {
+            Canvas c = GetComponentInParent<Canvas>();
+            parent = c != null ? c.transform : null;
+        }
 
-        // Ensure panel starts hidden unless you want it visible in editor
-        if (panel != null) panel.SetActive(false);
-        _isOpen = false;
+        // Instantiate prefab
+        panelInstance = Instantiate(settingsPanelPrefab, parent);
+        panelInstance.name = settingsPanelPrefab.name + "_INSTANCE";
+        panelInstance.SetActive(false);
+        Debug.Log("[SettingsMenu] Instantiated: " + panelInstance.name);
 
-        // Load saved values (default full volume)
+        // Auto-wire open button
+        if (openButton != null)
+        {
+            openButton.onClick.AddListener(Toggle);
+        }
+
+        // ------------------------------------
+        // AUTO-WIRE SLIDERS
+        // ------------------------------------
+        Debug.Log("[SettingsMenu] Auto-wiring sliders…");
+
+        // Find all sliders in the panel
+        var sliders = panelInstance.GetComponentsInChildren<Slider>(true);
+
+        // Try match by name
+        musicSlider = sliders.FirstOrDefault(s => s.name.ToLower().Contains("music"));
+        sfxSlider = sliders.FirstOrDefault(s => s.name.ToLower().Contains("sfx"));
+
+        // Try tags (optional)
+        if (musicSlider == null)
+            musicSlider = sliders.FirstOrDefault(s => s.CompareTag("MusicVolume"));
+        if (sfxSlider == null)
+            sfxSlider = sliders.FirstOrDefault(s => s.CompareTag("SfxVolume"));
+
+        // Fallback: first 2 sliders
+        if (musicSlider == null && sliders.Length > 0) musicSlider = sliders[0];
+        if (sfxSlider == null && sliders.Length > 1) sfxSlider = sliders[1];
+
+        Debug.Log("[SettingsMenu] Found Music Slider: " + (musicSlider ? musicSlider.name : "NONE"));
+        Debug.Log("[SettingsMenu] Found SFX Slider: " + (sfxSlider ? sfxSlider.name : "NONE"));
+
+        if (musicSlider != null)
+        {
+            musicSlider.minValue = 0f;
+            musicSlider.maxValue = 1f;
+            musicSlider.onValueChanged.AddListener(SetMusicVolumeFromSlider);
+        }
+
+        if (sfxSlider != null)
+        {
+            sfxSlider.minValue = 0f;
+            sfxSlider.maxValue = 1f;
+            sfxSlider.onValueChanged.AddListener(SetSfxVolumeFromSlider);
+        }
+
+        // ------------------------------------
+        // AUTO-WIRE CLOSE BUTTON
+        // ------------------------------------
+        closeButton = panelInstance.GetComponentsInChildren<Button>(true)
+                                   .FirstOrDefault(b => b.name.ToLower().Contains("close"));
+
+        if (closeButton != null)
+        {
+            closeButton.onClick.AddListener(Close);
+            Debug.Log("[SettingsMenu] Found close button: " + closeButton.name);
+        }
+        else
+        {
+            Debug.LogWarning("[SettingsMenu] No close button found inside prefab.");
+        }
+
+        // Load saved volume
         float savedMusic = PlayerPrefs.GetFloat(MusicKey, 1f);
         float savedSfx = PlayerPrefs.GetFloat(SfxKey, 1f);
 
         if (musicSlider != null) musicSlider.value = savedMusic;
         if (sfxSlider != null) sfxSlider.value = savedSfx;
 
-        // Apply to mixer immediately
         ApplyVolumeToMixer(musicParam, savedMusic);
         ApplyVolumeToMixer(sfxParam, savedSfx);
     }
@@ -62,50 +131,39 @@ public class SettingsMenu : MonoBehaviour
     {
         if (toggleKey != KeyCode.None && Input.GetKeyDown(toggleKey))
         {
-            if (_isOpen) Close(); else Open();
+            Toggle();
         }
     }
 
-    // --- Open / Close ---
-
     public void Open()
     {
-        if (panel == null || _isOpen) return;
+        if (panelInstance == null) return;
+        if (panelInstance.activeSelf) return;
 
-        panel.SetActive(true);
-        _isOpen = true;
+        panelInstance.SetActive(true);
 
         if (pauseOnOpen) Time.timeScale = 0f;
-
-        if (lockPlayerInputOnOpen)
-        {
-            // Requires your PlayerController to expose a public static flag
-            // Safe-guard if class is missing in this scene
-            TrySetPlayerInputLocked(true);
-        }
+        if (lockPlayerInputOnOpen) TrySetPlayerInputLocked(true);
     }
 
     public void Close()
     {
-        if (panel == null || !_isOpen) return;
+        if (panelInstance == null) return;
+        if (!panelInstance.activeSelf) return;
 
-        panel.SetActive(false);
-        _isOpen = false;
+        panelInstance.SetActive(false);
 
         if (pauseOnOpen) Time.timeScale = 1f;
-
-        if (lockPlayerInputOnOpen)
-        {
-            TrySetPlayerInputLocked(false);
-        }
+        if (lockPlayerInputOnOpen) TrySetPlayerInputLocked(false);
     }
 
     public void Toggle()
     {
-        if (_isOpen) Close(); else Open();
-    }
+        if (panelInstance == null) return;
 
-    // --- Volume hooks ---
+        if (panelInstance.activeSelf) Close();
+        else Open();
+    }
 
     private void SetMusicVolumeFromSlider(float v)
     {
@@ -121,24 +179,22 @@ public class SettingsMenu : MonoBehaviour
 
     private void ApplyVolumeToMixer(string param, float slider01)
     {
-        if (mixer == null || string.IsNullOrEmpty(param)) return;
+        if (mixer == null) return;
 
-        // Convert linear [0..1] slider to decibels; clamp away from log(0)
         float clamped = Mathf.Clamp(slider01, 0.0001f, 1f);
-        float dB = Mathf.Log10(clamped) * 20f;  // 1.0 -> 0 dB, 0.5 -> ~-6 dB, ~0 -> ~-80 dB
+        float dB = Mathf.Log10(clamped) * 20f;
         mixer.SetFloat(param, dB);
     }
 
-
-
     private void TrySetPlayerInputLocked(bool locked)
     {
-       
         var type = System.Type.GetType("PlayerController");
         if (type == null) return;
 
-        var field = type.GetField("IsInputLocked", System.Reflection.BindingFlags.Public |
-                                               System.Reflection.BindingFlags.Static);
+        var field = type.GetField("IsInputLocked",
+            System.Reflection.BindingFlags.Public |
+            System.Reflection.BindingFlags.Static);
+
         if (field != null && field.FieldType == typeof(bool))
         {
             field.SetValue(null, locked);
