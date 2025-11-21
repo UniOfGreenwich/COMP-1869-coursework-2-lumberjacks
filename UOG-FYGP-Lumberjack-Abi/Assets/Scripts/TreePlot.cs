@@ -1,162 +1,269 @@
-using System;
-using TMPro;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class TreePlot : MonoBehaviour
 {
     [Header("Identity")]
-    public string plotId = "Plot_01";        // unique plot id
+    public string plotId = "Plot_01";
 
     [Header("Items")]
-    public ItemSO seedItem;                  // seed item reference
-    public ItemSO logItem;                   // log item reference
+    public ItemSO seedItem;
+    public ItemSO logItem;
 
-    [Header("Growth")]
-    [Min(0.01f)] public float growHours = 3f; // growth time hours
-    public int logsPerHarvest = 10;          // logs per harvest
+    [Header("Economy")]
+    [Min(1)] public int seedsPerTree = 3;
+    [Min(1)] public int logsPerHarvest = 10;
+
+    [Header("Growth Minutes")]
+    [Min(0.1f)] public float growMinutes = 3f;
 
     [Header("Visuals")]
-    public GameObject emptyVisual;           // empty visual object
-    public GameObject growingVisual;         // growing visual object
-    public GameObject grownVisual;           // grown visual object
+    public GameObject emptyVisual;
+    public GameObject growingVisual;
+    public GameObject grownVisual;
 
-    [Header("UI")]
-    public TextMeshProUGUI statusText;       // status label reference
+    [Header("UI References")]
+    public Slider progressSlider;
+    public TextMeshProUGUI timeLabel;
+    public TextMeshProUGUI statusText;
+    public Button harvestButton;
+
+    [Header("Storage FX")]
+    public Canvas overlayCanvas;
+    public RectTransform storageAnchor;
+    public Sprite logIcon;
+    public Vector2 flyIconSize = new Vector2(36, 36);
+    public float flyDuration = 0.7f;
+    public int flyBurst = 6;
+    public AnimationCurve flyCurve;
+    public string overlayCanvasTag = "OverlayCanvas";
+    public string storageAnchorName = "StorageAnchor";
 
     private StorageManager storage;
-    private bool isGrowing;
-    private bool isGrown;
-    private DateTime plantedTime;
+    private float growTimer;
+    private float growSeconds;
+
+    private enum State { Empty, Growing, Ready }
+    private State state = State.Empty;
 
     void Awake()
     {
-        storage = UnityEngine.Object.FindFirstObjectByType<StorageManager>(); 
-        UpdateVisuals();
-        UpdateStatusText();
+        storage = FindFirstObjectByType<StorageManager>();
+        growSeconds = growMinutes * 60f;
+        if (flyCurve == null || flyCurve.keys.Length == 0)
+            flyCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+
+        if (harvestButton)
+        {
+            harvestButton.onClick.RemoveAllListeners();
+            harvestButton.onClick.AddListener(Harvest);
+        }
+
+        if (progressSlider)
+        {
+            progressSlider.minValue = 0f;
+            progressSlider.maxValue = 1f;
+            progressSlider.value = 0f;
+        }
+
+        TryAutoWireStorage();
+        SetState(State.Empty);
     }
 
     void Update()
     {
-        if (isGrowing)
-        {
-            DateTime now = DateTime.UtcNow;
-            TimeSpan delta = now - plantedTime;
-            double growSeconds = growHours * 3600.0;
-
-            if (delta.TotalSeconds >= growSeconds)
-            {
-                isGrowing = false;
-                isGrown = true;
-                SaveState();
-                UpdateVisuals();
-                UpdateStatusText();
-            }
-            else
-            {
-                UpdateStatusText();
-            }
-        }
+        if (state == State.Growing)
+            TickGrowth();
     }
 
     void OnMouseDown()
     {
-        if (!storage) return;
-
-        if (!isGrowing && !isGrown)
-        {
+        // Only plant by tap
+        if (state == State.Empty)
             TryPlant();
-        }
-        else if (isGrown)
+        // No harvest here now
+    }
+
+    void TryPlant()
+    {
+        if (!storage || seedItem == null) return;
+
+        int have = storage.GetCount(seedItem);
+        if (have < seedsPerTree)
         {
-            HarvestTree();
+            if (statusText) statusText.text = "Need more seeds";
+            return;
+        }
+
+        storage.Take(seedItem, seedsPerTree);
+        growSeconds = growMinutes * 60f;
+        growTimer = 0f;
+        SetState(State.Growing);
+    }
+
+    void TickGrowth()
+    {
+        growTimer += Time.deltaTime;
+        float t = Mathf.Clamp01(growTimer / Mathf.Max(0.01f, growSeconds));
+
+        if (progressSlider) progressSlider.value = t;
+
+        if (timeLabel)
+        {
+            float remain = Mathf.Max(0f, growSeconds - growTimer);
+            int mins = (int)(remain / 60f);
+            int secs = (int)(remain % 60f);
+            timeLabel.text = $"{mins:00}:{secs:00}";
+        }
+
+        if (growTimer >= growSeconds)
+            SetState(State.Ready);
+    }
+
+    void Harvest()
+    {
+        if (!storage || logItem == null)
+        {
+            SetState(State.Empty);
+            return;
+        }
+
+        storage.Put(logItem, logsPerHarvest);
+        Vector3 startWorld = transform.position + Vector3.up * 1.6f;
+
+        if (overlayCanvas && storageAnchor && logIcon)
+            StartCoroutine(FlyToStorageRoutine(startWorld, logsPerHarvest));
+
+        SetState(State.Empty);
+    }
+
+    void SetState(State newState)
+    {
+        state = newState;
+
+        if (emptyVisual) emptyVisual.SetActive(state == State.Empty);
+        if (growingVisual) growingVisual.SetActive(state == State.Growing);
+        if (grownVisual) grownVisual.SetActive(state == State.Ready);
+
+        if (progressSlider) progressSlider.gameObject.SetActive(state == State.Growing);
+        if (timeLabel) timeLabel.gameObject.SetActive(state == State.Growing);
+        if (harvestButton) harvestButton.gameObject.SetActive(state == State.Ready);
+
+        if (statusText)
+        {
+            if (state == State.Empty) statusText.text = "Tap to plant";
+            else if (state == State.Growing) statusText.text = "Tree growing";
+            else if (state == State.Ready) statusText.text = "Tree ready";
         }
     }
 
-    private void TryPlant()
+    void TryAutoWireStorage()
     {
-        if (!seedItem) return;
-
-        int taken = storage.Take(seedItem, 3);
-        if (taken <= 0) return;
-
-        plantedTime = DateTime.UtcNow;
-        isGrowing = true;
-        isGrown = false;
-        SaveState();
-        UpdateVisuals();
-        UpdateStatusText();
-    }
-
-    private void HarvestTree()
-    {
-        if (logItem && logsPerHarvest > 0 && storage != null)
+        if (overlayCanvas == null)
         {
-            storage.Put(logItem, logsPerHarvest);
+            foreach (var c in Resources.FindObjectsOfTypeAll<Canvas>())
+            {
+                if (!c || !c.gameObject.scene.IsValid()) continue;
+                if (!string.IsNullOrEmpty(overlayCanvasTag) &&
+                    c.CompareTag(overlayCanvasTag))
+                {
+                    overlayCanvas = c;
+                    break;
+                }
+
+                if (c.renderMode == RenderMode.ScreenSpaceOverlay ||
+                    c.renderMode == RenderMode.ScreenSpaceCamera)
+                {
+                    overlayCanvas = c;
+                    break;
+                }
+            }
         }
 
-        isGrowing = false;
-        isGrown = false;
-        SaveState();
-        UpdateVisuals();
-        UpdateStatusText();
-    }
-
-    private void UpdateVisuals()
-    {
-        if (emptyVisual) emptyVisual.SetActive(!isGrowing && !isGrown);
-        if (growingVisual) growingVisual.SetActive(isGrowing);
-        if (grownVisual) grownVisual.SetActive(isGrown);
-    }
-
-    private void UpdateStatusText()
-    {
-        if (!statusText) return;
-
-        if (!isGrowing && !isGrown)
+        if (overlayCanvas && storageAnchor == null)
         {
-            statusText.text = "Tap to plant seed";
-        }
-        else if (isGrowing)
-        {
-            TimeSpan elapsed = DateTime.UtcNow - plantedTime;
-            double growSeconds = growHours * 3600.0;
-            float t = Mathf.Clamp01((float)(elapsed.TotalSeconds / growSeconds));
-            int percent = Mathf.RoundToInt(t * 100f);
-            statusText.text = $"Growing {percent}%";
-        }
-        else if (isGrown)
-        {
-            statusText.text = "Tree grown tap harvest";
+            foreach (var rt in overlayCanvas.GetComponentsInChildren<RectTransform>(true))
+            {
+                if (rt.name == storageAnchorName)
+                {
+                    storageAnchor = rt;
+                    break;
+                }
+            }
         }
     }
 
-    private void SaveState()
+    IEnumerator FlyToStorageRoutine(Vector3 startWorld, int count)
     {
-        string baseKey = "TreePlot_" + plotId;
-        int state = 0;
-        if (isGrowing) state = 1;
-        if (isGrown) state = 2;
+        if (!overlayCanvas || !storageAnchor || logIcon == null) yield break;
 
-        PlayerPrefs.SetInt(baseKey + "_State", state);
-        PlayerPrefs.SetString(baseKey + "_Time", plantedTime.ToBinary().ToString());
-        PlayerPrefs.Save();
+        int icons = Mathf.Clamp(count, 1, flyBurst);
+        RectTransform overlayRect = overlayCanvas.transform as RectTransform;
+
+        Vector2 startScreen = RectTransformUtility.WorldToScreenPoint(Camera.main, startWorld);
+        Vector2 startLocal;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            overlayRect, startScreen, overlayCanvas.worldCamera, out startLocal);
+
+        Vector2 endScreen = RectTransformUtility.WorldToScreenPoint(
+            overlayCanvas ? overlayCanvas.worldCamera : null, storageAnchor.position);
+        Vector2 endLocal;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            overlayRect, endScreen, overlayCanvas ? overlayCanvas.worldCamera : null, out endLocal);
+
+        Vector2 control = Vector2.Lerp(startLocal, endLocal, 0.5f) + Vector2.up * 80f;
+
+        for (int i = 0; i < icons; i++)
+            StartCoroutine(SingleFlyIcon(startLocal, control, endLocal, i * 0.03f));
+
+        yield return new WaitForSeconds(flyDuration + 0.15f);
     }
 
-    private void LoadState()
+    IEnumerator SingleFlyIcon(Vector2 start, Vector2 control, Vector2 end, float delay)
     {
-        string baseKey = "TreePlot_" + plotId;
-        int state = PlayerPrefs.GetInt(baseKey + "_State", 0);
-        string timeRaw = PlayerPrefs.GetString(baseKey + "_Time", DateTime.UtcNow.ToBinary().ToString());
+        if (delay > 0f) yield return new WaitForSeconds(delay);
 
-        long bin;
-        if (!long.TryParse(timeRaw, out bin))
+        RectTransform overlayRect = overlayCanvas.transform as RectTransform;
+        var iconObj = new GameObject("TreeFlyIcon", typeof(RectTransform),
+            typeof(CanvasGroup), typeof(Image));
+        iconObj.transform.SetParent(overlayRect, false);
+
+        var iconRc = iconObj.GetComponent<RectTransform>();
+        iconRc.sizeDelta = flyIconSize;
+        iconRc.anchoredPosition = start;
+
+        var img = iconObj.GetComponent<Image>();
+        img.sprite = logIcon;
+        img.raycastTarget = false;
+
+        var grp = iconObj.GetComponent<CanvasGroup>();
+        grp.alpha = 1f;
+
+        float t = 0f;
+        while (t < 1f)
         {
-            bin = DateTime.UtcNow.ToBinary();
+            t += Time.deltaTime / Mathf.Max(0.0001f, flyDuration);
+            float k = Mathf.Clamp01(t);
+            float e = flyCurve != null ? flyCurve.Evaluate(k) : k;
+
+            Vector2 p = QuadraticBezier(start, control, end, e);
+            iconRc.anchoredPosition = p;
+
+            float s = Mathf.Lerp(1.0f, 0.65f, e);
+            iconRc.localScale = new Vector3(s, s, 1f);
+            grp.alpha = 1f - e * 0.2f;
+
+            yield return null;
         }
 
-        plantedTime = DateTime.FromBinary(bin);
+        Destroy(iconObj);
+    }
 
-        isGrowing = state == 1;
-        isGrown = state == 2;
+    static Vector2 QuadraticBezier(Vector2 a, Vector2 b, Vector2 c, float t)
+    {
+        float u = 1f - t;
+        return u * u * a + 2f * u * t * b + t * t * c;
     }
 }
