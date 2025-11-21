@@ -12,7 +12,7 @@ public class TreePlot : MonoBehaviour
     public ItemSO logItem;                   // log item reference
 
     [Header("Growth")]
-    [Min(0.1f)] public float growHours = 3f; // growth time hours
+    [Min(0.01f)] public float growHours = 3f; // growth time hours
     public int logsPerHarvest = 10;          // logs per harvest
 
     [Header("Visuals")]
