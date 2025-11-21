@@ -30,8 +30,7 @@ public class TreePlot : MonoBehaviour
 
     void Awake()
     {
-        storage = FindObjectOfType<StorageManager>();
-        LoadState();
+        storage = UnityEngine.Object.FindFirstObjectByType<StorageManager>(); 
         UpdateVisuals();
         UpdateStatusText();
     }
@@ -77,7 +76,7 @@ public class TreePlot : MonoBehaviour
     {
         if (!seedItem) return;
 
-        int taken = storage.Take(seedItem, 1);
+        int taken = storage.Take(seedItem, 3);
         if (taken <= 0) return;
 
         plantedTime = DateTime.UtcNow;

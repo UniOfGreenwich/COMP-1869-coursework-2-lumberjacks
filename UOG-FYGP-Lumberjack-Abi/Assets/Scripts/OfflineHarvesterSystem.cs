@@ -31,7 +31,7 @@ public class OfflineHarvesterNPC : MonoBehaviour
 
     void Awake()
     {
-        storage = FindObjectOfType<StorageManager>();
+        storage = UnityEngine.Object.FindFirstObjectByType<StorageManager>();
         ComputeOfflineHarvestOnce();
         UpdateStatusText();
         UpdatePendingText();
