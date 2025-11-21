@@ -596,7 +596,7 @@ GameObject:
   - component: {fileID: 5002171832550378008}
   - component: {fileID: 3434385761601700275}
   m_Layer: 5
-  m_Name: stockMarket
+  m_Name: Panel_stockMarket
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
