@@ -1,9 +1,7 @@
 using UnityEngine;
-using System;
 
-public class Customer : MonoBehaviour
+public class JobBoardUI : MonoBehaviour
 {
-    [SerializeField] private string customerName;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
