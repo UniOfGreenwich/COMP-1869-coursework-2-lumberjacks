@@ -1,16 +1,31 @@
 using UnityEngine;
 
-public class Customer
+public class Customer : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public Inventory inventory;
+    public JobRewardSO jobReward;
+    public CustomerTypeSO customerType;
+
+    void Awake()
     {
-        
+        if (!inventory)
+        {
+            GameObject gm = GameObject.FindWithTag("GameController");
+            if (gm)
+                inventory = gm.GetComponent<Inventory>();
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void CompleteOrder()
     {
-        
+        if (!inventory) return;
+        if (!jobReward) return;
+        if (!customerType) return;
+
+        float finalMoney = jobReward.moneyReward * customerType.moneyMultiplier;
+        int finalXp = Mathf.RoundToInt(jobReward.xpReward * customerType.xpMultiplier);
+
+        inventory.AddMoney(finalMoney);
+        inventory.AddXp(finalXp);
     }
 }
