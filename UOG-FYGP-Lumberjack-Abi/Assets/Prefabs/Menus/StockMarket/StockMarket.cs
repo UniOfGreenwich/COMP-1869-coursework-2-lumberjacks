@@ -86,6 +86,7 @@ public class StockMarket : MonoBehaviour
 
             UpdatePanelValues();
             UpdateHUD();
+            inventory.RefreshUI();
         }
     }
 
@@ -124,6 +125,7 @@ public class StockMarket : MonoBehaviour
 
                 UpdatePanelValues();
                 UpdateHUD();
+                inventory.RefreshUI();
             }
         }
     }

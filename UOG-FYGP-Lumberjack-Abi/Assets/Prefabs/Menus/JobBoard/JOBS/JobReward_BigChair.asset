@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 85889e55f345d6c4b8a76adc4a6f510b, type: 3}
-  m_Name: JobReward_SmallChair
+  m_Name: JobReward_BigChair
   m_EditorClassIdentifier: 
-  id: chair
-  displayName: SmallChair
+  id: BigChair
+  displayName: BigChair
   moneyReward: 100
   xpReward: 10
-  estimatedMinutes: 3
-  isBigJob: 0
+  estimatedMinutes: 25
+  isBigJob: 1
