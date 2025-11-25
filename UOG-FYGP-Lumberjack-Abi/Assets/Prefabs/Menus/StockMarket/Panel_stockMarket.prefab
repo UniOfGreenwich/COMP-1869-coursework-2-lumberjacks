@@ -1453,9 +1453,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4129930604282108618}
-        m_TargetAssemblyTypeName: TogglePanel, Assembly-CSharp
-        m_MethodName: ClosePanel
+      - m_Target: {fileID: 7090049552607836254}
+        m_TargetAssemblyTypeName: StockMarket, Assembly-CSharp
+        m_MethodName: toggleStockMarketUI
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
