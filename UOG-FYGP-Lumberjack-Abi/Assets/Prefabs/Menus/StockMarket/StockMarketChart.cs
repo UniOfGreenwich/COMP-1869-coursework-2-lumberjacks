@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -41,7 +41,7 @@ public class StockMarketChart : MonoBehaviour
             height = SimulatedRealWorldDataSet.tradeData[startTime+i, 1] - SimulatedRealWorldDataSet.tradeData[startTime+i, 0];
             position = SimulatedRealWorldDataSet.tradeData[startTime+i, 0] + height/2;
             candleSticks[i].rectTransform.sizeDelta = new Vector2(25, Mathf.Abs(height));
-            candleSticks[i].rectTransform.anchoredPosition = new Vector2(i * 25 - 600, position-positionOffset);
+            candleSticks[i].rectTransform.anchoredPosition = new Vector2(i * 30 - 500, position-positionOffset);
             
             //red or green candlestick based on increase or decrease in value
             if (height>0)
