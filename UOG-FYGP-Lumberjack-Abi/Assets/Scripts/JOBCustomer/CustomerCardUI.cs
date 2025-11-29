@@ -1,42 +1,116 @@
+using System.Text;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
 public class CustomerCardUI : MonoBehaviour
 {
-    public Image portraitImage;
-    public TextMeshProUGUI nameText;
-    public TextMeshProUGUI jobText;
+    public GameObject rootPanel;
+    public TextMeshProUGUI customerNameText;
+    public TextMeshProUGUI itemsText;
+    public TextMeshProUGUI timeText;
     public TextMeshProUGUI rewardText;
+    public TextMeshProUGUI noteText;
     public Button acceptButton;
+    public Button declineButton;
+    public Button closeButton;
 
+    JobManager jobManager;
     JobOrder job;
-    JobManager manager;
 
-    public void Bind(JobOrder jobOrder, JobManager owner, Sprite portrait)
+    void Awake()
     {
-        job = jobOrder;
-        manager = owner;
+        if (!rootPanel) rootPanel = gameObject;
+        rootPanel.SetActive(false);
+    }
 
-        if (portraitImage) portraitImage.sprite = portrait;
-        if (nameText) nameText.text = GetDisplayName(job.customer);
-        if (jobText)
+    public void Show(JobManager manager, JobOrder order, CustomerFBX sourceAvatar)
+    {
+        jobManager = manager;
+        job = order;
+
+        if (jobManager == null || job == null)
         {
-            jobText.text = BuildJobSummary(job);
+            Hide();
+            return;
         }
-        if (rewardText && manager != null)
+
+        if (!rootPanel) rootPanel = gameObject;
+        rootPanel.SetActive(true);
+
+        if (customerNameText)
         {
-            int gold = manager.EstimateGold(job);
-            rewardText.text = gold.ToString() + " gold";
+            customerNameText.text = GetCustomerName(job.customer);
         }
+
+        if (itemsText)
+        {
+            itemsText.text = BuildItemsText(job);
+        }
+
+        if (timeText)
+        {
+            int seconds = Mathf.CeilToInt(job.deadlineSeconds);
+            int m = seconds / 60;
+            int s = seconds % 60;
+            timeText.text = "Time limit: " + m.ToString("00") + ":" + s.ToString("00");
+        }
+
+        if (rewardText && jobManager != null)
+        {
+            int gold = jobManager.EstimateGold(job);
+            rewardText.text = "Estimated pay: " + gold.ToString() + " gold";
+        }
+
+        if (noteText)
+        {
+            noteText.text = BuildCustomerNote(job.customer);
+        }
+
         if (acceptButton)
         {
             acceptButton.onClick.RemoveAllListeners();
             acceptButton.onClick.AddListener(OnAcceptClicked);
         }
+
+        if (declineButton)
+        {
+            declineButton.onClick.RemoveAllListeners();
+            declineButton.onClick.AddListener(OnDeclineClicked);
+        }
+
+        if (closeButton)
+        {
+            closeButton.onClick.RemoveAllListeners();
+            closeButton.onClick.AddListener(Hide);
+        }
     }
 
-    string GetDisplayName(CustomerKind kind)
+    public void Hide()
+    {
+        if (!rootPanel) rootPanel = gameObject;
+        rootPanel.SetActive(false);
+    }
+
+    void OnAcceptClicked()
+    {
+        if (jobManager != null && job != null)
+        {
+            jobManager.AcceptJob(job);
+        }
+        Hide();
+    }
+
+    void OnDeclineClicked()
+    {
+        if (jobManager != null && job != null)
+        {
+            jobManager.DeclineJob(job);
+        }
+        Hide();
+    }
+
+    string GetCustomerName(CustomerKind kind)
     {
         switch (kind)
         {
@@ -48,50 +122,44 @@ public class CustomerCardUI : MonoBehaviour
         }
     }
 
-    string BuildJobSummary(JobOrder order)
+    string BuildItemsText(JobOrder order)
     {
-        if (order == null || order.lines == null || order.lines.Count == 0)
+        if (order.lines == null || order.lines.Count == 0)
         {
             return "No items";
         }
 
-        if (order.lines.Count == 1)
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < order.lines.Count; i++)
         {
-            var line = order.lines[0];
+            var line = order.lines[i];
+            if (line == null) continue;
+
             string name = line.product ? line.product.displayName : "Item";
-            return name + " x" + line.quantity.ToString();
+            sb.Append(name);
+            sb.Append(" x");
+            sb.Append(line.quantity);
+            sb.AppendLine();
         }
 
-        if (order.lines.Count == 2)
-        {
-            var l0 = order.lines[0];
-            var l1 = order.lines[1];
-
-            string n0 = l0.product ? l0.product.displayName : "Item";
-            string n1 = l1.product ? l1.product.displayName : "Item";
-
-            return n0 + " x" + l0.quantity.ToString() +
-                   " + " +
-                   n1 + " x" + l1.quantity.ToString();
-        }
-
-        var first = order.lines[0];
-        var second = order.lines[1];
-
-        string fn = first.product ? first.product.displayName : "Item";
-        string sn = second.product ? second.product.displayName : "Item";
-
-        int more = order.lines.Count - 2;
-
-        return fn + " x" + first.quantity.ToString() +
-               " + " +
-               sn + " x" + second.quantity.ToString() +
-               " +" + more.ToString() + " more";
+        return sb.ToString();
     }
 
-    void OnAcceptClicked()
+    string BuildCustomerNote(CustomerKind kind)
     {
-        if (manager == null || job == null) return;
-        manager.AcceptJob(job);
+        switch (kind)
+        {
+            case CustomerKind.Charlie:
+                return "Short deadlines, higher pay.";
+            case CustomerKind.Gabby:
+                return "Wants perfect quality.";
+            case CustomerKind.Sponge:
+                return "Small, simple orders.";
+            case CustomerKind.Brandon:
+                return "Large combo orders.";
+            default:
+                return "";
+        }
     }
 }

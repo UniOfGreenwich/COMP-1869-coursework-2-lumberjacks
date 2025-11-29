@@ -25,6 +25,7 @@ public class JobOrder
     public CustomerKind customer;
     public List<JobLine> lines = new List<JobLine>();
     public float deadlineSeconds;
+    public int slotIndex = -1;
     [NonSerialized] public float acceptedAt;
     public bool isAccepted;
     public bool isCompleted;
@@ -112,8 +113,10 @@ public class JobManager : MonoBehaviour
     public int baseXpPerJob = 50;
 
     [Header("UI Hooks")]
-    public CustomerSpawnUI customerUI;
     public JobBoardUI jobBoardUI;
+
+    [Header("World Customers")]
+    public CustomerSpawner worldSpawner;
 
     readonly List<JobOrder> availableJobs = new List<JobOrder>();
     readonly List<JobOrder> activeJobs = new List<JobOrder>();
@@ -124,12 +127,13 @@ public class JobManager : MonoBehaviour
     void Start()
     {
         GenerateInitialJobs();
-        RefreshAllUI();
+        NotifyChanged();
     }
 
     void Update()
     {
         bool changed = false;
+
         for (int i = 0; i < activeJobs.Count; i++)
         {
             var job = activeJobs[i];
@@ -138,6 +142,7 @@ public class JobManager : MonoBehaviour
                 if (job.RemainingSeconds <= 0f)
                 {
                     job.isFailed = true;
+                    HandleJobResolved(job, false);
                     changed = true;
                 }
             }
@@ -152,10 +157,11 @@ public class JobManager : MonoBehaviour
     void GenerateInitialJobs()
     {
         availableJobs.Clear();
-        for (int i = 0; i < customerSlots; i++)
+        for (int slot = 0; slot < customerSlots; slot++)
         {
             var kind = GetRandomCustomerKind();
             var job = CreateJob(kind);
+            job.slotIndex = slot;
             availableJobs.Add(job);
         }
     }
@@ -307,14 +313,34 @@ public class JobManager : MonoBehaviour
         availableJobs.Remove(job);
         activeJobs.Add(job);
 
-        while (availableJobs.Count < customerSlots)
+        NotifyChanged();
+    }
+
+    public void DeclineJob(JobOrder job)
+    {
+        if (job == null) return;
+        if (!AvailableJobsContains(job)) return;
+
+        int slot = job.slotIndex;
+
+        RemoveFromAvailable(job);
+
+        if (slot >= 0)
         {
-            var kind = GetRandomCustomerKind();
-            var newJob = CreateJob(kind);
-            availableJobs.Add(newJob);
+            SpawnNewJobForSlot(slot);
         }
 
-        RefreshAllUI();
+        NotifyChanged();
+    }
+
+    bool AvailableJobsContains(JobOrder job)
+    {
+        return availableJobs.Contains(job);
+    }
+
+    void RemoveFromAvailable(JobOrder job)
+    {
+        availableJobs.Remove(job);
     }
 
     public void ReportProductBuilt(ItemSO product, bool misfit)
@@ -404,6 +430,8 @@ public class JobManager : MonoBehaviour
         job.goldReward = Mathf.RoundToInt(pay);
         job.xpReward = Mathf.RoundToInt(xp);
 
+        HandleJobResolved(job, true);
+
         Debug.Log("Job " + job.id +
                   " done. Customer=" + job.customer +
                   " Pay=" + job.goldReward +
@@ -411,9 +439,33 @@ public class JobManager : MonoBehaviour
                   " Stars=" + job.StarValue);
     }
 
-    void RefreshAllUI()
+    void HandleJobResolved(JobOrder job, bool succeeded)
     {
-        if (customerUI) customerUI.Refresh();
-        if (jobBoardUI && jobBoardUI.gameObject.activeSelf) jobBoardUI.Refresh();
+        if (job.slotIndex >= 0)
+        {
+            SpawnNewJobForSlot(job.slotIndex);
+        }
+        NotifyChanged();
+    }
+
+    void SpawnNewJobForSlot(int slotIndex)
+    {
+        CustomerKind kind = GetRandomCustomerKind();
+        var newJob = CreateJob(kind);
+        newJob.slotIndex = slotIndex;
+        availableJobs.Add(newJob);
+    }
+
+    void NotifyChanged()
+    {
+        if (worldSpawner)
+        {
+            worldSpawner.SyncCustomers(availableJobs);
+        }
+
+        if (jobBoardUI && jobBoardUI.gameObject.activeSelf)
+        {
+            jobBoardUI.Refresh();
+        }
     }
 }
