@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Item_Wood
   m_EditorClassIdentifier: 
   id: wood
-  displayName: WoodPlank
+  displayName: Logs
   icon: {fileID: -942766337, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
   category: 0
   maxStack: 20

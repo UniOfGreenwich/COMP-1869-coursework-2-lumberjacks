@@ -29,6 +29,7 @@ public class Shop : MonoBehaviour
         if(machineLevel < 1)
         {
             PlaceMachine();
+
         }
         else
         {
