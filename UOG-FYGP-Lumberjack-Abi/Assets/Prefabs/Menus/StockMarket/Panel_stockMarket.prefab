@@ -908,7 +908,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   candleSticks: []
   timePeriod: 12
-  positionOffset: 215
+  tradeWindow: {fileID: 490275372040208256}
 --- !u!114 &8022943897607441104
 MonoBehaviour:
   m_ObjectHideFlags: 0
