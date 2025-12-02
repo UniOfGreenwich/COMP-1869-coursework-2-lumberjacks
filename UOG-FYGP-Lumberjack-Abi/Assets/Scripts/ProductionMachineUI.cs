@@ -156,6 +156,12 @@ public class ProductionMachineUI : MonoBehaviour
             var slot = slots[i];
             if (slot != null && slot.slotId == slotId) return slot;
         }
+
+
+
+
+
+
         return null;
     }
 
