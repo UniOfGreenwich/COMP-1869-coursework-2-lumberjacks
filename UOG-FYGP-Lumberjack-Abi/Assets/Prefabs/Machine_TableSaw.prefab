@@ -299,7 +299,7 @@ MonoBehaviour:
   inputEffectPrefab: {fileID: 919132149155446097, guid: d5cbccd86bf8afc469d433dd010029f7, type: 3}
   outputEffectPrefab: {fileID: 919132149155446097, guid: 5cc09c377d20eef478cee5be9e26ea69, type: 3}
   effectLifetime: 1.5
-  dropZoneWorldSize: 1
+  dropZoneWorldSize: 3
   showDropZone: 1
   promptPanel: {fileID: 0}
   promptTitle: {fileID: 0}
