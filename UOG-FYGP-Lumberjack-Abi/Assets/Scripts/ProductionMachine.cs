@@ -20,6 +20,10 @@ public class ProductionMachine : MonoBehaviour
     [Header("Timing")]
     [Min(0.1f)] public float secondsPerProduct = 4f;
 
+    [Header("Rules")]
+    [Tooltip("If errors for one assemble are >= this, UI will scrap the pieces.")]
+    [Min(0)] public int misfitScrapThreshold = 3;     // Change to 4 if you want more forgiveness.
+
     [Header("Blimp")]
     public bool enableBlimp = true;
     public float blimpHeight = 1.6f;
@@ -45,9 +49,16 @@ public class ProductionMachine : MonoBehaviour
     public string storageAnchorName = "StorageAnchor";
     public float uiProbeInterval = 0.5f;
 
+    [Header("World Output")]
+    [Tooltip("If true and the finished ItemSO has a worldPrefab, spawn it at the output point.")]
+    public bool spawnWorldOutputPrefab = true;
+    [Tooltip("Seconds before spawned world prefabs are destroyed. Use 0 to keep them.")]
+    public float worldPrefabLifetime = 2.5f;
+
     StorageManager storage;
     Placeble placeble;
     Camera mainCam;
+    JobManager jobManager;
 
     ProductionBlimp blimp;
     Transform blimpRoot;
@@ -59,6 +70,7 @@ public class ProductionMachine : MonoBehaviour
     int pendingCount;
     bool busy;
     ItemSO currentOutput;
+    bool currentHasMisfits;
     float nextProbeTime;
 
     void Awake()
@@ -66,6 +78,7 @@ public class ProductionMachine : MonoBehaviour
         storage = FindFirstObjectByType<StorageManager>();
         placeble = GetComponent<Placeble>();
         mainCam = Camera.main;
+        jobManager = FindFirstObjectByType<JobManager>();
 
         if (flyCurve == null || flyCurve.length == 0)
             flyCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
@@ -107,45 +120,77 @@ public class ProductionMachine : MonoBehaviour
 
         ui.gameObject.SetActive(true);
         ui.Init(this, recipes);
+        PlayerController.IsInputLocked = true;
     }
 
+    // Called by UI when player presses Assemble and passes validation.
     public void OnAssemble(ProductionRecipeSO recipe, int errors)
     {
         if (recipe == null) return;
-        if (busy) return;
+        if (busy)
+        {
+            Debug.Log("[ProductionMachine] Ignored assemble, machine busy.");
+            return;
+        }
 
         currentOutput = recipe.finishedProduct;
-        if (!currentOutput) return;
+        if (!currentOutput)
+        {
+            Debug.LogWarning("[ProductionMachine] No finishedProduct on recipe " + recipe.displayName);
+            return;
+        }
 
-        StartCoroutine(ProcessOneProduct(secondsPerProduct, errors));
+        currentHasMisfits = errors > 0;
+
+        Debug.Log("[ProductionMachine] Starting assemble for " + currentOutput.displayName + " errors=" + errors);
+
+        StartCoroutine(ProcessOneProduct(secondsPerProduct));
     }
 
-    IEnumerator ProcessOneProduct(float seconds, int errors)
+    IEnumerator ProcessOneProduct(float seconds)
     {
         busy = true;
         SetTimer(true);
 
         if (inputEffectPrefab && inputPoint)
         {
-            GameObject fx = Instantiate(inputEffectPrefab, inputPoint.position, Quaternion.identity);
-            if (effectLifetime > 0f) Destroy(fx, effectLifetime);
+            GameObject fxIn = Instantiate(inputEffectPrefab, inputPoint.position, Quaternion.identity);
+            if (effectLifetime > 0f) Destroy(fxIn, effectLifetime);
         }
 
         yield return new WaitForSeconds(seconds);
 
-        if (outputEffectPrefab && outputPoint)
+        if (outputPoint)
         {
-            GameObject fxOut = Instantiate(outputEffectPrefab, outputPoint.position, Quaternion.identity);
-            if (effectLifetime > 0f) Destroy(fxOut, effectLifetime);
+            if (outputEffectPrefab)
+            {
+                GameObject fxOut = Instantiate(outputEffectPrefab, outputPoint.position, Quaternion.identity);
+                if (effectLifetime > 0f) Destroy(fxOut, effectLifetime);
+            }
+
+            // Spawn actual world prefab for the finished product, if set.
+            if (spawnWorldOutputPrefab && currentOutput != null && currentOutput.worldPrefab != null)
+            {
+                GameObject world = Instantiate(currentOutput.worldPrefab, outputPoint.position, outputPoint.rotation);
+                if (worldPrefabLifetime > 0f)
+                    Destroy(world, worldPrefabLifetime);
+            }
         }
 
         pendingCount += 1;
         UpdateBlimpUI();
 
-        Debug.Log("[ProductionMachine] Built " + currentOutput.displayName + " misfits " + errors);
+        // Report to JobManager so misfits affect XP and money. :contentReference[oaicite:2]{index=2}
+        if (jobManager != null && currentOutput != null)
+        {
+            jobManager.ReportProductBuilt(currentOutput, currentHasMisfits);
+        }
+
+        Debug.Log("[ProductionMachine] Built " + currentOutput.displayName + " misfitFlag=" + currentHasMisfits);
 
         SetTimer(false);
         busy = false;
+        currentHasMisfits = false;
     }
 
     void UpdateBlimpUI()
@@ -467,4 +512,3 @@ public class ProductionMachine : MonoBehaviour
             t.rotation = Quaternion.LookRotation(dir);
     }
 }
-

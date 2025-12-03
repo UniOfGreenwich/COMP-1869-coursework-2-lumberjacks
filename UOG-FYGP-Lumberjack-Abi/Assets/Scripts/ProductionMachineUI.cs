@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -20,19 +21,29 @@ public class ProductionMachineUI : MonoBehaviour
     public Button assembleButton;
     public Button closeButton;
 
+    [Header("Auto Close")]
+    public bool autoCloseOnSuccess = true;
+    [Min(0.1f)] public float autoCloseDelaySeconds = 1.5f;
+
     ProductionMachine owner;
     readonly List<ProductionRecipeSO> recipes = new List<ProductionRecipeSO>();
     ProductionRecipeSO currentRecipe;
+
+    Coroutine autoCloseRoutine;
 
     public void Init(ProductionMachine machine, IList<ProductionRecipeSO> recipeList)
     {
         owner = machine;
         recipes.Clear();
+
         if (recipeList != null)
         {
             for (int i = 0; i < recipeList.Count; i++)
             {
-                if (recipeList[i] != null) recipes.Add(recipeList[i]);
+                if (recipeList[i] != null)
+                {
+                    recipes.Add(recipeList[i]);
+                }
             }
         }
 
@@ -46,7 +57,7 @@ public class ProductionMachineUI : MonoBehaviour
         else
         {
             ConfigureSlots(null);
-            UpdateErrorLabel(0);
+            ShowNeedPiecesMessage();
         }
     }
 
@@ -89,10 +100,12 @@ public class ProductionMachineUI : MonoBehaviour
         currentRecipe = recipe;
 
         if (titleText != null)
+        {
             titleText.text = recipe != null ? recipe.displayName : string.Empty;
+        }
 
         ConfigureSlots(recipe);
-        UpdateErrorLabel(0);
+        ShowNeedPiecesMessage();
     }
 
     void ConfigureSlots(ProductionRecipeSO recipe)
@@ -113,6 +126,7 @@ public class ProductionMachineUI : MonoBehaviour
             else
             {
                 slot.gameObject.SetActive(false);
+                slot.ClearPiece();
             }
         }
     }
@@ -121,14 +135,90 @@ public class ProductionMachineUI : MonoBehaviour
     {
         if (owner == null || currentRecipe == null) return;
 
+        if (AnyRequiredSlotEmpty())
+        {
+            ShowNeedPiecesMessage();
+            Debug.Log("[ProductionMachineUI] Assemble blocked, some slots are empty.");
+            return;
+        }
+
         int errors = CalculateErrors();
+
+        int scrapThreshold = owner != null ? Mathf.Max(0, owner.misfitScrapThreshold) : 0;
+        if (scrapThreshold > 0 && errors >= scrapThreshold)
+        {
+            ScrapAllSlotsWithMessage(errors);
+            Debug.Log("[ProductionMachineUI] Scrap triggered, errors=" + errors);
+            return;
+        }
+
         UpdateErrorLabel(errors);
         owner.OnAssemble(currentRecipe, errors);
+
+        Debug.Log("[ProductionMachineUI] Assemble accepted, errors=" + errors);
+
+        if (autoCloseOnSuccess)
+        {
+            BeginAutoClose();
+        }
     }
 
     void OnCloseClicked()
     {
+        if (autoCloseRoutine != null)
+        {
+            StopCoroutine(autoCloseRoutine);
+            autoCloseRoutine = null;
+        }
+
         gameObject.SetActive(false);
+        PlayerController.IsInputLocked = false;
+    }
+
+    void BeginAutoClose()
+    {
+        if (autoCloseRoutine != null)
+        {
+            StopCoroutine(autoCloseRoutine);
+        }
+
+        autoCloseRoutine = StartCoroutine(AutoCloseRoutine());
+    }
+
+    IEnumerator AutoCloseRoutine()
+    {
+        yield return new WaitForSeconds(autoCloseDelaySeconds);
+
+        if (gameObject.activeInHierarchy)
+        {
+            Debug.Log("[ProductionMachineUI] Auto closing panel after assemble.");
+            OnCloseClicked();
+        }
+
+        autoCloseRoutine = null;
+    }
+
+    bool AnyRequiredSlotEmpty()
+    {
+        if (currentRecipe == null) return false;
+
+        bool anyEmpty = false;
+
+        for (int i = 0; i < currentRecipe.slots.Count; i++)
+        {
+            var req = currentRecipe.slots[i];
+            ProductioSlotUI slot = GetSlotById(req.slotId);
+            if (slot == null || slot.CurrentItem == null)
+            {
+                anyEmpty = true;
+                if (slot != null)
+                {
+                    slot.ShowResult(false);
+                }
+            }
+        }
+
+        return anyEmpty;
     }
 
     int CalculateErrors()
@@ -157,18 +247,15 @@ public class ProductionMachineUI : MonoBehaviour
             if (slot != null && slot.slotId == slotId) return slot;
         }
 
-
-
-
-
-
         return null;
     }
 
     int SlotError(ProductioSlotUI slot, int reqW, int reqH)
     {
         if (slot == null)
+        {
             return 1;
+        }
 
         ItemSO item = slot.CurrentItem;
         if (item == null)
@@ -200,6 +287,30 @@ public class ProductionMachineUI : MonoBehaviour
         else
         {
             errorText.text = errors + " wrong fits.";
+        }
+    }
+
+    void ShowNeedPiecesMessage()
+    {
+        if (errorText == null) return;
+        errorText.text = "Add your square pieces into every slot.";
+    }
+
+    void ScrapAllSlotsWithMessage(int errors)
+    {
+        if (slots != null)
+        {
+            for (int i = 0; i < slots.Length; i++)
+            {
+                if (slots[i] == null) continue;
+                slots[i].ClearPiece();
+                slots[i].ResetVisual();
+            }
+        }
+
+        if (errorText != null)
+        {
+            errorText.text = "Too many misfits (" + errors + "). Pieces scrapped. Try again.";
         }
     }
 }
