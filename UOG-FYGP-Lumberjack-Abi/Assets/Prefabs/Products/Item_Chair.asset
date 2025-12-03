@@ -14,6 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: Chair
   displayName: Wooden Chair
-  icon: {fileID: -1033900102, guid: af2a582422717d84b90e41e6f90b55d8, type: 3}
+  icon: {fileID: -1323787500, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
   category: 1
   maxStack: 20
+  gridWidth: 1
+  gridHeight: 1
+  isProductionSquarePiece: 0
+  worldPrefab: {fileID: 919132149155446097, guid: 7f72175e15c54054b865ffa839b985d0, type: 3}
