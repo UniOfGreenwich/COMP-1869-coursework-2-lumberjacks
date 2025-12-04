@@ -8,6 +8,8 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
 {
     public TextMeshProUGUI labelText;
     public Image outlineImage;
+    public Transform itemIconRoot;
+    public Image itemIconPrefab;
 
     public ItemSO TargetItem { get; private set; }
     public int RequiredQuantity { get; private set; }
@@ -15,6 +17,7 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
 
     Color baseOutlineColor;
     Coroutine flashRoutine;
+    Image currentIcon;
 
     void Awake()
     {
@@ -22,6 +25,7 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
             baseOutlineColor = outlineImage.color;
 
         RefreshLabel();
+        UpdateVisualIcon();
     }
 
     public void Configure(ItemSO item, int quantity)
@@ -31,6 +35,7 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
         DeliveredCount = 0;
         RefreshLabel();
         ResetVisual();
+        UpdateVisualIcon();
     }
 
     public void RefreshLabel()
@@ -57,11 +62,6 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
 
         if (item != TargetItem)
         {
-            Debug.Log("[DeliverySlotUI] Rejected item " +
-                      (item ? item.displayName : "null") +
-                      " expected " +
-                      (TargetItem ? TargetItem.displayName : "none"));
-
             drag.ReturnRemainder(payload);
             Flash(false);
             return;
@@ -70,7 +70,6 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
         int remaining = Mathf.Max(0, RequiredQuantity - DeliveredCount);
         if (remaining <= 0)
         {
-            Debug.Log("[DeliverySlotUI] Slot already full for " + TargetItem.displayName);
             drag.ReturnRemainder(payload);
             Flash(true);
             return;
@@ -80,11 +79,8 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
         DeliveredCount += taken;
         payload.count -= taken;
 
-        Debug.Log("[DeliverySlotUI] Loaded " + taken + " x " +
-                  TargetItem.displayName + " now " +
-                  DeliveredCount + "/" + RequiredQuantity);
-
         RefreshLabel();
+        UpdateVisualIcon();
         drag.ReturnRemainder(payload);
         Flash(true);
     }
@@ -99,6 +95,7 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
         DeliveredCount = 0;
         RefreshLabel();
         ResetVisual();
+        UpdateVisualIcon();
     }
 
     public void ResetVisual()
@@ -111,6 +108,37 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
 
         if (outlineImage != null)
             outlineImage.color = baseOutlineColor;
+    }
+
+    void ClearIcon()
+    {
+        if (currentIcon != null)
+        {
+            Destroy(currentIcon.gameObject);
+            currentIcon = null;
+        }
+    }
+
+    void UpdateVisualIcon()
+    {
+        if (!itemIconRoot || !itemIconPrefab || TargetItem == null || DeliveredCount <= 0)
+        {
+            ClearIcon();
+            return;
+        }
+
+        if (currentIcon == null)
+        {
+            currentIcon = Instantiate(itemIconPrefab, itemIconRoot);
+            currentIcon.preserveAspect = true;
+        }
+
+        currentIcon.sprite = TargetItem.icon;
+
+        float t = Mathf.Clamp01(DeliveredCount / (float)RequiredQuantity);
+        Color c = currentIcon.color;
+        c.a = Mathf.Lerp(0.3f, 1f, t);
+        currentIcon.color = c;
     }
 
     void Flash(bool ok)
