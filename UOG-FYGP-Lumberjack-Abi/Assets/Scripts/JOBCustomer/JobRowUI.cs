@@ -89,8 +89,20 @@ public class JobRowUI : MonoBehaviour
         if (statusText)
         {
             string status = "Active";
-            if (job.isCompleted) status = "Completed";
-            else if (job.isFailed) status = "Failed";
+
+            if (job.isFailed)
+            {
+                status = "Failed";
+            }
+            else if (job.isCompleted)
+            {
+                status = "Delivered";
+            }
+            else if (job.TotalQuantity > 0 && job.TotalProduced >= job.TotalQuantity)
+            {
+                status = "Ready";
+            }
+
             statusText.text = status;
         }
     }

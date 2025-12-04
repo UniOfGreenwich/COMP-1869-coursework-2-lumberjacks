@@ -118,6 +118,9 @@ public class JobManager : MonoBehaviour
     [Header("World Customers")]
     public CustomerSpawner worldSpawner;
 
+    [Header("Rewards Target")]
+    public Inventory inventory;
+
     readonly List<JobOrder> availableJobs = new List<JobOrder>();
     readonly List<JobOrder> activeJobs = new List<JobOrder>();
 
@@ -128,6 +131,9 @@ public class JobManager : MonoBehaviour
     {
         GenerateInitialJobs();
         NotifyChanged();
+
+        if (inventory == null)
+            inventory = FindFirstObjectByType<Inventory>();
     }
 
     void Update()
@@ -144,6 +150,7 @@ public class JobManager : MonoBehaviour
                     job.isFailed = true;
                     HandleJobResolved(job, false);
                     changed = true;
+                    Debug.Log("[JobManager] Job " + job.id + " failed by timeout.");
                 }
             }
         }
@@ -313,34 +320,28 @@ public class JobManager : MonoBehaviour
         availableJobs.Remove(job);
         activeJobs.Add(job);
 
+        Debug.Log("[JobManager] Job accepted " + job.id);
+
         NotifyChanged();
     }
 
     public void DeclineJob(JobOrder job)
     {
         if (job == null) return;
-        if (!AvailableJobsContains(job)) return;
+        if (!availableJobs.Contains(job)) return;
 
         int slot = job.slotIndex;
 
-        RemoveFromAvailable(job);
+        availableJobs.Remove(job);
 
         if (slot >= 0)
         {
             SpawnNewJobForSlot(slot);
         }
 
+        Debug.Log("[JobManager] Job declined " + job.id);
+
         NotifyChanged();
-    }
-
-    bool AvailableJobsContains(JobOrder job)
-    {
-        return availableJobs.Contains(job);
-    }
-
-    void RemoveFromAvailable(JobOrder job)
-    {
-        availableJobs.Remove(job);
     }
 
     public void ReportProductBuilt(ItemSO product, bool misfit)
@@ -366,15 +367,16 @@ public class JobManager : MonoBehaviour
                 line.producedCount++;
                 if (misfit) job.misfitCount++;
                 matched = true;
+
+                Debug.Log("[JobManager] Progress for job " + job.id +
+                          " " + product.displayName +
+                          " " + job.TotalProduced + "/" + job.TotalQuantity +
+                          " misfits=" + job.misfitCount);
                 break;
             }
 
             if (matched)
             {
-                if (job.TotalProduced >= job.TotalQuantity)
-                {
-                    CompleteJob(job);
-                }
                 changed = true;
                 break;
             }
@@ -384,6 +386,21 @@ public class JobManager : MonoBehaviour
         {
             jobBoardUI.Refresh();
         }
+    }
+
+    public bool TryClaimRewards(JobOrder job)
+    {
+        if (job == null) return false;
+        if (!job.isAccepted || job.isFailed || job.isCompleted) return false;
+
+        if (job.TotalQuantity <= 0 || job.TotalProduced < job.TotalQuantity)
+        {
+            Debug.Log("[JobManager] TryClaimRewards blocked, job " + job.id + " not fully produced.");
+            return false;
+        }
+
+        CompleteJob(job);
+        return true;
     }
 
     void CompleteJob(JobOrder job)
@@ -430,13 +447,29 @@ public class JobManager : MonoBehaviour
         job.goldReward = Mathf.RoundToInt(pay);
         job.xpReward = Mathf.RoundToInt(xp);
 
-        HandleJobResolved(job, true);
+        if (inventory == null)
+        {
+            inventory = FindFirstObjectByType<Inventory>();
+        }
 
-        Debug.Log("Job " + job.id +
-                  " done. Customer=" + job.customer +
-                  " Pay=" + job.goldReward +
-                  " XP=" + job.xpReward +
-                  " Stars=" + job.StarValue);
+        if (inventory != null)
+        {
+            if (job.goldReward > 0)
+                inventory.AddMoney(job.goldReward);
+            if (job.xpReward > 0)
+                inventory.AddXp(job.xpReward);
+
+            Debug.Log("[JobManager] Rewards paid for job " + job.id +
+                      " money=" + job.goldReward +
+                      " xp=" + job.xpReward +
+                      " stars=" + job.StarValue);
+        }
+        else
+        {
+            Debug.LogWarning("[JobManager] No Inventory found, rewards not added to player.");
+        }
+
+        HandleJobResolved(job, true);
     }
 
     void HandleJobResolved(JobOrder job, bool succeeded)
