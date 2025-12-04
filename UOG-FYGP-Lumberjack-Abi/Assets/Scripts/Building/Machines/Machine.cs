@@ -580,38 +580,3 @@ public class Machine : MonoBehaviour, IDropHandler
     }
 }
 
-public class MachineDropForwarder : MonoBehaviour, IDropHandler
-{
-    public Machine target;
-    public void OnDrop(PointerEventData e) { if (target) target.OnDrop(e); }
-}
-
-public class MachineBlimp : MonoBehaviour, IPointerClickHandler
-{
-    private Machine machine;
-    private TextMeshProUGUI countText;
-    private Button backgroundButton;
-
-    public void Init(Machine m, TextMeshProUGUI text, Button button)
-    {
-        machine = m; countText = text; backgroundButton = button;
-        if (backgroundButton) backgroundButton.onClick.AddListener(Collect);
-    }
-
-    public void SetCount(int n)
-    {
-        if (countText) countText.text = "x" + n;
-    }
-
-    public void FaceCamera(Camera cam)
-    {
-        if (!cam) return;
-        var t = transform;
-        var dir = (t.position - cam.transform.position); dir.y = 0f;
-        if (dir.sqrMagnitude > 0.0001f) t.rotation = Quaternion.LookRotation(dir);
-    }
-
-    public void OnPointerClick(PointerEventData e) { Collect(); }
-
-    private void Collect() { if (machine) machine.CollectBlimp(); }
-}
