@@ -92,8 +92,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   labelText: {fileID: 7108955986496813346}
   outlineImage: {fileID: 7937518203873800558}
-  itemIconRoot: {fileID: 0}
-  itemIconPrefab: {fileID: 0}
+  itemIcon: {fileID: 1650826062808883722}
 --- !u!1 &2818205365699953253
 GameObject:
   m_ObjectHideFlags: 0

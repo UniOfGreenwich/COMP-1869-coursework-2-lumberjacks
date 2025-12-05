@@ -6,9 +6,13 @@ using UnityEngine.UI;
 
 public class DeliverySlotUI : MonoBehaviour, IDropHandler
 {
+    [Header("UI")]
     public TextMeshProUGUI labelText;
     public Image outlineImage;
     public Image itemIcon;
+
+    [Header("Debug")]
+    public bool debugLog = true;
 
     public ItemSO TargetItem { get; private set; }
     public int RequiredQuantity { get; private set; }
@@ -22,15 +26,30 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
         if (outlineImage != null)
             baseOutlineColor = outlineImage.color;
 
+        if (debugLog)
+        {
+            Debug.Log("[DeliverySlotUI] Awake on " + GetPath(this.transform) +
+                      " TargetItem=" + (TargetItem ? TargetItem.displayName : "null"));
+        }
+
         RefreshLabel();
         UpdateIcon();
     }
 
+    // Called when we build the row for a job line
     public void Configure(ItemSO item, int quantity)
     {
         TargetItem = item;
         RequiredQuantity = Mathf.Max(1, quantity);
         DeliveredCount = 0;
+
+        if (debugLog)
+        {
+            Debug.Log("[DeliverySlotUI] Configure on " + GetPath(this.transform) +
+                      " target=" + (TargetItem ? TargetItem.displayName : "null") +
+                      " qty=" + RequiredQuantity);
+        }
+
         RefreshLabel();
         ResetVisual();
         UpdateIcon();
@@ -40,8 +59,8 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
     {
         if (!labelText) return;
 
-        string name = TargetItem ? TargetItem.displayName : "Item";
-        labelText.text = name + " " + DeliveredCount + "/" + RequiredQuantity;
+        string nameText = TargetItem ? TargetItem.displayName : "Item";
+        labelText.text = nameText + " " + DeliveredCount + "/" + RequiredQuantity;
     }
 
     public void OnDrop(PointerEventData eventData)
@@ -52,34 +71,91 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
         NoOfItems payload = drag.TakePayload();
         if (payload.IsEmpty)
         {
+            if (debugLog)
+            {
+                Debug.Log("[DeliverySlotUI] OnDrop empty payload from " + drag.name +
+                          " on slot " + GetPath(this.transform));
+            }
             drag.ReturnRemainder(payload);
             return;
         }
 
-        ItemSO item = payload.item;
+        ItemSO droppedItem = payload.item;
 
-        if (item != TargetItem)
+        if (debugLog)
         {
+            Debug.Log("[DeliverySlotUI] OnDrop slot='" + GetPath(this.transform) +
+                      "' expected=" + (TargetItem ? TargetItem.displayName : "null") +
+                      " dropped=" + (droppedItem ? droppedItem.displayName : "null") +
+                      " count=" + payload.count);
+        }
+
+        // If this slot was never configured properly
+        if (TargetItem == null)
+        {
+            if (debugLog)
+            {
+                Debug.LogWarning("[DeliverySlotUI] TargetItem is null on slot " +
+                                 GetPath(this.transform) +
+                                 ". You are probably dropping onto a template slot.");
+            }
             drag.ReturnRemainder(payload);
             Flash(false);
             return;
         }
 
-        int remaining = Mathf.Max(0, RequiredQuantity - DeliveredCount);
-        if (remaining <= 0)
+        // Wrong item -> reject everything
+        if (droppedItem != TargetItem)
         {
+            if (debugLog)
+            {
+                Debug.Log("[DeliverySlotUI] Wrong item on slot " + GetPath(this.transform) +
+                          ". Expected=" + TargetItem.name +
+                          " got=" + (droppedItem ? droppedItem.name : "null"));
+            }
+
+            drag.ReturnRemainder(payload);
+            Flash(false);
+            return;
+        }
+
+        // Slot already full -> accept nothing, flash green
+        int remainingNeeded = Mathf.Max(0, RequiredQuantity - DeliveredCount);
+        if (remainingNeeded <= 0)
+        {
+            if (debugLog)
+            {
+                Debug.Log("[DeliverySlotUI] Slot " + GetPath(this.transform) +
+                          " already full. Returning all.");
+            }
+
             drag.ReturnRemainder(payload);
             Flash(true);
             return;
         }
 
-        int taken = Mathf.Min(remaining, payload.count);
+        // Take only what we need
+        int taken = Mathf.Min(remainingNeeded, payload.count);
         DeliveredCount += taken;
         payload.count -= taken;
 
+        if (debugLog)
+        {
+            Debug.Log("[DeliverySlotUI] Slot " + GetPath(this.transform) +
+                      " took=" + taken +
+                      " now=" + DeliveredCount + "/" + RequiredQuantity +
+                      " leftover=" + payload.count);
+        }
+
+        if (DeliveredCount > RequiredQuantity)
+            DeliveredCount = RequiredQuantity;
+
         RefreshLabel();
         UpdateIcon();
+
+        // Put leftover back to original source (HotBar / Storage)
         drag.ReturnRemainder(payload);
+
         Flash(true);
     }
 
@@ -88,6 +164,7 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
         return DeliveredCount >= RequiredQuantity;
     }
 
+    // Used if you want to reset only counts but keep same target item
     public void ClearCountsOnly()
     {
         DeliveredCount = 0;
@@ -120,7 +197,7 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
         else
         {
             itemIcon.sprite = TargetItem.icon;
-            itemIcon.enabled = true;
+            itemIcon.enabled = TargetItem.icon != null;
         }
     }
 
@@ -149,5 +226,17 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
 
         outlineImage.color = baseOutlineColor;
         flashRoutine = null;
+    }
+
+    // Helper to see exactly which object is being used
+    static string GetPath(Transform t)
+    {
+        string path = t.name;
+        while (t.parent != null)
+        {
+            t = t.parent;
+            path = t.name + "/" + path;
+        }
+        return path;
     }
 }
