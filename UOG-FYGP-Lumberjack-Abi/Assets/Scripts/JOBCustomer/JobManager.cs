@@ -26,10 +26,13 @@ public class JobOrder
     public List<JobLine> lines = new List<JobLine>();
     public float deadlineSeconds;
     public int slotIndex = -1;
+
     [NonSerialized] public float acceptedAt;
+
     public bool isAccepted;
     public bool isCompleted;
     public bool isFailed;
+    public bool isReadyForDelivery;
     public int misfitCount;
     public int xpReward;
     public int goldReward;
@@ -142,8 +145,8 @@ public class JobManager : MonoBehaviour
                 if (job.RemainingSeconds <= 0f)
                 {
                     job.isFailed = true;
-                    HandleJobResolved(job, false);
                     changed = true;
+                    HandleJobResolved(job, false);
                 }
             }
         }
@@ -192,9 +195,11 @@ public class JobManager : MonoBehaviour
             {
                 used.Add(line.product);
             }
+
             int qty = GetQuantityFor(kind);
             qty = Mathf.Clamp(qty, minQuantityPerLine, maxQuantityPerLine);
             line.quantity = Mathf.Max(1, qty);
+
             job.lines.Add(line);
         }
 
@@ -319,11 +324,11 @@ public class JobManager : MonoBehaviour
     public void DeclineJob(JobOrder job)
     {
         if (job == null) return;
-        if (!AvailableJobsContains(job)) return;
+        if (!availableJobs.Contains(job)) return;
 
         int slot = job.slotIndex;
 
-        RemoveFromAvailable(job);
+        availableJobs.Remove(job);
 
         if (slot >= 0)
         {
@@ -333,16 +338,7 @@ public class JobManager : MonoBehaviour
         NotifyChanged();
     }
 
-    bool AvailableJobsContains(JobOrder job)
-    {
-        return availableJobs.Contains(job);
-    }
-
-    void RemoveFromAvailable(JobOrder job)
-    {
-        availableJobs.Remove(job);
-    }
-
+    // called by the production machine when it finishes building one item
     public void ReportProductBuilt(ItemSO product, bool misfit)
     {
         if (product == null) return;
@@ -373,7 +369,7 @@ public class JobManager : MonoBehaviour
             {
                 if (job.TotalProduced >= job.TotalQuantity)
                 {
-                    CompleteJob(job);
+                    job.isReadyForDelivery = true;
                 }
                 changed = true;
                 break;
@@ -384,6 +380,21 @@ public class JobManager : MonoBehaviour
         {
             jobBoardUI.Refresh();
         }
+    }
+
+    // called by the truck UI when the player has dragged items and pressed Deliver
+    public void DeliverJob(JobOrder job)
+    {
+        if (job == null) return;
+        if (job.isCompleted || job.isFailed) return;
+
+        if (!job.isReadyForDelivery)
+        {
+            Debug.Log("Tried to deliver job that is not ready for delivery.");
+            return;
+        }
+
+        CompleteJob(job);
     }
 
     void CompleteJob(JobOrder job)
@@ -430,10 +441,17 @@ public class JobManager : MonoBehaviour
         job.goldReward = Mathf.RoundToInt(pay);
         job.xpReward = Mathf.RoundToInt(xp);
 
+        Inventory inv = FindFirstObjectByType<Inventory>();
+        if (inv != null)
+        {
+            if (job.goldReward > 0) inv.AddMoney(job.goldReward);
+            if (job.xpReward > 0) inv.AddXp(job.xpReward);
+        }
+
         HandleJobResolved(job, true);
 
         Debug.Log("Job " + job.id +
-                  " done. Customer=" + job.customer +
+                  " delivered. Customer=" + job.customer +
                   " Pay=" + job.goldReward +
                   " XP=" + job.xpReward +
                   " Stars=" + job.StarValue);
