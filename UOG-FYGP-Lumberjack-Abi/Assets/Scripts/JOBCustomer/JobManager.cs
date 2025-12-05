@@ -26,10 +26,13 @@ public class JobOrder
     public List<JobLine> lines = new List<JobLine>();
     public float deadlineSeconds;
     public int slotIndex = -1;
+
     [NonSerialized] public float acceptedAt;
+
     public bool isAccepted;
     public bool isCompleted;
     public bool isFailed;
+    public bool isReadyForDelivery;
     public int misfitCount;
     public int xpReward;
     public int goldReward;
@@ -118,9 +121,6 @@ public class JobManager : MonoBehaviour
     [Header("World Customers")]
     public CustomerSpawner worldSpawner;
 
-    [Header("Rewards Target")]
-    public Inventory inventory;
-
     readonly List<JobOrder> availableJobs = new List<JobOrder>();
     readonly List<JobOrder> activeJobs = new List<JobOrder>();
 
@@ -131,9 +131,6 @@ public class JobManager : MonoBehaviour
     {
         GenerateInitialJobs();
         NotifyChanged();
-
-        if (inventory == null)
-            inventory = FindFirstObjectByType<Inventory>();
     }
 
     void Update()
@@ -148,9 +145,8 @@ public class JobManager : MonoBehaviour
                 if (job.RemainingSeconds <= 0f)
                 {
                     job.isFailed = true;
-                    HandleJobResolved(job, false);
                     changed = true;
-                    Debug.Log("[JobManager] Job " + job.id + " failed by timeout.");
+                    HandleJobResolved(job, false);
                 }
             }
         }
@@ -199,9 +195,11 @@ public class JobManager : MonoBehaviour
             {
                 used.Add(line.product);
             }
+
             int qty = GetQuantityFor(kind);
             qty = Mathf.Clamp(qty, minQuantityPerLine, maxQuantityPerLine);
             line.quantity = Mathf.Max(1, qty);
+
             job.lines.Add(line);
         }
 
@@ -320,8 +318,6 @@ public class JobManager : MonoBehaviour
         availableJobs.Remove(job);
         activeJobs.Add(job);
 
-        Debug.Log("[JobManager] Job accepted " + job.id);
-
         NotifyChanged();
     }
 
@@ -339,11 +335,10 @@ public class JobManager : MonoBehaviour
             SpawnNewJobForSlot(slot);
         }
 
-        Debug.Log("[JobManager] Job declined " + job.id);
-
         NotifyChanged();
     }
 
+    // called by the production machine when it finishes building one item
     public void ReportProductBuilt(ItemSO product, bool misfit)
     {
         if (product == null) return;
@@ -367,16 +362,15 @@ public class JobManager : MonoBehaviour
                 line.producedCount++;
                 if (misfit) job.misfitCount++;
                 matched = true;
-
-                Debug.Log("[JobManager] Progress for job " + job.id +
-                          " " + product.displayName +
-                          " " + job.TotalProduced + "/" + job.TotalQuantity +
-                          " misfits=" + job.misfitCount);
                 break;
             }
 
             if (matched)
             {
+                if (job.TotalProduced >= job.TotalQuantity)
+                {
+                    job.isReadyForDelivery = true;
+                }
                 changed = true;
                 break;
             }
@@ -388,19 +382,19 @@ public class JobManager : MonoBehaviour
         }
     }
 
-    public bool TryClaimRewards(JobOrder job)
+    // called by the truck UI when the player has dragged items and pressed Deliver
+    public void DeliverJob(JobOrder job)
     {
-        if (job == null) return false;
-        if (!job.isAccepted || job.isFailed || job.isCompleted) return false;
+        if (job == null) return;
+        if (job.isCompleted || job.isFailed) return;
 
-        if (job.TotalQuantity <= 0 || job.TotalProduced < job.TotalQuantity)
+        if (!job.isReadyForDelivery)
         {
-            Debug.Log("[JobManager] TryClaimRewards blocked, job " + job.id + " not fully produced.");
-            return false;
+            Debug.Log("Tried to deliver job that is not ready for delivery.");
+            return;
         }
 
         CompleteJob(job);
-        return true;
     }
 
     void CompleteJob(JobOrder job)
@@ -447,29 +441,20 @@ public class JobManager : MonoBehaviour
         job.goldReward = Mathf.RoundToInt(pay);
         job.xpReward = Mathf.RoundToInt(xp);
 
-        if (inventory == null)
+        Inventory inv = FindFirstObjectByType<Inventory>();
+        if (inv != null)
         {
-            inventory = FindFirstObjectByType<Inventory>();
-        }
-
-        if (inventory != null)
-        {
-            if (job.goldReward > 0)
-                inventory.AddMoney(job.goldReward);
-            if (job.xpReward > 0)
-                inventory.AddXp(job.xpReward);
-
-            Debug.Log("[JobManager] Rewards paid for job " + job.id +
-                      " money=" + job.goldReward +
-                      " xp=" + job.xpReward +
-                      " stars=" + job.StarValue);
-        }
-        else
-        {
-            Debug.LogWarning("[JobManager] No Inventory found, rewards not added to player.");
+            if (job.goldReward > 0) inv.AddMoney(job.goldReward);
+            if (job.xpReward > 0) inv.AddXp(job.xpReward);
         }
 
         HandleJobResolved(job, true);
+
+        Debug.Log("Job " + job.id +
+                  " delivered. Customer=" + job.customer +
+                  " Pay=" + job.goldReward +
+                  " XP=" + job.xpReward +
+                  " Stars=" + job.StarValue);
     }
 
     void HandleJobResolved(JobOrder job, bool succeeded)

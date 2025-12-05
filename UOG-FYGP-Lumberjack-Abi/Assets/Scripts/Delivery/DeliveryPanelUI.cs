@@ -1,14 +1,18 @@
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class DeliveryPanelUI : MonoBehaviour
 {
-    [Header("Refs")]
     public JobManager jobManager;
     public RectTransform jobListRoot;
-    public DeliveryJobRowUI jobRowPrefab;
+    public GameObject jobRowPrefab;
+    public DeliverySlotUI slotPrefab;
     public Button closeButton;
-    public StorageManager storage;
+    public TextMeshProUGUI globalStatusText;
+
+    readonly List<DeliveryJobRowUI> rows = new List<DeliveryJobRowUI>();
 
     void Awake()
     {
@@ -18,88 +22,83 @@ public class DeliveryPanelUI : MonoBehaviour
             closeButton.onClick.AddListener(Close);
         }
 
-        if (!storage)
-            storage = FindFirstObjectByType<StorageManager>();
+        gameObject.SetActive(false);
     }
 
     public void Open()
     {
         gameObject.SetActive(true);
-        RebuildJobs();
+        Refresh();
         PlayerController.IsInputLocked = true;
     }
 
     public void Close()
     {
-        RefundAllRows();
         gameObject.SetActive(false);
         PlayerController.IsInputLocked = false;
     }
 
-    void RefundAllRows()
+    public void Refresh()
     {
-        if (!jobListRoot || !storage) return;
-
-        for (int i = 0; i < jobListRoot.childCount; i++)
-        {
-            var row = jobListRoot.GetChild(i).GetComponent<DeliveryJobRowUI>();
-            if (row != null)
-            {
-                row.RefundItems(storage);
-            }
-        }
-    }
-
-    public void RebuildJobs()
-    {
-        if (!jobManager || !jobListRoot || !jobRowPrefab) return;
-
-        RefundAllRows();
+        if (!jobManager || !jobListRoot || !jobRowPrefab || !slotPrefab) return;
 
         for (int i = jobListRoot.childCount - 1; i >= 0; i--)
             Destroy(jobListRoot.GetChild(i).gameObject);
 
-        var jobs = jobManager.ActiveJobs;
-        int built = 0;
+        rows.Clear();
 
+        var jobs = jobManager.ActiveJobs;
         for (int i = 0; i < jobs.Count; i++)
         {
-            JobOrder job = jobs[i];
+            var job = jobs[i];
             if (job == null) continue;
-            if (!job.isAccepted) continue;
-            if (job.isFailed) continue;
-            if (job.isCompleted) continue;
-            if (job.TotalQuantity <= 0) continue;
-            if (job.TotalProduced < job.TotalQuantity) continue;
+            if (!job.isAccepted || job.isCompleted || job.isFailed) continue;
+            if (!job.isReadyForDelivery) continue;
 
-            var rowObj = Instantiate(jobRowPrefab.gameObject, jobListRoot);
-            var row = rowObj.GetComponent<DeliveryJobRowUI>();
-            row.Bind(this, job);
-            built++;
+            GameObject rowGO = Instantiate(jobRowPrefab, jobListRoot);
+            DeliveryJobRowUI row = rowGO.GetComponent<DeliveryJobRowUI>();
+            if (row == null) row = rowGO.AddComponent<DeliveryJobRowUI>();
+
+            row.Bind(this, job, slotPrefab);
+            rows.Add(row);
         }
 
-        Debug.Log("[DeliveryPanelUI] Rebuilt delivery list, rows=" + built);
+        if (globalStatusText != null)
+        {
+            if (rows.Count == 0)
+                globalStatusText.text = "No finished jobs ready for delivery.";
+            else
+                globalStatusText.text = "";
+        }
     }
 
-    public bool TryDeliverJob(JobOrder job)
+    public void TryDeliver(JobOrder job, DeliveryJobRowUI row)
     {
-        if (!jobManager)
+        if (jobManager == null || job == null || row == null) return;
+
+        DeliverySlotUI[] slots = row.GetSlots();
+        bool allOk = true;
+
+        for (int i = 0; i < slots.Length; i++)
         {
-            Debug.LogWarning("[DeliveryPanelUI] No JobManager, cannot deliver.");
-            return false;
+            if (slots[i] == null) continue;
+            if (!slots[i].IsSatisfied())
+                allOk = false;
         }
 
-        bool ok = jobManager.TryClaimRewards(job);
-        if (ok)
+        if (!allOk)
         {
-            Debug.Log("[DeliveryPanelUI] Delivery confirmed for job " + job.id);
-            RebuildJobs();
-        }
-        else
-        {
-            Debug.Log("[DeliveryPanelUI] Delivery blocked for job " + job.id);
+            string msg = "Not enough items loaded.";
+            row.SetStatus(msg);
+            if (globalStatusText != null) globalStatusText.text = msg;
+            return;
         }
 
-        return ok;
+        row.SetStatus("Delivered.");
+        if (globalStatusText != null) globalStatusText.text = "";
+
+        jobManager.DeliverJob(job);
+
+        Refresh();
     }
 }

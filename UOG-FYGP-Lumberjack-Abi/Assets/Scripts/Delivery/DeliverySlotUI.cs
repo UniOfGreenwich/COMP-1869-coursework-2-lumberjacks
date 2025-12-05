@@ -8,8 +8,7 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
 {
     public TextMeshProUGUI labelText;
     public Image outlineImage;
-    public Transform itemIconRoot;
-    public Image itemIconPrefab;
+    public Image itemIcon;
 
     public ItemSO TargetItem { get; private set; }
     public int RequiredQuantity { get; private set; }
@@ -17,7 +16,6 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
 
     Color baseOutlineColor;
     Coroutine flashRoutine;
-    Image currentIcon;
 
     void Awake()
     {
@@ -25,7 +23,7 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
             baseOutlineColor = outlineImage.color;
 
         RefreshLabel();
-        UpdateVisualIcon();
+        UpdateIcon();
     }
 
     public void Configure(ItemSO item, int quantity)
@@ -35,7 +33,7 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
         DeliveredCount = 0;
         RefreshLabel();
         ResetVisual();
-        UpdateVisualIcon();
+        UpdateIcon();
     }
 
     public void RefreshLabel()
@@ -80,7 +78,7 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
         payload.count -= taken;
 
         RefreshLabel();
-        UpdateVisualIcon();
+        UpdateIcon();
         drag.ReturnRemainder(payload);
         Flash(true);
     }
@@ -95,7 +93,7 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
         DeliveredCount = 0;
         RefreshLabel();
         ResetVisual();
-        UpdateVisualIcon();
+        UpdateIcon();
     }
 
     public void ResetVisual()
@@ -110,35 +108,20 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
             outlineImage.color = baseOutlineColor;
     }
 
-    void ClearIcon()
+    void UpdateIcon()
     {
-        if (currentIcon != null)
+        if (!itemIcon) return;
+
+        if (TargetItem == null || DeliveredCount <= 0)
         {
-            Destroy(currentIcon.gameObject);
-            currentIcon = null;
+            itemIcon.enabled = false;
+            itemIcon.sprite = null;
         }
-    }
-
-    void UpdateVisualIcon()
-    {
-        if (!itemIconRoot || !itemIconPrefab || TargetItem == null || DeliveredCount <= 0)
+        else
         {
-            ClearIcon();
-            return;
+            itemIcon.sprite = TargetItem.icon;
+            itemIcon.enabled = true;
         }
-
-        if (currentIcon == null)
-        {
-            currentIcon = Instantiate(itemIconPrefab, itemIconRoot);
-            currentIcon.preserveAspect = true;
-        }
-
-        currentIcon.sprite = TargetItem.icon;
-
-        float t = Mathf.Clamp01(DeliveredCount / (float)RequiredQuantity);
-        Color c = currentIcon.color;
-        c.a = Mathf.Lerp(0.3f, 1f, t);
-        currentIcon.color = c;
     }
 
     void Flash(bool ok)
@@ -156,6 +139,7 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
     {
         outlineImage.color = target;
         float t = 0f;
+
         while (t < 1f)
         {
             t += Time.deltaTime * 4f;
