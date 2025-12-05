@@ -4,7 +4,7 @@
 TagManager:
   serializedVersion: 3
   tags:
-  - QuantityUI
+  - OverlayCanvas
   layers:
   - Default
   - TransparentFX
@@ -13,7 +13,7 @@ TagManager:
   - Water
   - UI
   - Interactable
-  - 
+  - Ground2
   - 
   - 
   - 

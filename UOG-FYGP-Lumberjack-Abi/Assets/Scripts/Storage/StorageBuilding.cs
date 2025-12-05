@@ -1,102 +1,192 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using TMPro;
 
+[RequireComponent(typeof(Collider))]
 public class StorageBuilding : MonoBehaviour
 {
-    [Header("Assign in Inspector")]
-    [SerializeField] private GameObject windowPrefab;        // Storage UI prefab (panel)
-    [SerializeField] private GameObject storageButtonPrefab; // "Storage" button prefab (UGUI Button)
+    [Header("Assign In Inspector")]
+    [SerializeField] private GameObject windowPrefab;
+    [SerializeField] private GameObject storageButtonPrefab;
     [SerializeField] private Vector3 buttonOffset = new Vector3(0, 2f, 0);
 
     private Canvas canvas;
-    private GameObject windowInstance;
-    private GameObject storageButtonInstance;
-    private Camera mainCam;
+    private Camera cam;
+
+    private GameObject window;
+    private GameObject button;
+    private RectTransform buttonRect;
+
+    void Awake()
+    {
+        EnsureEventSystem();
+    }
 
     void Start()
     {
-        mainCam = Camera.main;
-        var canvases = FindObjectsOfType<Canvas>(true);
+        cam = Camera.main;
+
+        // Find ANY valid screen-space canvas
+        Canvas[] canvases = FindObjectsOfType<Canvas>(true);
         foreach (var c in canvases)
         {
-            if (c.renderMode == RenderMode.ScreenSpaceOverlay ||
-                c.renderMode == RenderMode.ScreenSpaceCamera)
-            { canvas = c; break; }
+            if (c.renderMode == RenderMode.ScreenSpaceOverlay || c.renderMode == RenderMode.ScreenSpaceCamera)
+            {
+                canvas = c;
+                break;
+            }
         }
-        if (!canvas && canvases.Length > 0) canvas = canvases[0];
 
-        if (!canvas)
+        if (canvas == null && canvases.Length > 0)
+            canvas = canvases[0];
+
+        if (canvas == null)
         {
-            Debug.LogError("StorageBuilding: No Canvas found in scene!");
+            Debug.LogError("StorageBuilding: No Canvas found in scene.");
             return;
         }
 
-        if (windowPrefab != null)
+        // Create storage window
+        if (windowPrefab)
         {
-            windowInstance = Instantiate(windowPrefab, canvas.transform);
-            windowInstance.SetActive(false);
-        }
-        else
-        {
-            Debug.LogWarning("StorageBuilding: windowPrefab not assigned.");
+            window = Instantiate(windowPrefab, canvas.transform);
+            window.SetActive(false);
         }
     }
 
     void Update()
     {
-        if (!mainCam) mainCam = Camera.main;
+        if (!cam) cam = Camera.main;
 
-        // Don’t place button when clicking UI
         if (Input.GetMouseButtonDown(0))
         {
-            if (EventSystem.current && EventSystem.current.IsPointerOverGameObject()) return;
+            if (PointerOverUI()) return;
 
-            var ray = mainCam ? mainCam.ScreenPointToRay(Input.mousePosition) : new Ray();
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
             {
-                // Accept any child collider of this building
-                var building = hit.collider.GetComponentInParent<StorageBuilding>();
-                if (building == this) ShowStorageButton();
+                if (hit.collider.GetComponentInParent<StorageBuilding>() == this)
+                {
+                    ShowButton();
+                }
             }
         }
-        if (storageButtonInstance != null && mainCam)
-        {
-            Vector3 screenPos = mainCam.WorldToScreenPoint(transform.position + buttonOffset);
-            storageButtonInstance.GetComponent<RectTransform>().position = screenPos;
-        }
+
+        UpdateButtonPosition();
     }
 
-    private void ShowStorageButton()
-    {
-        if (storageButtonInstance != null) return;
+    // ---------------------------
+    // BUTTON HANDLING
+    // ---------------------------
 
-        if (storageButtonPrefab == null || canvas == null)
+    private void ShowButton()
+    {
+        // Always destroy any old button (prevents invisible leftovers)
+        if (button != null)
         {
-            Debug.LogWarning("StorageBuilding: storageButtonPrefab or canvas not set.");
+            Destroy(button);
+            button = null;
+            buttonRect = null;
+        }
+
+        // Spawn new button
+        button = Instantiate(storageButtonPrefab, canvas.transform);
+        buttonRect = button.GetComponent<RectTransform>();
+
+        // Make sure it's visible and readable
+        ForceText(button, "Open Storage");
+
+        // Bring to top
+        button.transform.SetAsLastSibling();
+
+        // Hook events
+        button.GetComponent<Button>().onClick.AddListener(OpenWindow);
+    }
+
+    private void UpdateButtonPosition()
+    {
+        if (buttonRect == null || cam == null) return;
+
+        Vector3 screenPos = cam.WorldToScreenPoint(transform.position + buttonOffset);
+
+        // Hide when behind camera
+        if (screenPos.z < 0)
+        {
+            buttonRect.gameObject.SetActive(false);
             return;
         }
 
-        storageButtonInstance = Instantiate(storageButtonPrefab, canvas.transform);
-        var btn = storageButtonInstance.GetComponent<Button>();
-        if (btn) btn.onClick.AddListener(OpenStorageUI);
+        // Ensure visible
+        if (!buttonRect.gameObject.activeSelf)
+            buttonRect.gameObject.SetActive(true);
+
+        buttonRect.position = screenPos;
     }
 
-    private void OpenStorageUI()
+    // ---------------------------
+    // WINDOW HANDLING
+    // ---------------------------
+
+    private void OpenWindow()
     {
-        if (windowInstance != null) windowInstance.SetActive(true);
-        if (storageButtonInstance != null) Destroy(storageButtonInstance);
-         PlayerController.IsInputLocked = true;
+        if (window != null)
+            window.SetActive(true);
+
+        // Button no longer needed
+        if (button != null)
+            Destroy(button);
+
+        button = null;
+        buttonRect = null;
+
+        PlayerController.IsInputLocked = true;
     }
 
-    public void CloseStorageUI()
+    public void CloseWindow()
     {
-        if (windowInstance != null) windowInstance.SetActive(false);
+        if (window != null)
+            window.SetActive(false);
+
         PlayerController.IsInputLocked = false;
     }
 
     void OnDisable()
     {
-        if (storageButtonInstance) Destroy(storageButtonInstance);
+        if (button != null)
+            Destroy(button);
+    }
+
+    // ---------------------------
+    // UTILS
+    // ---------------------------
+
+    private bool PointerOverUI()
+    {
+        return EventSystem.current && EventSystem.current.IsPointerOverGameObject();
+    }
+
+    private void ForceText(GameObject root, string fallback)
+    {
+        var tmp = root.GetComponentInChildren<TextMeshProUGUI>(true);
+        if (tmp)
+        {
+            if (string.IsNullOrWhiteSpace(tmp.text)) tmp.text = fallback;
+            tmp.enableAutoSizing = true;
+            tmp.fontSizeMin = 18;
+            tmp.fontSizeMax = 36;
+            tmp.color = Color.black;
+        }
+    }
+
+    private void EnsureEventSystem()
+    {
+        if (EventSystem.current != null) return;
+
+        var es = new GameObject("EventSystem",
+            typeof(EventSystem),
+            typeof(StandaloneInputModule));
+
+        DontDestroyOnLoad(es);
     }
 }

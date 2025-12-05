@@ -19,6 +19,7 @@ public class HotBar : MonoBehaviour, IDropHandler
     public NoOfItems Peek() => stack; // allow drag to read what we have
     public bool IsEmpty => stack.IsEmpty;
 
+    
     public void SetStack(NoOfItems s)
     {
         stack = s;
@@ -73,7 +74,8 @@ public class HotBar : MonoBehaviour, IDropHandler
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        Canvas.ForceUpdateCanvases();
+        RefreshUI();
     }
 
     // Update is called once per frame
