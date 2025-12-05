@@ -1488,6 +1488,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0e8bb89645848804594d2c85d0ee2eb8, type: 2}
   - {fileID: 11400000, guid: 01bc67abe8730af49935049dcb2c82c1, type: 2}
   - {fileID: 11400000, guid: aebcebebdd411bd478bc335b9216975a, type: 2}
+  - {fileID: 11400000, guid: 98008f065516e974bb24980124425b23, type: 2}
   storage: {fileID: 260181082}
   inventory: {fileID: 2062837426}
   feedbackLabel: {fileID: 1021660522}
