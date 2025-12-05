@@ -1054,63 +1054,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 38792a4102adabf409762260295acc38, type: 3}
---- !u!1001 &307819529
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: 86ed983d633336f46bd92951c0a70dca, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 4.37
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 86ed983d633336f46bd92951c0a70dca, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 86ed983d633336f46bd92951c0a70dca, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 4.62
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 86ed983d633336f46bd92951c0a70dca, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 86ed983d633336f46bd92951c0a70dca, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 86ed983d633336f46bd92951c0a70dca, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 86ed983d633336f46bd92951c0a70dca, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 86ed983d633336f46bd92951c0a70dca, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 86ed983d633336f46bd92951c0a70dca, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 86ed983d633336f46bd92951c0a70dca, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: 86ed983d633336f46bd92951c0a70dca, type: 3}
-      propertyPath: m_Name
-      value: cabinet
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 86ed983d633336f46bd92951c0a70dca, type: 3}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -6427,7 +6370,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5965833640959285229, guid: 8b5b720f2baaffd4998d963f8a273f62, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -2.59
+      value: -0.88
       objectReference: {fileID: 0}
     - target: {fileID: 5965833640959285229, guid: 8b5b720f2baaffd4998d963f8a273f62, type: 3}
       propertyPath: m_LocalRotation.w
@@ -6586,10 +6529,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1463330620416953211, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
-      propertyPath: m_NavMeshData
-      value: 
-      objectReference: {fileID: 23800000, guid: 225539cacd49d28409251ee66285e874, type: 2}
     - target: {fileID: 5093649518548901304, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -6634,13 +6573,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: roomMachine
       objectReference: {fileID: 0}
-    - target: {fileID: 7513770538558204934, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.97
-      objectReference: {fileID: 0}
-    - target: {fileID: 7513770538558204934, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 1.74
+    - target: {fileID: 8627552945135626513, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
+      propertyPath: tableSawAnimator
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6692,9 +6627,8 @@ SceneRoots:
   - {fileID: 1476342785}
   - {fileID: 2062837422}
   - {fileID: 4550825683947835819}
-  - {fileID: 560696728}
   - {fileID: 260181080}
   - {fileID: 281564574}
   - {fileID: 6780735990812326799}
   - {fileID: 4569069337438111872}
-  - {fileID: 307819529}
+  - {fileID: 560696728}
