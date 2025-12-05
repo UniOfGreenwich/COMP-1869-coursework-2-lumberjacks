@@ -21,8 +21,7 @@ public class ProductionMachine : MonoBehaviour
     [Min(0.1f)] public float secondsPerProduct = 4f;
 
     [Header("Rules")]
-    [Tooltip("If errors for one assemble are >= this, UI will scrap the pieces.")]
-    [Min(0)] public int misfitScrapThreshold = 3;     // Change to 4 if you want more forgiveness.
+    [Min(0)] public int misfitScrapThreshold = 3;
 
     [Header("Blimp")]
     public bool enableBlimp = true;
@@ -50,9 +49,7 @@ public class ProductionMachine : MonoBehaviour
     public float uiProbeInterval = 0.5f;
 
     [Header("World Output")]
-    [Tooltip("If true and the finished ItemSO has a worldPrefab, spawn it at the output point.")]
     public bool spawnWorldOutputPrefab = true;
-    [Tooltip("Seconds before spawned world prefabs are destroyed. Use 0 to keep them.")]
     public float worldPrefabLifetime = 2.5f;
 
     StorageManager storage;
@@ -118,12 +115,28 @@ public class ProductionMachine : MonoBehaviour
         if (placeble && !placeble.placed) return;
         if (!ui) return;
 
+        IList<ProductionRecipeSO> source = recipes;
+
+        if (RecipeUnlockManager.Instance != null)
+            source = RecipeUnlockManager.Instance.FilterUnlocked(recipes);
+
+        int recipeCount = 0;
+        if (source != null)
+        {
+            foreach (var r in source)
+            {
+                if (r != null)
+                    recipeCount++;
+            }
+        }
+
         ui.gameObject.SetActive(true);
-        ui.Init(this, recipes);
+        ui.Init(this, source);
         PlayerController.IsInputLocked = true;
+
+        Debug.Log("[ProductionMachine] Open UI with " + recipeCount + " unlocked recipes.");
     }
 
-    // Called by UI when player presses Assemble and passes validation.
     public void OnAssemble(ProductionRecipeSO recipe, int errors)
     {
         if (recipe == null) return;
@@ -168,7 +181,6 @@ public class ProductionMachine : MonoBehaviour
                 if (effectLifetime > 0f) Destroy(fxOut, effectLifetime);
             }
 
-            // Spawn actual world prefab for the finished product, if set.
             if (spawnWorldOutputPrefab && currentOutput != null && currentOutput.worldPrefab != null)
             {
                 GameObject world = Instantiate(currentOutput.worldPrefab, outputPoint.position, outputPoint.rotation);
@@ -180,11 +192,8 @@ public class ProductionMachine : MonoBehaviour
         pendingCount += 1;
         UpdateBlimpUI();
 
-        // Report to JobManager so misfits affect XP and money. :contentReference[oaicite:2]{index=2}
         if (jobManager != null && currentOutput != null)
-        {
             jobManager.ReportProductBuilt(currentOutput, currentHasMisfits);
-        }
 
         Debug.Log("[ProductionMachine] Built " + currentOutput.displayName + " misfitFlag=" + currentHasMisfits);
 
@@ -192,7 +201,6 @@ public class ProductionMachine : MonoBehaviour
         busy = false;
         currentHasMisfits = false;
     }
-
     void UpdateBlimpUI()
     {
         if (!enableBlimp) return;

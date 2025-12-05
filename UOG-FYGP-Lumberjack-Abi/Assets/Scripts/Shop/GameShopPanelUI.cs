@@ -48,7 +48,10 @@ public class GameShopPanelUI : MonoBehaviour
             gameObject.SetActive(true);
 
         if (feedbackLabel != null)
-            feedbackLabel.text = "";
+            feedbackLabel.text = string.Empty;
+
+        PlayerController.IsInputLocked = true;
+        Debug.Log("[ShopPanel] Opened.");
     }
 
     public void Close()
@@ -57,6 +60,9 @@ public class GameShopPanelUI : MonoBehaviour
             rootPanel.SetActive(false);
         else
             gameObject.SetActive(false);
+
+        PlayerController.IsInputLocked = false;
+        Debug.Log("[ShopPanel] Closed.");
     }
 
     void BuildList()
@@ -95,21 +101,23 @@ public class GameShopPanelUI : MonoBehaviour
             return;
         }
 
-        if (item.price <= 0)
+        if (item.price < 0)
         {
-            Debug.LogWarning("[ShopPanel] Item price is not valid for " + item.name);
+            Debug.LogWarning("[ShopPanel] Negative price on " + item.name);
             if (feedbackLabel != null)
                 feedbackLabel.text = "Config error.";
             return;
         }
 
-        // Spend money first
-        if (!inventory.TrySpend(item.price))
+        if (item.price > 0)
         {
-            Debug.Log("[ShopPanel] Not enough money for " + item.displayName);
-            if (feedbackLabel != null)
-                feedbackLabel.text = "Not enough money.";
-            return;
+            if (!inventory.TrySpend(item.price))
+            {
+                Debug.Log("[ShopPanel] Not enough money for " + item.displayName);
+                if (feedbackLabel != null)
+                    feedbackLabel.text = "Not enough money.";
+                return;
+            }
         }
 
         bool success = false;
@@ -124,6 +132,10 @@ public class GameShopPanelUI : MonoBehaviour
             case ShopItemType.BuyFieldToPlace:
                 success = BuyPlaceable(item);
                 break;
+
+            case ShopItemType.BuyRecipe:
+                success = BuyRecipe(item);
+                break;
         }
 
         if (!success)
@@ -132,8 +144,9 @@ public class GameShopPanelUI : MonoBehaviour
             if (feedbackLabel != null)
                 feedbackLabel.text = "Buy failed.";
 
-            // Refund if something went wrong
-            inventory.AddMoney(item.price);
+            if (item.price > 0)
+                inventory.AddMoney(item.price);
+
             return;
         }
 
@@ -181,6 +194,25 @@ public class GameShopPanelUI : MonoBehaviour
 
         Debug.Log("[ShopPanel] Starting placement for " + item.displayName);
         BuildingSystem.instance.StartPlacement(item.prefabToPlace);
+        return true;
+    }
+
+    bool BuyRecipe(ShopItemSO item)
+    {
+        if (item.recipeToUnlock == null)
+        {
+            Debug.LogWarning("[ShopPanel] recipeToUnlock is null on " + item.name);
+            return false;
+        }
+
+        if (RecipeUnlockManager.Instance == null)
+        {
+            Debug.LogError("[ShopPanel] No RecipeUnlockManager in scene.");
+            return false;
+        }
+
+        RecipeUnlockManager.Instance.UnlockRecipe(item.recipeToUnlock);
+        Debug.Log("[ShopPanel] Unlocked recipe: " + item.recipeToUnlock.displayName);
         return true;
     }
 }
