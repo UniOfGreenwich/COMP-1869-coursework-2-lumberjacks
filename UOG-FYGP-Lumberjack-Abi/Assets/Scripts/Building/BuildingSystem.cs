@@ -60,7 +60,7 @@ public class BuildingSystem : MonoBehaviour
             objectToPlace = null;
         }
     }
-    private void StartPlacement(GameObject prefab)
+    public void StartPlacement(GameObject prefab)
     {
         Vector3 mousePos = GetMouseWorldPosition();
         Vector3 snappedPos = SnapCoordinateToGrid(mousePos);

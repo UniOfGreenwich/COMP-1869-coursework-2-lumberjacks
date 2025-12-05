@@ -72,12 +72,23 @@ public class ProductioSlotUI : MonoBehaviour, IDropHandler
 
         ItemSO item = payload.item;
 
+        // Only allow square Utility pieces that are marked for production.
+        if (!IsAllowedItem(item))
+        {
+            Debug.Log("[ProductioSlotUI] Rejected item " + (item ? item.displayName : "null") + " not a valid square piece.");
+            drag.ReturnRemainder(payload);   // Goes back to where it came from.
+            ShowResult(false);               // Flash red.
+            return;
+        }
+
+        // Take exactly one piece into this slot, rest goes back.
         if (payload.count > 1)
         {
             payload.count -= 1;
             drag.ReturnRemainder(payload);
         }
 
+        // If slot already had something, put it back to storage.
         if (CurrentItem != null && storage != null)
         {
             storage.Put(CurrentItem, 1);
@@ -92,6 +103,14 @@ public class ProductioSlotUI : MonoBehaviour, IDropHandler
         }
 
         ResetVisual();
+    }
+
+    bool IsAllowedItem(ItemSO item)
+    {
+        if (!item) return false;
+        if (item.category != ItemCategory.Utility) return false;
+        if (!item.isProductionSquarePiece) return false;
+        return true;
     }
 
     public void ShowResult(bool isCorrect)

@@ -783,36 +783,3 @@ public class SquareCutter : MonoBehaviour, IDropHandler
         }
     }
 }
-
-public class SquareDropProxy : MonoBehaviour, IDropHandler
-{
-    public SquareCutter square;
-    public void OnDrop(PointerEventData eventData)
-    {
-        if (square) square.OnDrop(eventData);
-    }
-}
-
-public static class MachineBlimpExtensions
-{
-    public static void InitForSquare(this MachineBlimp blimp, SquareCutter cutter, Button button)
-    {
-        var forwarder = new SquareBlimpForwarder { cutter = cutter };
-        blimp.gameObject.AddComponent<SquareBlimpForwarderHolder>().forwarder = forwarder;
-        if (button) button.onClick.AddListener(() => forwarder.Collect());
-    }
-}
-
-class SquareBlimpForwarder
-{
-    public SquareCutter cutter;
-    public void Collect()
-    {
-        if (cutter) cutter.CollectBlimp();
-    }
-}
-
-class SquareBlimpForwarderHolder : MonoBehaviour
-{
-    public SquareBlimpForwarder forwarder;
-}
