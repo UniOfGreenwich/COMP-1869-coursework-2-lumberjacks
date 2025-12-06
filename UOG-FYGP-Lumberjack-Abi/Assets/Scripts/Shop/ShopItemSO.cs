@@ -12,7 +12,7 @@ public enum ShopItemType
 public class ShopItemSO : ScriptableObject
 {
     [Header("Identity")]
-    public string id;
+    public string id;                 // must be unique per shop item
     public string displayName;
     public Sprite icon;
 
@@ -23,12 +23,15 @@ public class ShopItemSO : ScriptableObject
     public ShopItemType type = ShopItemType.BuyItemToStorage;
 
     [Header("Item Settings")]
-    public ItemSO item;
+    public ItemSO item;               // used when type = BuyItemToStorage
     [Min(1)] public int itemCount = 1;
 
     [Header("Prefab Settings")]
-    public GameObject prefabToPlace;
+    public GameObject prefabToPlace;  // used when type = BuyMachineToPlace / BuyFieldToPlace
 
     [Header("Recipe Settings")]
-    public ProductionRecipeSO recipeToUnlock;
+    public ProductionRecipeSO recipeToUnlock; // used when type = BuyRecipe
+
+    [Header("Purchase Rules")]
+    public bool singlePurchase = false;       // if true you can only buy this once
 }

@@ -18,6 +18,8 @@ public class GameShopPanelUI : MonoBehaviour
     [Header("Feedback")]
     public TextMeshProUGUI feedbackLabel;
 
+    const string PrefOwnedPrefix = "ShopOwned_";
+
     void Awake()
     {
         if (storage == null)
@@ -86,8 +88,9 @@ public class GameShopPanelUI : MonoBehaviour
         {
             if (item == null) continue;
 
+            bool owned = IsOwned(item);
             var row = Instantiate(rowPrefab, contentRoot);
-            row.Bind(this, item);
+            row.Bind(this, item, owned);
         }
 
         Debug.Log("[ShopPanel] Built " + items.Length + " rows.");
@@ -95,9 +98,20 @@ public class GameShopPanelUI : MonoBehaviour
 
     public void HandleBuy(ShopItemSO item)
     {
+        if (item == null) return;
+
         if (inventory == null)
         {
             Debug.LogError("[ShopPanel] No Inventory found.");
+            return;
+        }
+
+        // stop extra buys for single-purchase items
+        if (item.singlePurchase && IsOwned(item))
+        {
+            Debug.Log("[ShopPanel] " + item.displayName + " already owned, skipping buy.");
+            if (feedbackLabel != null)
+                feedbackLabel.text = "Owned.";
             return;
         }
 
@@ -150,9 +164,21 @@ public class GameShopPanelUI : MonoBehaviour
             return;
         }
 
+        if (item.singlePurchase)
+            SetOwned(item);
+
         Debug.Log("[ShopPanel] Buy success for " + item.displayName);
+
         if (feedbackLabel != null)
-            feedbackLabel.text = "Bought " + item.displayName;
+        {
+            if (item.singlePurchase)
+                feedbackLabel.text = "Owned " + item.displayName;
+            else
+                feedbackLabel.text = "Bought " + item.displayName;
+        }
+
+        // rebuild so row changes to "Owned"
+        BuildList();
     }
 
     bool BuyItemToStorage(ShopItemSO item)
@@ -214,5 +240,21 @@ public class GameShopPanelUI : MonoBehaviour
         RecipeUnlockManager.Instance.UnlockRecipe(item.recipeToUnlock);
         Debug.Log("[ShopPanel] Unlocked recipe: " + item.recipeToUnlock.displayName);
         return true;
+    }
+
+    public bool IsOwned(ShopItemSO item)
+    {
+        if (item == null || string.IsNullOrEmpty(item.id)) return false;
+        return PlayerPrefs.GetInt(PrefOwnedPrefix + item.id, 0) == 1;
+    }
+
+    void SetOwned(ShopItemSO item)
+    {
+        if (item == null || string.IsNullOrEmpty(item.id)) return;
+
+        PlayerPrefs.SetInt(PrefOwnedPrefix + item.id, 1);
+        PlayerPrefs.Save();
+
+        Debug.Log("[ShopPanel] Marked owned: " + item.displayName);
     }
 }
