@@ -494,6 +494,7 @@ GameObject:
   - component: {fileID: 3949961004982046072}
   - component: {fileID: 4557884827539133329}
   - component: {fileID: 793653914097069265}
+  - component: {fileID: 5586404335740746790}
   m_Layer: 5
   m_Name: ShopRow
   m_TagString: Untagged
@@ -522,7 +523,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: -450}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4557884827539133329
 MonoBehaviour:
@@ -566,6 +567,14 @@ MonoBehaviour:
   nameLabel: {fileID: 6417637217230587666}
   priceLabel: {fileID: 5787288313171732494}
   buyButton: {fileID: 4198950273808878391}
+--- !u!222 &5586404335740746790
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7047450838022972160}
+  m_CullTransparentMesh: 1
 --- !u!1 &7409136490529776875
 GameObject:
   m_ObjectHideFlags: 0
