@@ -21,3 +21,4 @@ MonoBehaviour:
   itemCount: 1
   prefabToPlace: {fileID: 0}
   recipeToUnlock: {fileID: 11400000, guid: f325ea2baf8171d4b9670bca7588de46, type: 2}
+  singlePurchase: 1
