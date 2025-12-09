@@ -41,3 +41,6 @@ MonoBehaviour:
     label: Leg4
     requiredWidth: 1
     requiredHeight: 5
+  unlockedByDefault: 0
+  unlockCost: 100
+  hintSprite: {fileID: 439138574, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}

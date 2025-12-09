@@ -10,13 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d567830ac9642f84da0a528aaf803d77, type: 3}
-  m_Name: ShopItem_
+  m_Name: ShopItem_Square cutter
   m_EditorClassIdentifier: 
-  id: Log
-  displayName: Logs
-  icon: {fileID: -942766337, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
-  price: 20
-  type: 0
-  item: {fileID: 11400000, guid: 777eb4c0e0642d045b5077f1db84c59d, type: 2}
+  id: sqcut
+  displayName: cut
+  icon: {fileID: 546309245, guid: 5bf62e6323e7c3f45ab09ddec0f337c3, type: 3}
+  price: 10
+  type: 1
+  item: {fileID: 0}
   itemCount: 1
-  prefabToPlace: {fileID: 0}
+  prefabToPlace: {fileID: 1316224057959332359, guid: bda3ff54ef17277499762906cff812b9, type: 3}
+  recipeToUnlock: {fileID: 0}
+  singlePurchase: 1

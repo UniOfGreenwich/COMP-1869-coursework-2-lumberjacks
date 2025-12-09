@@ -10,22 +10,23 @@ public class ShopRowUI : MonoBehaviour
     public TextMeshProUGUI priceLabel;
     public Button buyButton;
 
-    private ShopItemSO data;
-    private GameShopPanelUI owner;
+    ShopItemSO data;
+    GameShopPanelUI owner;
+    bool owned;
 
-    public void Bind(GameShopPanelUI owner, ShopItemSO data)
+    public void Bind(GameShopPanelUI owner, ShopItemSO data, bool owned)
     {
         this.owner = owner;
         this.data = data;
+        this.owned = owned;
 
         if (nameLabel != null)
             nameLabel.text = string.IsNullOrEmpty(data.displayName) ? data.name : data.displayName;
 
-        if (priceLabel != null)
-            priceLabel.text = data.price.ToString();
-
         if (icon != null)
             icon.sprite = data.icon;
+
+        RefreshPriceAndButton();
 
         if (buyButton != null)
         {
@@ -33,7 +34,26 @@ public class ShopRowUI : MonoBehaviour
             buyButton.onClick.AddListener(OnBuyClicked);
         }
 
-        Debug.Log("[ShopRow] Bound row for " + nameLabel.text);
+        Debug.Log("[ShopRow] Bound row for " + nameLabel.text + " owned=" + owned);
+    }
+
+    void RefreshPriceAndButton()
+    {
+        if (priceLabel != null)
+        {
+            if (data.singlePurchase && owned)
+                priceLabel.text = "Owned";
+            else
+                priceLabel.text = data.price.ToString();
+        }
+
+        if (buyButton != null)
+        {
+            if (data.singlePurchase && owned)
+                buyButton.interactable = false;
+            else
+                buyButton.interactable = true;
+        }
     }
 
     void OnBuyClicked()

@@ -25,6 +25,9 @@ public class ProductionMachineUI : MonoBehaviour
     public bool autoCloseOnSuccess = true;
     [Min(0.1f)] public float autoCloseDelaySeconds = 1.5f;
 
+    [Header("Recipe Hint")]
+    public Image hintImage;
+
     ProductionMachine owner;
     readonly List<ProductionRecipeSO> recipes = new List<ProductionRecipeSO>();
     ProductionRecipeSO currentRecipe;
@@ -41,11 +44,11 @@ public class ProductionMachineUI : MonoBehaviour
             for (int i = 0; i < recipeList.Count; i++)
             {
                 if (recipeList[i] != null)
-                {
                     recipes.Add(recipeList[i]);
-                }
             }
         }
+
+        Debug.Log("[ProductionMachineUI] Init with " + recipes.Count + " recipes.");
 
         WireButtons();
         BuildProductButtons();
@@ -56,8 +59,10 @@ public class ProductionMachineUI : MonoBehaviour
         }
         else
         {
+            currentRecipe = null;
             ConfigureSlots(null);
-            ShowNeedPiecesMessage();
+            UpdateHintImage(null);
+            ShowNoRecipesMessage();
         }
     }
 
@@ -81,18 +86,34 @@ public class ProductionMachineUI : MonoBehaviour
         if (!productButtonContainer || !productButtonPrefab) return;
 
         for (int i = productButtonContainer.childCount - 1; i >= 0; i--)
-        {
             Destroy(productButtonContainer.GetChild(i).gameObject);
-        }
+
+        RecipeUnlockManager unlockMgr = RecipeUnlockManager.Instance;
 
         for (int i = 0; i < recipes.Count; i++)
         {
             ProductionRecipeSO recipe = recipes[i];
+            if (recipe == null) continue;
+
             Button btn = Object.Instantiate(productButtonPrefab, productButtonContainer);
             TextMeshProUGUI label = btn.GetComponentInChildren<TextMeshProUGUI>();
-            if (label != null) label.text = recipe.displayName;
-            btn.onClick.AddListener(() => SelectRecipe(recipe));
+
+            bool unlocked = unlockMgr == null || unlockMgr.IsUnlocked(recipe);
+
+            if (label != null)
+            {
+                label.text = unlocked
+                    ? recipe.displayName
+                    : recipe.displayName + " (Locked)";
+            }
+
+            btn.interactable = unlocked;
+
+            ProductionRecipeSO captured = recipe;
+            btn.onClick.AddListener(() => SelectRecipe(captured));
         }
+
+        Debug.Log("[ProductionMachineUI] Built " + recipes.Count + " recipe buttons.");
     }
 
     void SelectRecipe(ProductionRecipeSO recipe)
@@ -100,12 +121,32 @@ public class ProductionMachineUI : MonoBehaviour
         currentRecipe = recipe;
 
         if (titleText != null)
-        {
             titleText.text = recipe != null ? recipe.displayName : string.Empty;
-        }
+
+        if (assembleButton != null)
+            assembleButton.interactable = (recipe != null);
 
         ConfigureSlots(recipe);
+        UpdateHintImage(recipe);
         ShowNeedPiecesMessage();
+
+        Debug.Log("[ProductionMachineUI] Selected recipe " + (recipe != null ? recipe.displayName : "null"));
+    }
+
+    void UpdateHintImage(ProductionRecipeSO recipe)
+    {
+        if (hintImage == null) return;
+
+        if (recipe != null && recipe.hintSprite != null)
+        {
+            hintImage.enabled = true;
+            hintImage.sprite = recipe.hintSprite;
+        }
+        else
+        {
+            hintImage.enabled = false;
+            hintImage.sprite = null;
+        }
     }
 
     void ConfigureSlots(ProductionRecipeSO recipe)
@@ -135,6 +176,14 @@ public class ProductionMachineUI : MonoBehaviour
     {
         if (owner == null || currentRecipe == null) return;
 
+        RecipeUnlockManager unlockMgr = RecipeUnlockManager.Instance;
+        if (unlockMgr != null && !unlockMgr.IsUnlocked(currentRecipe))
+        {
+            Debug.Log("[ProductionMachineUI] Assemble blocked, recipe locked.");
+            ShowLockedMessage();
+            return;
+        }
+
         if (AnyRequiredSlotEmpty())
         {
             ShowNeedPiecesMessage();
@@ -158,9 +207,7 @@ public class ProductionMachineUI : MonoBehaviour
         Debug.Log("[ProductionMachineUI] Assemble accepted, errors=" + errors);
 
         if (autoCloseOnSuccess)
-        {
             BeginAutoClose();
-        }
     }
 
     void OnCloseClicked()
@@ -173,14 +220,14 @@ public class ProductionMachineUI : MonoBehaviour
 
         gameObject.SetActive(false);
         PlayerController.IsInputLocked = false;
+
+        Debug.Log("[ProductionMachineUI] Panel closed.");
     }
 
     void BeginAutoClose()
     {
         if (autoCloseRoutine != null)
-        {
             StopCoroutine(autoCloseRoutine);
-        }
 
         autoCloseRoutine = StartCoroutine(AutoCloseRoutine());
     }
@@ -212,9 +259,7 @@ public class ProductionMachineUI : MonoBehaviour
             {
                 anyEmpty = true;
                 if (slot != null)
-                {
                     slot.ShowResult(false);
-                }
             }
         }
 
@@ -244,7 +289,8 @@ public class ProductionMachineUI : MonoBehaviour
         for (int i = 0; i < slots.Length; i++)
         {
             var slot = slots[i];
-            if (slot != null && slot.slotId == slotId) return slot;
+            if (slot != null && slot.slotId == slotId)
+                return slot;
         }
 
         return null;
@@ -253,9 +299,7 @@ public class ProductionMachineUI : MonoBehaviour
     int SlotError(ProductioSlotUI slot, int reqW, int reqH)
     {
         if (slot == null)
-        {
             return 1;
-        }
 
         ItemSO item = slot.CurrentItem;
         if (item == null)
@@ -277,23 +321,32 @@ public class ProductionMachineUI : MonoBehaviour
         if (errorText == null) return;
 
         if (errors <= 0)
-        {
             errorText.text = "Perfect fit. 0 wrong fits.";
-        }
         else if (errors == 1)
-        {
             errorText.text = "1 wrong fit.";
-        }
         else
-        {
             errorText.text = errors + " wrong fits.";
-        }
     }
 
     void ShowNeedPiecesMessage()
     {
         if (errorText == null) return;
         errorText.text = "Add your square pieces into every slot.";
+    }
+
+    void ShowLockedMessage()
+    {
+        if (errorText == null) return;
+        errorText.text = "Buy a recipe in the shop to use this machine.";
+    }
+
+    void ShowNoRecipesMessage()
+    {
+        if (errorText != null)
+            errorText.text = "Go to the shop and buy a recipe to start assembling.";
+
+        if (assembleButton != null)
+            assembleButton.interactable = false;
     }
 
     void ScrapAllSlotsWithMessage(int errors)
