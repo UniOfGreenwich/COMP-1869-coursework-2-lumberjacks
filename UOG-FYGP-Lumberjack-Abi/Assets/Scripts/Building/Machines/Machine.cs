@@ -59,12 +59,15 @@ public class Machine : MonoBehaviour, IDropHandler
     public AnimationCurve flyCurve;
 
     [Header("Auto Wiring")]
-    public bool autoFindStorageUI = true;        // auto wire storage
-    public string overlayCanvasTag = "OverlayCanvas"; // optional canvas tag
-    public string storageAnchorName = "StorageAnchor"; // child rect name
-    public float uiProbeInterval = 0.5f;         // search cadence seconds
+    public bool autoFindStorageUI = true;
+    public string overlayCanvasTag = "OverlayCanvas";
+    public string storageAnchorName = "StorageAnchor";
+    public float uiProbeInterval = 0.5f;
 
-    // state caches here
+    [Header("Animation")]
+    [SerializeField] private Animator tableSawAnimator;
+    [SerializeField] private string animBoolParameter = "IsCutting";
+
     private StorageManager storage;
     private Placeble placeble;
     private Canvas dropCanvas;
@@ -72,18 +75,21 @@ public class Machine : MonoBehaviour, IDropHandler
     private int pendingPlanks;
     private MachineBlimp blimp;
 
-    // timer elements here
     private Canvas timerCanvas;
     private RectTransform timerRect;
     private Image timerImage;
     private Transform blimpRoot;
 
-    // probe control here
     private float _nextProbeTime;
+
+    private static bool TagDefined(string tagName)
+    {
+        try { GameObject.FindGameObjectsWithTag(tagName); return true; }
+        catch { return false; }
+    }
 
     void Awake()
     {
-        // bootstrap systems now
         storage = FindFirstObjectByType<StorageManager>();
         placeble = GetComponent<Placeble>();
         EnsureDropZone();
@@ -91,41 +97,37 @@ public class Machine : MonoBehaviour, IDropHandler
         EnsureBlimp();
         EnsureTimer();
 
-        // default curve fallback
         if (flyCurve == null || flyCurve.keys.Length == 0)
             flyCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
-        // immediate auto wire try
         TryAutoWireStorage();
+
+        if (!tableSawAnimator)
+            tableSawAnimator = GetComponentInChildren<Animator>(true);
     }
 
     void Update()
     {
-        // drop canvas toggle
         if (dropCanvas)
         {
             dropCanvas.enabled = placeble == null || placeble.placed;
             if (dropCanvas.worldCamera == null) dropCanvas.worldCamera = Camera.main;
         }
 
-        // periodic ui probing
         if (autoFindStorageUI && Time.unscaledTime >= _nextProbeTime)
         {
             _nextProbeTime = Time.unscaledTime + uiProbeInterval;
             TryAutoWireStorage();
         }
 
-        // timer follows blimp
         if (timerCanvas && timerDockToBlimp)
         {
             Vector3 anchor = blimpRoot ? blimpRoot.localPosition : new Vector3(0, blimpHeight, 0);
             timerCanvas.transform.localPosition = anchor + timerLocalOffset;
         }
 
-        // face blimp camera
         if (blimp) blimp.FaceCamera(Camera.main);
 
-        // spin timer icon
         if (timerCanvas && timerCanvas.gameObject.activeSelf)
         {
             FaceCanvas(timerCanvas.transform, Camera.main);
@@ -135,7 +137,6 @@ public class Machine : MonoBehaviour, IDropHandler
 
     public void OnDrop(PointerEventData eventData)
     {
-        // guard placement state
         if (busy || (placeble && !placeble.placed)) return;
 
         var draggable = eventData.pointerDrag ? eventData.pointerDrag.GetComponent<DraggableItemUI>() : null;
@@ -161,10 +162,12 @@ public class Machine : MonoBehaviour, IDropHandler
 
     private IEnumerator ProcessLogs(int logs)
     {
-        // process queue items
         if (logs <= 0 || busy) yield break;
         busy = true;
         SetTimer(true);
+
+        if (tableSawAnimator)
+            tableSawAnimator.SetBool(animBoolParameter, true);
 
         for (int i = 0; i < logs; i++)
         {
@@ -186,13 +189,15 @@ public class Machine : MonoBehaviour, IDropHandler
             }
         }
 
+        if (tableSawAnimator)
+            tableSawAnimator.SetBool(animBoolParameter, false);
+
         busy = false;
         SetTimer(false);
     }
 
     private void EnsureBlimp()
     {
-        // build blimp ui
         if (!enableBlimp) return;
 
         var canvasObj = new GameObject("BlimpCanvas", typeof(Canvas), typeof(GraphicRaycaster));
@@ -244,7 +249,6 @@ public class Machine : MonoBehaviour, IDropHandler
 
     private void EnsureTimer()
     {
-        // create timer ui
         if (!showTimer) return;
 
         var timerCanvasObj = new GameObject("TimerCanvas", typeof(Canvas), typeof(GraphicRaycaster));
@@ -280,7 +284,6 @@ public class Machine : MonoBehaviour, IDropHandler
 
     private void SetTimer(bool on)
     {
-        // toggle timer state
         if (!showTimer || !timerCanvas) return;
         timerCanvas.gameObject.SetActive(on);
         if (timerRect) timerRect.localRotation = Quaternion.identity;
@@ -288,7 +291,6 @@ public class Machine : MonoBehaviour, IDropHandler
 
     private void UpdateBlimpUI()
     {
-        // refresh blimp text
         if (!enableBlimp || !blimp) return;
         blimp.gameObject.SetActive(pendingPlanks > 0);
         blimp.SetCount(pendingPlanks);
@@ -296,7 +298,6 @@ public class Machine : MonoBehaviour, IDropHandler
 
     internal void CollectBlimp()
     {
-        // commit to storage
         if (pendingPlanks <= 0) return;
         if (!storage) return;
 
@@ -308,7 +309,6 @@ public class Machine : MonoBehaviour, IDropHandler
         pendingPlanks = 0;
         UpdateBlimpUI();
 
-        // try visual flight
         if (!overlayCanvas || !storageAnchor) TryAutoWireStorage();
         if (overlayCanvas && storageAnchor && plankIcon)
             StartCoroutine(FlyToStorageRoutine(startWorld, collected));
@@ -316,7 +316,6 @@ public class Machine : MonoBehaviour, IDropHandler
 
     private void EnsureDropZone()
     {
-        // build drop zone
         var forwarderExisting = GetComponentInChildren<MachineDropForwarder>(true);
         if (forwarderExisting)
         {
@@ -353,7 +352,6 @@ public class Machine : MonoBehaviour, IDropHandler
 
     private void SetupPrompt()
     {
-        // wire quantity ui
         if (!promptPanel)
         {
             Transform quantityTransform = null;
@@ -364,8 +362,11 @@ public class Machine : MonoBehaviour, IDropHandler
                     if (t && t.name == "QuantityUI" && t.hideFlags == HideFlags.None) { quantityTransform = t; break; }
             if (!quantityTransform)
             {
-                var tagged = GameObject.FindGameObjectWithTag("QuantityUI");
-                if (tagged) quantityTransform = tagged.transform;
+                if (TagDefined("QuantityUI"))
+                {
+                    var tagged = GameObject.FindGameObjectWithTag("QuantityUI");
+                    if (tagged) quantityTransform = tagged.transform;
+                }
             }
             if (quantityTransform)
             {
@@ -407,7 +408,6 @@ public class Machine : MonoBehaviour, IDropHandler
 
     private void ShowPrompt(string title, int max, System.Action<int> onConfirm, System.Action onCancel)
     {
-        // open quantity prompt
         if (!promptPanel || !promptSlider) { onCancel?.Invoke(); return; }
         _onConfirm = onConfirm; _onCancel = onCancel;
 
@@ -422,7 +422,6 @@ public class Machine : MonoBehaviour, IDropHandler
 
     private void ClosePrompt(bool confirmed)
     {
-        // close quantity prompt
         if (!promptPanel || !promptSlider) return;
         int value = (int)promptSlider.value;
         promptPanel.SetActive(false);
@@ -433,7 +432,6 @@ public class Machine : MonoBehaviour, IDropHandler
 
     private void FaceCanvas(Transform t, Camera cam)
     {
-        // face toward camera
         if (!cam) return;
         var dir = t.position - cam.transform.position;
         dir.y = 0f;
@@ -442,7 +440,6 @@ public class Machine : MonoBehaviour, IDropHandler
 
     private IEnumerator FlyToStorageRoutine(Vector3 startWorld, int count)
     {
-        // icon flight effect
         int icons = Mathf.Clamp(count, 1, flyBurst);
         RectTransform overlayCanvasRect = overlayCanvas.transform as RectTransform;
 
@@ -466,7 +463,6 @@ public class Machine : MonoBehaviour, IDropHandler
 
     private IEnumerator SingleFlyIcon(Vector2 start, Vector2 control, Vector2 end, float delay)
     {
-        // fly single icon
         if (delay > 0f) yield return new WaitForSeconds(delay);
 
         RectTransform overlayCanvasRect = overlayCanvas.transform as RectTransform;
@@ -506,14 +502,12 @@ public class Machine : MonoBehaviour, IDropHandler
 
     private static Vector2 QuadraticBezier(Vector2 a, Vector2 b, Vector2 c, float t)
     {
-        // quadratic bezier evaluate
         float u = 1f - t;
         return u * u * a + 2f * u * t * b + t * t * c;
     }
 
     private IEnumerator PulseStorageAnchor()
     {
-        // anchor pulse feedback
         float up = 0.1f;
         float down = 0.1f;
         Vector3 baseScale = storageAnchor.localScale;
@@ -540,28 +534,23 @@ public class Machine : MonoBehaviour, IDropHandler
         storageAnchor.localScale = baseScale;
     }
 
-    // runtime auto wiring
     private void TryAutoWireStorage()
     {
-        // find overlay canvas
         if (overlayCanvas == null && autoFindStorageUI)
         {
             foreach (var c in Resources.FindObjectsOfTypeAll<Canvas>())
             {
-                if (!string.IsNullOrEmpty(overlayCanvasTag) && c.CompareTag(overlayCanvasTag)) { overlayCanvas = c; break; }
-            }
-            if (overlayCanvas == null)
-            {
-                foreach (var c in Resources.FindObjectsOfTypeAll<Canvas>())
-                {
-                    if (!c || !c.gameObject.scene.IsValid()) continue;
-                    if (c.renderMode == RenderMode.ScreenSpaceOverlay || c.renderMode == RenderMode.ScreenSpaceCamera)
-                    { overlayCanvas = c; break; }
-                }
+                if (!c || !c.gameObject.scene.IsValid()) continue;
+
+                bool tagMatch = false;
+                if (!string.IsNullOrEmpty(overlayCanvasTag) && TagDefined(overlayCanvasTag))
+                    tagMatch = (c.gameObject.tag == overlayCanvasTag);
+
+                if (tagMatch || c.renderMode == RenderMode.ScreenSpaceOverlay || c.renderMode == RenderMode.ScreenSpaceCamera)
+                { overlayCanvas = c; break; }
             }
         }
 
-        // find storage anchor
         if (overlayCanvas && storageAnchor == null)
         {
             foreach (var rt in overlayCanvas.GetComponentsInChildren<RectTransform>(true))
@@ -570,7 +559,6 @@ public class Machine : MonoBehaviour, IDropHandler
             }
         }
 
-        // fallback anchor create
         if (overlayCanvas && storageAnchor == null)
         {
             var go = new GameObject(storageAnchorName, typeof(RectTransform));
@@ -585,49 +573,10 @@ public class Machine : MonoBehaviour, IDropHandler
         }
     }
 
-    // optional external wiring
     public void WireStorageUI(Canvas canvas, RectTransform anchor)
     {
-        // external dependency injection
         overlayCanvas = canvas;
         storageAnchor = anchor;
     }
 }
 
-public class MachineDropForwarder : MonoBehaviour, IDropHandler
-{
-    // forward drop event
-    public Machine target;
-    public void OnDrop(PointerEventData e) { if (target) target.OnDrop(e); }
-}
-
-public class MachineBlimp : MonoBehaviour, IPointerClickHandler
-{
-    // blimp interactions here
-    private Machine machine;
-    private TextMeshProUGUI countText;
-    private Button backgroundButton;
-
-    public void Init(Machine m, TextMeshProUGUI text, Button button)
-    {
-        machine = m; countText = text; backgroundButton = button;
-        if (backgroundButton) backgroundButton.onClick.AddListener(Collect);
-    }
-
-    public void SetCount(int n)
-    {
-        if (countText) countText.text = "x" + n;
-    }
-
-    public void FaceCamera(Camera cam)
-    {
-        if (!cam) return;
-        var t = transform;
-        var dir = (t.position - cam.transform.position); dir.y = 0f;
-        if (dir.sqrMagnitude > 0.0001f) t.rotation = Quaternion.LookRotation(dir);
-    }
-
-    public void OnPointerClick(PointerEventData e) { Collect(); }
-
-    private void Collect() { if (machine) machine.CollectBlimp(); }
-}

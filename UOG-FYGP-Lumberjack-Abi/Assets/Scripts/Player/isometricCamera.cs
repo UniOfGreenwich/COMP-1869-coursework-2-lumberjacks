@@ -4,21 +4,26 @@ public class isometricCamera : MonoBehaviour
 {
     [Header("Pan settings")]
     public float panSpeed = 0.5f;
+
     [Header("Zoom settings")]
     public float zoomSpeed = 0.1f;
     public float zoomSmoothness = 5f;
     public float minZoom = 2f;
     public float maxZoom = 20f;
     public float rotationSpeed = 100f;
+
     [Header("Map settings")]
     public GameObject mapObject;
     public float mapWidth;
     public float mapHeight;
+
     private Camera _camera;
     private Vector2 _lastPanPosition;
     private int _panFingerId;
     private bool _isPanning;
     private float _currentZoom;
+    private Vector3 mapCenter;
+
     private void Awake()
     {
         _camera = GetComponentInChildren<Camera>();
@@ -30,51 +35,58 @@ public class isometricCamera : MonoBehaviour
 
     private void CalculateMapSize()
     {
+        if (mapObject == null) return;
+
         MeshRenderer renderer = mapObject.GetComponent<MeshRenderer>();
         if (renderer != null)
         {
             mapWidth = renderer.bounds.size.x;
             mapHeight = renderer.bounds.size.z;
+            mapCenter = renderer.bounds.center;
         }
     }
+
     private void RecalculateMaxZoom()
     {
         float maxByHeight = mapHeight / 2f;
         float maxByWidth = (mapWidth / 2f) / _camera.aspect;
         maxZoom = Mathf.Min(maxByHeight, maxByWidth);
     }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    // Unity default start method
     void Start()
     {
-        
     }
 
-    // Update is called once per frame
+    // Unity default update method
     void Update()
     {
-        {
 #if UNITY_EDITOR || UNITY_STANDALONE
-            HandleEditorInput();
+        HandleEditorInput();
 #else
-            HandleTouchInput();
+        HandleTouchInput();
 #endif
-            ApplyZoom();
-            ClampPosition();
-        }
+        ApplyZoom();
+        ClampPosition();
     }
+
     private void HandleEditorInput()
     {
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
         transform.Translate(new Vector3(h, 0, v) * panSpeed, Space.World);
+
         float scroll = Input.mouseScrollDelta.y;
-        if (Mathf.Abs(scroll) > 0.01f) _currentZoom -= scroll * zoomSpeed * 100f * Time.deltaTime;
+        if (Mathf.Abs(scroll) > 0.01f)
+            _currentZoom -= scroll * zoomSpeed * 100f * Time.deltaTime;
+
         if (Input.GetMouseButton(1))
         {
             float mouseDeltaX = Input.GetAxis("Mouse X");
             transform.Rotate(Vector3.up, mouseDeltaX * rotationSpeed * Time.deltaTime, Space.World);
         }
     }
+
     private void HandleTouchInput()
     {
         if (Input.touchCount == 1)
@@ -87,7 +99,9 @@ public class isometricCamera : MonoBehaviour
                 _panFingerId = touch.fingerId;
                 _isPanning = true;
             }
-            else if (touch.fingerId == _panFingerId && touch.phase == TouchPhase.Moved && _isPanning)
+            else if (touch.fingerId == _panFingerId &&
+                     touch.phase == TouchPhase.Moved &&
+                     _isPanning)
             {
                 Vector2 touchDelta = touch.position - _lastPanPosition;
                 Vector3 move = new Vector3(
@@ -95,29 +109,46 @@ public class isometricCamera : MonoBehaviour
                     0,
                     -touchDelta.y * panSpeed * Time.deltaTime
                 );
-
                 transform.Translate(move, Space.World);
                 _lastPanPosition = touch.position;
             }
-            else if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
+            else if (touch.fingerId == _panFingerId &&
+                     (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled))
             {
                 _isPanning = false;
             }
         }
-        else if (Input.touchCount == 2) // PINCH ZOOM + ROTATE
+        else if (Input.touchCount == 2) // Pinch zoom rotate input
         {
             Touch t0 = Input.GetTouch(0);
             Touch t1 = Input.GetTouch(1);
-            float prevDist = (t0.position - t0.deltaPosition - (t1.position - t1.deltaPosition)).magnitude;
+
+            float prevDist = (t0.position - t0.deltaPosition -
+                              (t1.position - t1.deltaPosition)).magnitude;
             float currDist = (t0.position - t1.position).magnitude;
             float delta = prevDist - currDist;
+
             _currentZoom += delta * zoomSpeed * Time.deltaTime;
-            Vector2 prevDir = (t0.position - t0.deltaPosition) - (t1.position - t1.deltaPosition);
+
+            Vector2 prevDir = (t0.position - t0.deltaPosition) -
+                              (t1.position - t1.deltaPosition);
             Vector2 currDir = t0.position - t1.position;
             float angle = Vector2.SignedAngle(prevDir, currDir);
             transform.Rotate(Vector3.up, angle * rotationSpeed * Time.deltaTime, Space.World);
         }
     }
+
+    public void SetMapObject(GameObject newMap)
+    {
+        mapObject = newMap;
+        if (mapObject != null)
+        {
+            CalculateMapSize();
+            RecalculateMaxZoom();
+            ClampPosition();
+        }
+    }
+
     private void ApplyZoom()
     {
         _currentZoom = Mathf.Clamp(_currentZoom, minZoom, maxZoom);
@@ -128,18 +159,24 @@ public class isometricCamera : MonoBehaviour
             Time.deltaTime * zoomSmoothness
         );
     }
+
     private void ClampPosition()
     {
+        if (_camera == null || mapObject == null) return;
+
         float vertExtent = _camera.orthographicSize;
         float horzExtent = vertExtent * _camera.aspect;
 
         if (mapWidth < horzExtent * 2f || mapHeight < vertExtent * 2f)
             return;
 
-        float minX = -mapWidth / 2f + horzExtent;
-        float maxX = mapWidth / 2f - horzExtent;
-        float minZ = -mapHeight / 2f + vertExtent;
-        float maxZ = mapHeight / 2f - vertExtent;
+        float halfWidth = mapWidth / 2f;
+        float halfHeight = mapHeight / 2f;
+
+        float minX = mapCenter.x - halfWidth + horzExtent;
+        float maxX = mapCenter.x + halfWidth - horzExtent;
+        float minZ = mapCenter.z - halfHeight + vertExtent;
+        float maxZ = mapCenter.z + halfHeight - vertExtent;
 
         Vector3 pos = transform.position;
         pos.x = Mathf.Clamp(pos.x, minX, maxX);
