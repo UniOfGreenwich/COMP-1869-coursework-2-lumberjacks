@@ -153,7 +153,7 @@ public class TreePlot : MonoBehaviour
 
         if (statusText)
         {
-            if (state == State.Empty) statusText.text = "Tap to plant";
+            if (state == State.Empty) statusText.text = "Tap tree stump to plant";
             else if (state == State.Growing) statusText.text = "Tree growing";
             else if (state == State.Ready) statusText.text = "Tree ready";
         }
