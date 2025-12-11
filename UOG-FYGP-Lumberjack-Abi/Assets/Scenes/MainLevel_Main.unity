@@ -6480,6 +6480,14 @@ PrefabInstance:
       propertyPath: nextRoom
       value: 
       objectReference: {fileID: 885068902}
+    - target: {fileID: 3577780427970737902, guid: 5ad52676a2136524ebd1f0d021172194, type: 3}
+      propertyPath: spawnPoint.x
+      value: -3.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3577780427970737902, guid: 5ad52676a2136524ebd1f0d021172194, type: 3}
+      propertyPath: spawnPoint.z
+      value: 4.25
+      objectReference: {fileID: 0}
     - target: {fileID: 8337901112098247702, guid: 5ad52676a2136524ebd1f0d021172194, type: 3}
       propertyPath: m_Name
       value: roomsLumberAreaMain
@@ -6622,13 +6630,17 @@ PrefabInstance:
       propertyPath: nextRoom
       value: 
       objectReference: {fileID: 885068902}
+    - target: {fileID: 754724565010556232, guid: 0356beb2987e3034eaceb272c019c3a0, type: 3}
+      propertyPath: spawnPoint.x
+      value: 4.25
+      objectReference: {fileID: 0}
     - target: {fileID: 1593346734902077175, guid: 0356beb2987e3034eaceb272c019c3a0, type: 3}
       propertyPath: m_Name
       value: roomStorage
       objectReference: {fileID: 0}
     - target: {fileID: 1593346734902077175, guid: 0356beb2987e3034eaceb272c019c3a0, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2114269348476337229, guid: 0356beb2987e3034eaceb272c019c3a0, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6895,7 +6907,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5619251619465135874, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7669343763947279619, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
       propertyPath: nextRoom
