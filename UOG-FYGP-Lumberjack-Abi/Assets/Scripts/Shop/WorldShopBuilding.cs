@@ -2,17 +2,19 @@ using UnityEngine;
 
 public class WorldShopBuilding : MonoBehaviour
 {
-    public GameShopPanelUI shopPanel;
+    [Header("Panel References")]
+    [SerializeField] private GameObject computerUI;  // @ANDREI NEW
+    // shopPanel removed – now opened only from inside Computer_UI
 
-    void OnMouseDown()
+    private void OnMouseDown()
     {
-        if (shopPanel == null)
+        if (computerUI == null)
         {
-            Debug.LogWarning("[WorldShopBuilding] ShopPanel not assigned.");
+            Debug.LogWarning("[WorldShopBuilding] Computer UI not assigned.");
             return;
         }
 
-        Debug.Log("[WorldShopBuilding] Opening shop.");
-        shopPanel.Open();
+        Debug.Log("[WorldShopBuilding] Opening Computer UI.");
+        computerUI.SetActive(true);
     }
 }

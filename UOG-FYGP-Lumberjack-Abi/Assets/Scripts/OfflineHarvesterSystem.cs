@@ -32,6 +32,16 @@ public class OfflineHarvesterNPC : MonoBehaviour
     public string storageAnchorName = "StorageAnchor";
     public float uiProbeInterval = 0.5f;
 
+    [Header("Blimp Style")]
+    public Sprite logsBlimpSprite;
+    public Sprite seedsBlimpSprite;
+    public TMP_FontAsset blimpFont;
+    public Color blimpTextColor = Color.white;
+    public bool blimpTextBold = false;
+    public bool blimpTextAutoSize = true;
+    public int blimpTextFontSizeMin = 22;
+    public int blimpTextFontSizeMax = 36;
+
     private StorageManager storage;
     private int pendingLogs;
     private int pendingSeeds;
@@ -88,8 +98,51 @@ public class OfflineHarvesterNPC : MonoBehaviour
     {
         logsCanvas = BuildBlimpCanvas("LogsBlimp", new Vector3(-0.6f, blimpHeight, 0f),
             out logsText, out logsButton);
+ 
+
         seedsCanvas = BuildBlimpCanvas("SeedsBlimp", new Vector3(0.6f, blimpHeight, 0f),
             out seedsText, out seedsButton);
+
+
+        // LOGS styling
+        logsButton.image.sprite = logsBlimpSprite;
+        logsText.font = blimpFont;
+        logsText.color = blimpTextColor;
+
+        logsText.enableAutoSizing = blimpTextAutoSize;
+        if (blimpTextAutoSize)
+        {
+            logsText.fontSizeMin = blimpTextFontSizeMin;
+            logsText.fontSizeMax = blimpTextFontSizeMax;
+        }
+        else
+        {
+            logsText.fontSize = blimpTextFontSizeMax; // fixed size if autosize off
+        }
+
+        logsText.fontStyle = blimpTextBold ? FontStyles.Bold : FontStyles.Normal;
+
+
+        // SEEDS styling
+        seedsButton.image.sprite = seedsBlimpSprite;
+        seedsText.font = blimpFont;
+        seedsText.color = blimpTextColor;
+
+        seedsText.enableAutoSizing = blimpTextAutoSize;
+        if (blimpTextAutoSize)
+        {
+            seedsText.fontSizeMin = blimpTextFontSizeMin;
+            seedsText.fontSizeMax = blimpTextFontSizeMax;
+        }
+        else
+        {
+            seedsText.fontSize = blimpTextFontSizeMax;
+        }
+
+        seedsText.fontStyle = blimpTextBold ? FontStyles.Bold : FontStyles.Normal;
+
+
+
 
         logsButton.onClick.AddListener(CollectLogs);
         seedsButton.onClick.AddListener(CollectSeeds);
@@ -193,8 +246,8 @@ public class OfflineHarvesterNPC : MonoBehaviour
         if (logsCanvas) logsCanvas.gameObject.SetActive(showLogs);
         if (seedsCanvas) seedsCanvas.gameObject.SetActive(showSeeds);
 
-        if (logsText) logsText.text = "Logs x" + pendingLogs;
-        if (seedsText) seedsText.text = "Seeds x" + pendingSeeds;
+        if (logsText) logsText.text = "logs:" + pendingLogs;
+        if (seedsText) seedsText.text = "seeds:" + pendingSeeds;
     }
 
     void CollectLogs()
