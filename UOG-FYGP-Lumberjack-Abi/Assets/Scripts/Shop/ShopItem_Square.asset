@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d567830ac9642f84da0a528aaf803d77, type: 3}
-  m_Name: ShopItem_ 1
+  m_Name: ShopItem_Square
   m_EditorClassIdentifier: 
-  id: Machine
-  displayName: production
-  icon: {fileID: -38176839, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
+  id: plank
+  displayName: plank cutter
+  icon: {fileID: 21300000, guid: 6f738e7a6cd54d744885a6859767206e, type: 3}
   price: 10
   type: 1
   item: {fileID: 0}
   itemCount: 1
-  prefabToPlace: {fileID: 5405113680654707641, guid: 9f2376475e8874843b2bd819eb2d575f, type: 3}
+  prefabToPlace: {fileID: 1316224057959332359, guid: bda3ff54ef17277499762906cff812b9, type: 3}
   recipeToUnlock: {fileID: 0}
   singlePurchase: 1

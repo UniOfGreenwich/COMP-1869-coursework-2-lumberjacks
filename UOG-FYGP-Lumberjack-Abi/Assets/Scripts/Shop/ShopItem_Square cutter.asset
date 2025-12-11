@@ -19,6 +19,6 @@ MonoBehaviour:
   type: 1
   item: {fileID: 0}
   itemCount: 1
-  prefabToPlace: {fileID: 1316224057959332359, guid: bda3ff54ef17277499762906cff812b9, type: 3}
+  prefabToPlace: {fileID: 3817230068808145539, guid: 46ad57575cdca9f429c5c0d9576ca43c, type: 3}
   recipeToUnlock: {fileID: 0}
   singlePurchase: 1
