@@ -4,21 +4,31 @@ using TMPro;
 [RequireComponent(typeof(Collider))]
 public class CustomerFBX : MonoBehaviour
 {
-    public TextMeshPro worldText;
+    public SpriteRenderer alertIcon;//andrei
     public CustomerCardUI orderPopup;
 
     JobManager jobManager;
     JobOrder job;
 
+
+    void LateUpdate()
+    {
+        if (alertIcon != null)
+        {
+            alertIcon.transform.forward = Camera.main.transform.forward;
+        }
+    }
+
+
     public void Setup(JobManager manager, JobOrder order)
     {
         jobManager = manager;
         job = order;
+        
+        // Enable icon only if there is an order ANDREI
+        if (alertIcon != null)
+            alertIcon.enabled = (order != null);
 
-        if (worldText != null)
-        {
-            worldText.text = BuildLabel(order);
-        }
 
         if (orderPopup == null)
         {
@@ -26,16 +36,7 @@ public class CustomerFBX : MonoBehaviour
         }
     }
 
-    string BuildLabel(JobOrder order)
-    {
-        if (order == null)
-        {
-            return "Order";
-        }
-
-        int total = order.TotalQuantity;
-        return "Order\n" + total.ToString() + " items";
-    }
+ 
 
     void OnMouseDown()
     {
