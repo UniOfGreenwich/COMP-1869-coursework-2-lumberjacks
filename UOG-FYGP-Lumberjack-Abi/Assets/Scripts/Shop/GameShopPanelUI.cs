@@ -18,6 +18,8 @@ public class GameShopPanelUI : MonoBehaviour
     [Header("Feedback")]
     public TextMeshProUGUI feedbackLabel;
 
+    const string PrefOwnedPrefix = "ShopOwned_";
+
     void Awake()
     {
         if (storage == null)
@@ -48,7 +50,10 @@ public class GameShopPanelUI : MonoBehaviour
             gameObject.SetActive(true);
 
         if (feedbackLabel != null)
-            feedbackLabel.text = "";
+            feedbackLabel.text = string.Empty;
+
+        PlayerController.IsInputLocked = true;
+        Debug.Log("[ShopPanel] Opened.");
     }
 
     public void Close()
@@ -57,6 +62,9 @@ public class GameShopPanelUI : MonoBehaviour
             rootPanel.SetActive(false);
         else
             gameObject.SetActive(false);
+
+        PlayerController.IsInputLocked = false;
+        Debug.Log("[ShopPanel] Closed.");
     }
 
     void BuildList()
@@ -80,8 +88,9 @@ public class GameShopPanelUI : MonoBehaviour
         {
             if (item == null) continue;
 
+            bool owned = IsOwned(item);
             var row = Instantiate(rowPrefab, contentRoot);
-            row.Bind(this, item);
+            row.Bind(this, item, owned);
         }
 
         Debug.Log("[ShopPanel] Built " + items.Length + " rows.");
@@ -89,27 +98,40 @@ public class GameShopPanelUI : MonoBehaviour
 
     public void HandleBuy(ShopItemSO item)
     {
+        if (item == null) return;
+
         if (inventory == null)
         {
             Debug.LogError("[ShopPanel] No Inventory found.");
             return;
         }
 
-        if (item.price <= 0)
+        // stop extra buys for single-purchase items
+        if (item.singlePurchase && IsOwned(item))
         {
-            Debug.LogWarning("[ShopPanel] Item price is not valid for " + item.name);
+            Debug.Log("[ShopPanel] " + item.displayName + " already owned, skipping buy.");
+            if (feedbackLabel != null)
+                feedbackLabel.text = "Owned.";
+            return;
+        }
+
+        if (item.price < 0)
+        {
+            Debug.LogWarning("[ShopPanel] Negative price on " + item.name);
             if (feedbackLabel != null)
                 feedbackLabel.text = "Config error.";
             return;
         }
 
-        // Spend money first
-        if (!inventory.TrySpend(item.price))
+        if (item.price > 0)
         {
-            Debug.Log("[ShopPanel] Not enough money for " + item.displayName);
-            if (feedbackLabel != null)
-                feedbackLabel.text = "Not enough money.";
-            return;
+            if (!inventory.TrySpend(item.price))
+            {
+                Debug.Log("[ShopPanel] Not enough money for " + item.displayName);
+                if (feedbackLabel != null)
+                    feedbackLabel.text = "Not enough money.";
+                return;
+            }
         }
 
         bool success = false;
@@ -124,6 +146,10 @@ public class GameShopPanelUI : MonoBehaviour
             case ShopItemType.BuyFieldToPlace:
                 success = BuyPlaceable(item);
                 break;
+
+            case ShopItemType.BuyRecipe:
+                success = BuyRecipe(item);
+                break;
         }
 
         if (!success)
@@ -132,14 +158,27 @@ public class GameShopPanelUI : MonoBehaviour
             if (feedbackLabel != null)
                 feedbackLabel.text = "Buy failed.";
 
-            // Refund if something went wrong
-            inventory.AddMoney(item.price);
+            if (item.price > 0)
+                inventory.AddMoney(item.price);
+
             return;
         }
 
+        if (item.singlePurchase)
+            SetOwned(item);
+
         Debug.Log("[ShopPanel] Buy success for " + item.displayName);
+
         if (feedbackLabel != null)
-            feedbackLabel.text = "Bought " + item.displayName;
+        {
+            if (item.singlePurchase)
+                feedbackLabel.text = "Owned " + item.displayName;
+            else
+                feedbackLabel.text = "Bought " + item.displayName;
+        }
+
+        // rebuild so row changes to "Owned"
+        BuildList();
     }
 
     bool BuyItemToStorage(ShopItemSO item)
@@ -182,5 +221,40 @@ public class GameShopPanelUI : MonoBehaviour
         Debug.Log("[ShopPanel] Starting placement for " + item.displayName);
         BuildingSystem.instance.StartPlacement(item.prefabToPlace);
         return true;
+    }
+
+    bool BuyRecipe(ShopItemSO item)
+    {
+        if (item.recipeToUnlock == null)
+        {
+            Debug.LogWarning("[ShopPanel] recipeToUnlock is null on " + item.name);
+            return false;
+        }
+
+        if (RecipeUnlockManager.Instance == null)
+        {
+            Debug.LogError("[ShopPanel] No RecipeUnlockManager in scene.");
+            return false;
+        }
+
+        RecipeUnlockManager.Instance.UnlockRecipe(item.recipeToUnlock);
+        Debug.Log("[ShopPanel] Unlocked recipe: " + item.recipeToUnlock.displayName);
+        return true;
+    }
+
+    public bool IsOwned(ShopItemSO item)
+    {
+        if (item == null || string.IsNullOrEmpty(item.id)) return false;
+        return PlayerPrefs.GetInt(PrefOwnedPrefix + item.id, 0) == 1;
+    }
+
+    void SetOwned(ShopItemSO item)
+    {
+        if (item == null || string.IsNullOrEmpty(item.id)) return;
+
+        PlayerPrefs.SetInt(PrefOwnedPrefix + item.id, 1);
+        PlayerPrefs.Save();
+
+        Debug.Log("[ShopPanel] Marked owned: " + item.displayName);
     }
 }
