@@ -2355,6 +2355,11 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7549337052847456500, guid: 3ff35f8986fb0cd42b69e41d1b1d0209, type: 3}
   m_PrefabInstance: {fileID: 843113622}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &885068902 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5619251619465135874, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
+  m_PrefabInstance: {fileID: 6780735990812326799}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &937388835
 GameObject:
   m_ObjectHideFlags: 0
@@ -3895,6 +3900,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1282683878}
   m_CullTransparentMesh: 1
+--- !u!1 &1307113400 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8337901112098247702, guid: 5ad52676a2136524ebd1f0d021172194, type: 3}
+  m_PrefabInstance: {fileID: 2901957106615139785}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1310771113
 GameObject:
   m_ObjectHideFlags: 0
@@ -6297,8 +6307,12 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1635998655521204195, guid: 3958ae3401c29b64daa5616b33041098, type: 3}
       propertyPath: m_Name
-      value: roomsLuberAreaUpgrade
+      value: roomsLumberAreaUpgrade
       objectReference: {fileID: 0}
+    - target: {fileID: 1687528248921982506, guid: 3958ae3401c29b64daa5616b33041098, type: 3}
+      propertyPath: nextRoom
+      value: 
+      objectReference: {fileID: 1307113400}
     - target: {fileID: 2161706618527153497, guid: 3958ae3401c29b64daa5616b33041098, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -6394,10 +6408,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: roomLoadingBayUpgrade
       objectReference: {fileID: 0}
-    - target: {fileID: 1564298261139030219, guid: ee5da94628f0a274cab9635d684fe2ad, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2233310802419669617, guid: ee5da94628f0a274cab9635d684fe2ad, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -6438,6 +6448,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2741857659492333316, guid: ee5da94628f0a274cab9635d684fe2ad, type: 3}
+      propertyPath: nextRoom
+      value: 
+      objectReference: {fileID: 8550785084361734873}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6451,13 +6465,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3577780427970737902, guid: 5ad52676a2136524ebd1f0d021172194, type: 3}
+      propertyPath: nextRoom
+      value: 
+      objectReference: {fileID: 885068902}
     - target: {fileID: 8337901112098247702, guid: 5ad52676a2136524ebd1f0d021172194, type: 3}
       propertyPath: m_Name
       value: roomsLumberAreaMain
-      objectReference: {fileID: 0}
-    - target: {fileID: 8337901112098247702, guid: 5ad52676a2136524ebd1f0d021172194, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8718401866607824556, guid: 5ad52676a2136524ebd1f0d021172194, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6531,25 +6545,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 796348658141927185, guid: 8b5b720f2baaffd4998d963f8a273f62, type: 3}
-      propertyPath: maxTapMovement
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 1922137006786056503, guid: 8b5b720f2baaffd4998d963f8a273f62, type: 3}
-      propertyPath: m_Speed
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 5965833640959285229, guid: 8b5b720f2baaffd4998d963f8a273f62, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5965833640959285229, guid: 8b5b720f2baaffd4998d963f8a273f62, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 5965833640959285229, guid: 8b5b720f2baaffd4998d963f8a273f62, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.88
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5965833640959285229, guid: 8b5b720f2baaffd4998d963f8a273f62, type: 3}
       propertyPath: m_LocalRotation.w
@@ -6579,10 +6585,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6875445517090223806, guid: 8b5b720f2baaffd4998d963f8a273f62, type: 3}
-      propertyPath: minInterval
-      value: 0.15
-      objectReference: {fileID: 0}
     - target: {fileID: 6927807972405082794, guid: 8b5b720f2baaffd4998d963f8a273f62, type: 3}
       propertyPath: m_Name
       value: Player
@@ -6600,13 +6602,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 754724565010556232, guid: 0356beb2987e3034eaceb272c019c3a0, type: 3}
+      propertyPath: nextRoom
+      value: 
+      objectReference: {fileID: 885068902}
     - target: {fileID: 1593346734902077175, guid: 0356beb2987e3034eaceb272c019c3a0, type: 3}
       propertyPath: m_Name
       value: roomStorage
-      objectReference: {fileID: 0}
-    - target: {fileID: 1593346734902077175, guid: 0356beb2987e3034eaceb272c019c3a0, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2114269348476337229, guid: 0356beb2987e3034eaceb272c019c3a0, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6646,18 +6648,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2114269348476337229, guid: 0356beb2987e3034eaceb272c019c3a0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3339735458648635387, guid: 0356beb2987e3034eaceb272c019c3a0, type: 3}
-      propertyPath: m_NavMeshData
-      value: 
-      objectReference: {fileID: 23800000, guid: e16b3e5ece07a924794797cc71ad6449, type: 2}
-    - target: {fileID: 9123722442311340017, guid: 0356beb2987e3034eaceb272c019c3a0, type: 3}
-      propertyPath: m_Name
-      value: DoorCollider_Machine
-      objectReference: {fileID: 0}
-    - target: {fileID: 9123722442311340017, guid: 0356beb2987e3034eaceb272c019c3a0, type: 3}
-      propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -6708,6 +6698,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2350069716730448912, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
+      propertyPath: nextRoom
+      value: 
+      objectReference: {fileID: 1307113400}
     - target: {fileID: 5093649518548901304, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -6748,14 +6742,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5390374049246198548, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
+      propertyPath: nextRoom
+      value: 
+      objectReference: {fileID: 8550785084361734873}
     - target: {fileID: 5619251619465135874, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
       propertyPath: m_Name
       value: roomMachine
       objectReference: {fileID: 0}
-    - target: {fileID: 5619251619465135874, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
+    - target: {fileID: 7669343763947279619, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
+      propertyPath: nextRoom
+      value: 
+      objectReference: {fileID: 4569069337438111873}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6788,13 +6786,13 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3718110896167439206, guid: 3a0bf593a26cd354ebfa079492f05e87, type: 3}
+      propertyPath: nextRoom
+      value: 
+      objectReference: {fileID: 885068902}
     - target: {fileID: 8135062766885837543, guid: 3a0bf593a26cd354ebfa079492f05e87, type: 3}
       propertyPath: m_Name
       value: roomLoadingBayMain
-      objectReference: {fileID: 0}
-    - target: {fileID: 8135062766885837543, guid: 3a0bf593a26cd354ebfa079492f05e87, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8912162764106809437, guid: 3a0bf593a26cd354ebfa079492f05e87, type: 3}
       propertyPath: m_LocalPosition.x
@@ -6841,6 +6839,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3a0bf593a26cd354ebfa079492f05e87, type: 3}
+--- !u!1 &8550785084361734873 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8135062766885837543, guid: 3a0bf593a26cd354ebfa079492f05e87, type: 3}
+  m_PrefabInstance: {fileID: 8550785084361734872}
+  m_PrefabAsset: {fileID: 0}
 --- !u!222 &8827830661905699114
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6873,6 +6876,6 @@ SceneRoots:
   - {fileID: 8550785084361734872}
   - {fileID: 6780735990812326799}
   - {fileID: 2901957106615139785}
+  - {fileID: 1367867311580011295}
   - {fileID: 4569069337438111872}
   - {fileID: 560696728}
-  - {fileID: 1367867311580011295}
