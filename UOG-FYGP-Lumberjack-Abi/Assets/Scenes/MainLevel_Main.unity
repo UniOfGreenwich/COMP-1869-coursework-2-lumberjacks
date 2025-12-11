@@ -6698,6 +6698,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1463330620416953211, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
+      propertyPath: m_NavMeshData
+      value: 
+      objectReference: {fileID: 23800000, guid: 66d2bed9de6c82c4583060bcaa6d9e23, type: 2}
     - target: {fileID: 2350069716730448912, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
       propertyPath: nextRoom
       value: 
