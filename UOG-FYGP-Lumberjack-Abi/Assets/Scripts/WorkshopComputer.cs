@@ -24,11 +24,11 @@ public class WorkshopComputer : MonoBehaviour
 
         if (panelOpen)
         {
-            UIManager.Instance.Open(computerPanel);
+            UIManager.Instance.Open(computerPanel);   // locks input
         }
         else
         {
-            UIManager.Instance.Close(computerPanel);
+            UIManager.Instance.Close(computerPanel);  // unlocks input
         }
     }
 
@@ -38,8 +38,7 @@ public class WorkshopComputer : MonoBehaviour
         if (stockMarket != null)
             stockMarket.toggleStockMarketUI();
 
-        // Always close computer panel and reset lock
-        UIManager.Instance.Close(computerPanel);
+        UIManager.Instance.Close(computerPanel); // unlocks input
         panelOpen = false;
     }
 
@@ -49,26 +48,14 @@ public class WorkshopComputer : MonoBehaviour
         if (shopPanel != null)
             shopPanel.Open();
 
-        // Always close computer panel and reset lock
-        UIManager.Instance.Close(computerPanel);
+        UIManager.Instance.Close(computerPanel); // unlocks input
         panelOpen = false;
     }
 
     // Called when close button is clicked
     public void OnCloseComputerPanel()
     {
-        UIManager.Instance.Close(computerPanel);
+        UIManager.Instance.Close(computerPanel); // unlocks input
         panelOpen = false;
     }
-    void OnEnable()
-    {
-        if (computerPanel != null && computerPanel.activeSelf)
-            PlayerController.IsInputLocked = true;
-    }
-
-    void OnDisable()
-    {
-        PlayerController.IsInputLocked = false;
-    }
-
 }
