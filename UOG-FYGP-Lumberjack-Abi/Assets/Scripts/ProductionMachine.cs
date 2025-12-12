@@ -82,8 +82,10 @@ public class ProductionMachine : MonoBehaviour
 
         EnsureBlimp();
         EnsureTimer();
-        TryAutoWireStorage();
+        AutoWireStorage();
+        AutoWireUI();
     }
+
 
     void Update()
     {
@@ -92,7 +94,7 @@ public class ProductionMachine : MonoBehaviour
         if (autoFindStorageUI && Time.unscaledTime >= nextProbeTime)
         {
             nextProbeTime = Time.unscaledTime + uiProbeInterval;
-            TryAutoWireStorage();
+            AutoWireStorage();
         }
 
         if (blimp)
@@ -113,6 +115,7 @@ public class ProductionMachine : MonoBehaviour
     {
         if (busy) return;
         if (placeble && !placeble.placed) return;
+        if (!ui) AutoWireUI();
         if (!ui) return;
 
         IList<ProductionRecipeSO> source = recipes;
@@ -340,8 +343,24 @@ public class ProductionMachine : MonoBehaviour
         if (timerRect)
             timerRect.localRotation = Quaternion.identity;
     }
+    void AutoWireUI()
+    {
+        if (ui) return;
 
-    void TryAutoWireStorage()
+        ProductionMachineUI[] panels = Resources.FindObjectsOfTypeAll<ProductionMachineUI>();
+        for (int i = 0; i < panels.Length; i++)
+        {
+            var panel = panels[i];
+            if (!panel) continue;
+            GameObject go = panel.gameObject;
+            if (!go.scene.IsValid()) continue;
+            ui = panel;
+            break;
+        }
+    }
+
+
+    void AutoWireStorage()
     {
         if (!overlayCanvas && autoFindStorageUI)
         {
