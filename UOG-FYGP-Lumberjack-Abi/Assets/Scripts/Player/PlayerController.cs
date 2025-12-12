@@ -22,24 +22,21 @@ public class PlayerController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponentInChildren<Animator>();
         mainCamera = Camera.main;
+
+        IsInputLocked = false; // ensure unlocked at start
     }
 
     private void Update()
     {
         if (IsInputLocked)
         {
-            if (agent != null)
-                agent.isStopped = true;
-
-            if (animator != null)
-                animator.Play("Idle");
-
+            if (agent != null) agent.isStopped = true;
+            if (animator != null) animator.Play("Idle");
             return;
         }
         else
         {
-            if (agent != null && agent.isStopped)
-                agent.isStopped = false;
+            if (agent != null && agent.isStopped) agent.isStopped = false;
         }
 
         HandleInput();
