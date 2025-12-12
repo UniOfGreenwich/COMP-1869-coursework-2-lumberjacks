@@ -33,11 +33,8 @@ public class SettingsMenu : MonoBehaviour
 
     private void Awake()
     {
-        Debug.Log("[SettingsMenu] Awake");
-
         if (settingsPanelPrefab == null)
         {
-            Debug.LogError("[SettingsMenu] NO settings panel prefab assigned!");
             return;
         }
 

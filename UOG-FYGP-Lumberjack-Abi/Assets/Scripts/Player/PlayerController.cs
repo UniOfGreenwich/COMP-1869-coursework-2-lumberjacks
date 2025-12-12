@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(NavMeshAgent))]
 public class PlayerController : MonoBehaviour
@@ -15,26 +16,29 @@ public class PlayerController : MonoBehaviour
 
     private Vector2 touchStartPos;
     public static bool IsInputLocked = false;
+
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponentInChildren<Animator>();
         mainCamera = Camera.main;
+
+        IsInputLocked = false; // ensure unlocked at start
     }
 
     private void Update()
     {
         if (IsInputLocked)
         {
-            agent.isStopped = true; // stop moving
-            animator.Play("Idle");
+            if (agent != null) agent.isStopped = true;
+            if (animator != null) animator.Play("Idle");
             return;
         }
         else
         {
-            if (agent != null && agent.isStopped)
-                agent.isStopped = false;
+            if (agent != null && agent.isStopped) agent.isStopped = false;
         }
+
         HandleInput();
         FaceTarget();
         UpdateAnimationState();
@@ -42,17 +46,22 @@ public class PlayerController : MonoBehaviour
 
     private void HandleInput()
     {
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            return;
+
         if (Input.GetMouseButtonDown(0))
         {
+            if (mainCamera == null)
+                mainCamera = Camera.main;
+
             Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
                 string hitLayer = LayerMask.LayerToName(hit.collider.gameObject.layer);
 
-                // Ignore interactables
-                if (hitLayer == "Interactable") return;
+                if (hitLayer == "Interactable")
+                    return;
 
-                // Move on ground
                 if (hitLayer == "Ground")
                 {
                     MoveAgent(hit.point);
@@ -64,7 +73,8 @@ public class PlayerController : MonoBehaviour
 
     private void MoveAgent(Vector3 destination)
     {
-        if (agent == null) return;
+        if (agent == null)
+            return;
 
         agent.SetDestination(destination);
 
@@ -74,10 +84,11 @@ public class PlayerController : MonoBehaviour
 
     private void FaceTarget()
     {
-        if (agent == null) return;
+        if (agent == null)
+            return;
 
-        Vector3 direction = (agent.destination - transform.position);
-        direction.y = 0;
+        Vector3 direction = agent.destination - transform.position;
+        direction.y = 0f;
 
         if (direction.sqrMagnitude < 0.0001f)
             return;
@@ -92,7 +103,8 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateAnimationState()
     {
-        if (animator == null || agent == null) return;
+        if (animator == null || agent == null)
+            return;
 
         if (agent.velocity.sqrMagnitude < 0.01f)
             animator.Play("Idle");

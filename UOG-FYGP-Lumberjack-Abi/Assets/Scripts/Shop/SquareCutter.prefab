@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 348460074485550255}
   - component: {fileID: 8802254291655746340}
   - component: {fileID: 1211363442074285070}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SquareCutter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -421,7 +421,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7460801150411515714}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Out
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -452,7 +452,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2629203918220840416}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: In
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -522,9 +522,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -1466847434113193454, guid: b2eba02207b463d429205edda6fdc80a, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: b2eba02207b463d429205edda6fdc80a, type: 3}
       propertyPath: m_Name
       value: SM_LaserCutter
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: b2eba02207b463d429205edda6fdc80a, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8968678397814069160, guid: b2eba02207b463d429205edda6fdc80a, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

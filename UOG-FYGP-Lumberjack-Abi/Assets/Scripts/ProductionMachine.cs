@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class ProductionMachine : MonoBehaviour
@@ -113,6 +114,13 @@ public class ProductionMachine : MonoBehaviour
 
     void OnMouseDown()
     {
+        if (PlayerController.IsInputLocked)
+            return;
+
+        if (EventSystem.current != null &&
+            EventSystem.current.IsPointerOverGameObject())
+            return;
+
         if (busy) return;
         if (placeble && !placeble.placed) return;
         if (!ui) AutoWireUI();
@@ -139,6 +147,7 @@ public class ProductionMachine : MonoBehaviour
 
         Debug.Log("[ProductionMachine] Open UI with " + recipeCount + " unlocked recipes.");
     }
+
 
     public void OnAssemble(ProductionRecipeSO recipe, int errors)
     {
