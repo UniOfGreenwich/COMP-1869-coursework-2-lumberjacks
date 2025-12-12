@@ -3,26 +3,34 @@ using UnityEngine.UI;
 
 public class CloseComputerUI : MonoBehaviour
 {
-    [SerializeField] private GameObject computerUI; // Assign Computer_UI prefab here
+    [SerializeField] private GameObject computerUI;
+    private Button button;
 
     private void Awake()
     {
-        computerUI = transform.root.gameObject; // closes whole prefab
-        GetComponent<Button>().onClick.AddListener(() => computerUI.SetActive(false));
+        if (computerUI == null)
+            computerUI = transform.root.gameObject;
+
+        button = GetComponent<Button>();
+        if (button != null)
+        {
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(CloseUI);
+        }
     }
 
     private void CloseUI()
     {
+        var computer = FindObjectOfType<WorkshopComputer>();
+        if (computer != null)
+        {
+            computer.OnCloseComputerPanel();
+            return;
+        }
+
         if (computerUI != null)
-        {
-            Debug.Log("[CloseComputerUI] Closing Computer UI.");
             computerUI.SetActive(false);
-        }
-        else
-        {
-            Debug.LogWarning("[CloseComputerUI] computerUI reference missing.");
-        }
+
+        PlayerController.IsInputLocked = false;
     }
-
-
 }

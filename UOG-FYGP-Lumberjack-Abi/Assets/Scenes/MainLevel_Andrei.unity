@@ -1639,6 +1639,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_BirdHouse
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: bdc9475f58097204eacf456148bf36c6, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2290,10 +2294,6 @@ PrefabInstance:
       propertyPath: storageAnchor
       value: 
       objectReference: {fileID: 2146245986561863478}
-    - target: {fileID: 3211290645963036284, guid: 8562d9185df33c940a86c2d54d53e182, type: 3}
-      propertyPath: outputEffectPrefab
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 8946980868466010931, guid: 8562d9185df33c940a86c2d54d53e182, type: 3}
       propertyPath: m_Name
       value: ProductionMachine

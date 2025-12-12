@@ -12,14 +12,16 @@ public class WorkshopComputer : MonoBehaviour
 
     void OnMouseDown()
     {
+        if (PlayerController.IsInputLocked)
+            return;
+
         if (EventSystem.current != null &&
             EventSystem.current.IsPointerOverGameObject())
-        {
             return;
-        }
 
         ToggleComputerPanel();
     }
+
 
     public void ToggleComputerPanel()
     {

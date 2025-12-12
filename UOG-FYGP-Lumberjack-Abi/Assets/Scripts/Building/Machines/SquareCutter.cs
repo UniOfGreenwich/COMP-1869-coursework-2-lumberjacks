@@ -196,10 +196,18 @@ public class SquareCutter : MonoBehaviour, IDropHandler
 
     private void OnMouseDown()
     {
+        if (PlayerController.IsInputLocked)
+            return;
+
+        if (EventSystem.current != null &&
+            EventSystem.current.IsPointerOverGameObject())
+            return;
+
         if (busy) return;
         if (placeble && !placeble.placed) return;
         OpenDimensionUI();
     }
+
 
     public void OnDrop(PointerEventData e)
     {
