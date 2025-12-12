@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d567830ac9642f84da0a528aaf803d77, type: 3}
-  m_Name: ShopItem_ 1
+  m_Name: Production machine
   m_EditorClassIdentifier: 
-  id: Machine
-  displayName: production
-  icon: {fileID: -38176839, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
+  id: pro
+  displayName: pro
+  icon: {fileID: 21300000, guid: dc1f143a09221db4399b3f9c5d6cee9f, type: 3}
   price: 10
   type: 1
   item: {fileID: 0}
   itemCount: 1
-  prefabToPlace: {fileID: 5405113680654707641, guid: 9f2376475e8874843b2bd819eb2d575f, type: 3}
+  prefabToPlace: {fileID: 8946980868466010931, guid: 8562d9185df33c940a86c2d54d53e182, type: 3}
   recipeToUnlock: {fileID: 0}
   singlePurchase: 1

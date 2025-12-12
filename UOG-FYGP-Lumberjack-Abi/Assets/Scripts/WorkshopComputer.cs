@@ -12,11 +12,8 @@ public class WorkshopComputer : MonoBehaviour
 
     void OnMouseDown()
     {
-        if (EventSystem.current != null &&
-            EventSystem.current.IsPointerOverGameObject())
-        {
-            return;
-        }
+        if (PlayerController.IsInputLocked) return;
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
 
         ToggleComputerPanel();
     }
@@ -25,59 +22,40 @@ public class WorkshopComputer : MonoBehaviour
     {
         panelOpen = !panelOpen;
 
-        if (computerPanel != null)
-            computerPanel.SetActive(panelOpen);
-
-        PlayerController.IsInputLocked = panelOpen;
-
-        Debug.Log("[WorkshopComputer] Computer panel " +
-                  (panelOpen ? "opened" : "closed"));
-    }
-
-    public void OnStockMarketButtonClicked()
-    {
-        if (stockMarket != null)
+        if (panelOpen)
         {
-            stockMarket.toggleStockMarketUI();
-            Debug.Log("[WorkshopComputer] Toggled stock market UI.");
+            UIManager.Instance.Open(computerPanel);   // locks input
         }
         else
         {
-            Debug.LogWarning("[WorkshopComputer] No StockMarket reference set.");
+            UIManager.Instance.Close(computerPanel);  // unlocks input
         }
+    }
 
-        if (computerPanel != null)
-            computerPanel.SetActive(false);
+    // Called when stock market button is clicked
+    public void OnStockMarketButtonClicked()
+    {
+        if (stockMarket != null)
+            stockMarket.toggleStockMarketUI();
 
+        UIManager.Instance.Close(computerPanel); // unlocks input
         panelOpen = false;
     }
 
+    // Called when shop button is clicked
     public void OnShopButtonClicked()
     {
-        if (shopPanel == null)
-        {
-            Debug.LogWarning("[WorkshopComputer] No shopPanel reference set.");
-            return;
-        }
+        if (shopPanel != null)
+            shopPanel.Open();
 
-        shopPanel.Open();
-        Debug.Log("[WorkshopComputer] Opened shop panel.");
-
-        if (computerPanel != null)
-            computerPanel.SetActive(false);
-
+        UIManager.Instance.Close(computerPanel); // unlocks input
         panelOpen = false;
     }
 
+    // Called when close button is clicked
     public void OnCloseComputerPanel()
     {
+        UIManager.Instance.Close(computerPanel); // unlocks input
         panelOpen = false;
-
-        if (computerPanel != null)
-            computerPanel.SetActive(false);
-
-        PlayerController.IsInputLocked = false;
-
-        Debug.Log("[WorkshopComputer] Computer panel closed.");
     }
 }

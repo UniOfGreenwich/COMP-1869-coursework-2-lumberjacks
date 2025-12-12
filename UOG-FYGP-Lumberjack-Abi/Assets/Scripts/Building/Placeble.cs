@@ -6,19 +6,18 @@ public class Placeble : MonoBehaviour
     public Vector3Int Size { get; private set; }
     public Vector3[] Vertices { get; private set; }
 
-    private Vector3[] localBottomCorners;
-    private MeshRenderer objectrenderer;
-    private Material originalMaterial;
-    private Material ghostMaterial;
+    Vector3[] localBottomCorners;
+    MeshRenderer objectrenderer;
+    Material originalMaterial;
+    Material ghostMaterial;
 
-    private void Awake()
+    void Awake()
     {
-        // Cache MeshRenderer + Materials
         objectrenderer = GetComponent<MeshRenderer>();
         if (objectrenderer != null)
         {
             originalMaterial = objectrenderer.material;
-            ghostMaterial = new Material(originalMaterial); // clone for tinting
+            ghostMaterial = new Material(originalMaterial);
             objectrenderer.material = ghostMaterial;
         }
         else
@@ -26,56 +25,72 @@ public class Placeble : MonoBehaviour
             Debug.LogError("[Placeble] No MeshRenderer found on " + gameObject.name);
         }
 
-        // Cache collider corners
         CacheBottomCorners();
     }
+
     public void Load()
     {
-        placed = true;                     // mark as permanently placed
-        RestoreOriginalMaterial();         // use the normal material
-        Destroy(GetComponent<ObjectDrag>()); // remove dragging if present
+        placed = true;
+        RestoreOriginalMaterial();
+        var drag = GetComponent<ObjectDrag>();
+        if (drag) Destroy(drag);
     }
-    private void Start()
+
+    void Start()
     {
-        CalculateSize();
-    }
-    public void Rotate()
-    {
-        Debug.Log("Rotating: " + gameObject.name);
-        transform.Rotate(Vector3.up, 90f, Space.World); // global Y rotation
         CalculateSize();
     }
 
-    private void Update()
+    public void Rotate()
+    {
+        Debug.Log("Rotating: " + gameObject.name);
+        transform.Rotate(Vector3.up, 90f, Space.World);
+        CalculateSize();
+    }
+
+    void Update()
     {
         if (!placed)
         {
-            bool canPlace = BuildingSystem.instance.CanBePlaced(this);
+            bool canPlace = BuildingSystem.instance != null && BuildingSystem.instance.CanBePlaced(this);
             SetGhostColor(canPlace ? Color.green : Color.red);
         }
     }
-    private void CacheBottomCorners()
+
+    void CacheBottomCorners()
     {
         BoxCollider b = GetComponent<BoxCollider>();
         if (b == null)
+            b = GetComponentInChildren<BoxCollider>();
+
+        if (b == null)
         {
             Debug.LogError("[Placeble] No BoxCollider found on " + gameObject.name);
+            localBottomCorners = new Vector3[0];
             Size = new Vector3Int(1, 1, 1);
             return;
         }
 
-        float hx = b.size.x * 0.5f;
-        float hz = b.size.z * 0.5f;
-        float y = b.center.y - b.size.y * 0.5f;
+        var bounds = b.bounds;
+        Vector3 c = bounds.center;
+        Vector3 e = bounds.extents;
+
+        Vector3[] world = new Vector3[4];
+        world[0] = new Vector3(c.x - e.x, c.y - e.y, c.z - e.z);
+        world[1] = new Vector3(c.x + e.x, c.y - e.y, c.z - e.z);
+        world[2] = new Vector3(c.x + e.x, c.y - e.y, c.z + e.z);
+        world[3] = new Vector3(c.x - e.x, c.y - e.y, c.z + e.z);
 
         localBottomCorners = new Vector3[4];
-        localBottomCorners[0] = new Vector3(b.center.x - hx, y, b.center.z - hz);
-        localBottomCorners[1] = new Vector3(b.center.x + hx, y, b.center.z - hz);
-        localBottomCorners[2] = new Vector3(b.center.x + hx, y, b.center.z + hz);
-        localBottomCorners[3] = new Vector3(b.center.x - hx, y, b.center.z + hz);
+        for (int i = 0; i < 4; i++)
+            localBottomCorners[i] = transform.InverseTransformPoint(world[i]);
     }
-    private void CalculateSize()
+
+    void CalculateSize()
     {
+        if (localBottomCorners == null || localBottomCorners.Length == 0)
+            CacheBottomCorners();
+
         if (localBottomCorners == null || localBottomCorners.Length == 0)
         {
             Size = new Vector3Int(1, 1, 1);
@@ -91,8 +106,10 @@ public class Placeble : MonoBehaviour
             cells[i] = grid.WorldToCell(worldPos);
         }
 
-        int minX = cells[0].x, maxX = cells[0].x;
-        int minY = cells[0].y, maxY = cells[0].y;
+        int minX = cells[0].x;
+        int maxX = cells[0].x;
+        int minY = cells[0].y;
+        int maxY = cells[0].y;
 
         for (int i = 1; i < cells.Length; i++)
         {
@@ -104,9 +121,20 @@ public class Placeble : MonoBehaviour
 
         Size = new Vector3Int(maxX - minX + 1, maxY - minY + 1, 1);
     }
+
     public Vector3 GetStartPosition()
     {
         var grid = BuildingSystem.instance.gridLayout;
+
+        if (localBottomCorners == null || localBottomCorners.Length == 0)
+            CacheBottomCorners();
+
+        if (localBottomCorners == null || localBottomCorners.Length == 0)
+        {
+            Vector3Int cell = grid.WorldToCell(transform.position);
+            return grid.CellToWorld(new Vector3Int(cell.x, cell.y, 0));
+        }
+
         Vector3Int minCell = grid.WorldToCell(transform.TransformPoint(localBottomCorners[0]));
 
         for (int i = 1; i < localBottomCorners.Length; i++)
@@ -124,15 +152,17 @@ public class Placeble : MonoBehaviour
         placed = true;
         RestoreOriginalMaterial();
     }
-    private void SetGhostColor(Color color)
+
+    void SetGhostColor(Color color)
     {
         if (ghostMaterial != null && !placed)
         {
-            color.a = 0.6f; // semi-transparent ghost
+            color.a = 0.6f;
             ghostMaterial.color = color;
         }
     }
-    private void RestoreOriginalMaterial()
+
+    void RestoreOriginalMaterial()
     {
         if (objectrenderer != null && originalMaterial != null)
         {

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using TMPro;
 
 [RequireComponent(typeof(Collider))]
@@ -40,6 +41,13 @@ public class CustomerFBX : MonoBehaviour
 
     void OnMouseDown()
     {
+        if (PlayerController.IsInputLocked)
+            return;
+
+        if (EventSystem.current != null &&
+            EventSystem.current.IsPointerOverGameObject())
+            return;
+
         if (jobManager == null || job == null) return;
 
         if (orderPopup == null)
@@ -52,4 +60,5 @@ public class CustomerFBX : MonoBehaviour
             orderPopup.Show(jobManager, job, this);
         }
     }
+
 }
