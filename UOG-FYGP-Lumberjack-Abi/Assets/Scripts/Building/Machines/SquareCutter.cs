@@ -156,7 +156,7 @@ public class SquareCutter : MonoBehaviour, IDropHandler
         if (flyCurve == null || flyCurve.keys.Length == 0)  // ensure curve
             flyCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
-        TryAutoWireStorage();                               // find overlay
+        AutoWireStorage();                               // find overlay
         ComputeDimensionParams();                           // compute now
 
         if (dropCanvas) dropCanvas.gameObject.SetActive(false); // hide zone
@@ -175,7 +175,7 @@ public class SquareCutter : MonoBehaviour, IDropHandler
         if (autoFindStorageUI && Time.unscaledTime >= _nextProbeTime)
         {
             _nextProbeTime = Time.unscaledTime + uiProbeInterval;
-            TryAutoWireStorage();
+            AutoWireStorage();
         }
 
         if (timerCanvas && timerDockToBlimp)
@@ -314,6 +314,11 @@ public class SquareCutter : MonoBehaviour, IDropHandler
     {
         if (!dimensionPanel)
         {
+            SetupDimensionUI();
+        }
+
+        if (!dimensionPanel)
+        {
             waitingForDrop = true;
             return;
         }
@@ -323,6 +328,7 @@ public class SquareCutter : MonoBehaviour, IDropHandler
         ComputeDimensionParams();
         dimensionPanel.SetActive(true);
     }
+
 
     private void CloseDimensionUI(bool confirmed)
     {
@@ -384,7 +390,7 @@ public class SquareCutter : MonoBehaviour, IDropHandler
         pendingCount = 0;
         UpdateBlimpUI();
 
-        if (!overlayCanvas || !storageAnchor) TryAutoWireStorage();
+        if (!overlayCanvas || !storageAnchor) AutoWireStorage();
         if (overlayCanvas && storageAnchor && outputIcon)
             StartCoroutine(FlyToStorageRoutine(startWorld, collected));
     }
@@ -505,7 +511,7 @@ public class SquareCutter : MonoBehaviour, IDropHandler
         var countText = textObj.GetComponent<TextMeshProUGUI>();
         countText.text = "COLLECT: x0";
         countText.alignment = TextAlignmentOptions.Center;
-       
+
         // Font
         if (blimpFont != null)
             countText.font = blimpFont;
@@ -684,7 +690,7 @@ public class SquareCutter : MonoBehaviour, IDropHandler
         storageAnchor.localScale = baseScale;
     }
 
-    private void TryAutoWireStorage()
+    private void AutoWireStorage()
     {
         if (overlayCanvas == null && autoFindStorageUI)
         {
@@ -753,7 +759,73 @@ public class SquareCutter : MonoBehaviour, IDropHandler
 
     private void SetupDimensionUI()
     {
+        if (!dimensionPanel)
+        {
+            RectTransform found = null;
+            var rects = Resources.FindObjectsOfTypeAll<RectTransform>();
+            for (int i = 0; i < rects.Length; i++)
+            {
+                var r = rects[i];
+                if (!r) continue;
+                var go = r.gameObject;
+                if (!go.scene.IsValid()) continue;
+                if (go.name == "DimensionUI")
+                {
+                    found = r;
+                    break;
+                }
+            }
+
+            if (found) dimensionPanel = found.gameObject;
+        }
+
         if (!dimensionPanel) return;
+
+        if (!widthField)
+        {
+            var wTransform = dimensionPanel.transform.Find("Row_LeftCol/ROWWH/W");
+            if (wTransform)
+            {
+                widthField = wTransform.GetComponentInChildren<TMP_InputField>(true);
+            }
+        }
+
+        if (!heightField)
+        {
+            var hTransform = dimensionPanel.transform.Find("Row_LeftCol/ROWWH/H");
+            if (hTransform)
+            {
+                heightField = hTransform.GetComponentInChildren<TMP_InputField>(true);
+            }
+        }
+
+        if (!dimSummary)
+        {
+            var sTransform = dimensionPanel.transform.Find("Row_RightCol/Summary");
+            if (sTransform)
+            {
+                dimSummary = sTransform.GetComponent<TextMeshProUGUI>();
+            }
+        }
+
+        if (!dimCancelButton)
+        {
+            var cTransform = dimensionPanel.transform.Find("Row_Buttons/Cancel");
+            if (cTransform)
+            {
+                dimCancelButton = cTransform.GetComponent<Button>();
+            }
+        }
+
+        if (!dimOkButton)
+        {
+            var oTransform = dimensionPanel.transform.Find("Row_Buttons/OK");
+            if (oTransform)
+            {
+                dimOkButton = oTransform.GetComponent<Button>();
+            }
+        }
+
         dimensionPanel.SetActive(false);
 
         if (widthField)

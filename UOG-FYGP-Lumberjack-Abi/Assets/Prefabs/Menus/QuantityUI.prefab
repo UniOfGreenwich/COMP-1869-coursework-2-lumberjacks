@@ -277,7 +277,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 0
+  m_text: x20
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f7c9d17a01f8e334d99201182ab9d1c6, type: 2}
   m_sharedMaterial: {fileID: 4311699069660427887, guid: f7c9d17a01f8e334d99201182ab9d1c6, type: 2}
@@ -584,7 +584,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: CHOOSE QUANTITY OF LOGS TO CUT
+  m_text: Logs  Planks
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f7c9d17a01f8e334d99201182ab9d1c6, type: 2}
   m_sharedMaterial: {fileID: 4311699069660427887, guid: f7c9d17a01f8e334d99201182ab9d1c6, type: 2}
@@ -872,7 +872,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &5974168324804896595
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1362,7 +1362,7 @@ MonoBehaviour:
   m_MinValue: 1
   m_MaxValue: 20
   m_WholeNumbers: 1
-  m_Value: 1
+  m_Value: 20
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
