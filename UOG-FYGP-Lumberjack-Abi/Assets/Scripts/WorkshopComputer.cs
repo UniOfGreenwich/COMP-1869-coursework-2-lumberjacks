@@ -3,10 +3,9 @@ using UnityEngine.EventSystems;
 
 public class WorkshopComputer : MonoBehaviour
 {
-    [Header("Panels")]
-    public GameObject computerPanel;      // small panel with the 2 icons
-    public GameShopPanelUI shopPanel;     // your GameShopPanelUI
-    public StockMarket stockMarket;       // your StockMarket script
+    public GameObject computerPanel;
+    public GameShopPanelUI shopPanel;
+    public StockMarket stockMarket;
 
     bool panelOpen;
 
@@ -22,40 +21,31 @@ public class WorkshopComputer : MonoBehaviour
     {
         panelOpen = !panelOpen;
 
-        if (panelOpen)
-        {
-            UIManager.Instance.Open(computerPanel);   // locks input
-        }
-        else
-        {
-            UIManager.Instance.Close(computerPanel);  // unlocks input
-        }
+        if (panelOpen) UIManager.Instance.Open(computerPanel);
+        else UIManager.Instance.Close(computerPanel);
     }
 
-    // Called when stock market button is clicked
     public void OnStockMarketButtonClicked()
     {
+        UIManager.Instance.Close(computerPanel);
+        panelOpen = false;
+
         if (stockMarket != null)
             stockMarket.toggleStockMarketUI();
-
-        UIManager.Instance.Close(computerPanel); // unlocks input
-        panelOpen = false;
     }
 
-    // Called when shop button is clicked
     public void OnShopButtonClicked()
     {
+        UIManager.Instance.Close(computerPanel);
+        panelOpen = false;
+
         if (shopPanel != null)
             shopPanel.Open();
-
-        UIManager.Instance.Close(computerPanel); // unlocks input
-        panelOpen = false;
     }
 
-    // Called when close button is clicked
     public void OnCloseComputerPanel()
     {
-        UIManager.Instance.Close(computerPanel); // unlocks input
+        UIManager.Instance.Close(computerPanel);
         panelOpen = false;
     }
 }
