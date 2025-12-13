@@ -12,10 +12,12 @@ GameObject:
   - component: {fileID: 2287831159851801321}
   - component: {fileID: 7649624113578640004}
   - component: {fileID: 888150567371834701}
+  - component: {fileID: 8661211192430310451}
   - component: {fileID: 7972494504681457905}
   - component: {fileID: 2003789419549648133}
   - component: {fileID: 6183937941136724777}
   - component: {fileID: 3860647326126934946}
+  - component: {fileID: 5587663500219867944}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: GameController
@@ -86,6 +88,18 @@ MonoBehaviour:
   volatility: 0.05
   cycleSpeed: 0.1
   cycleAmplitude: 0.3
+--- !u!114 &8661211192430310451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1933063713713379544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5cba0f2d0d7049e45b9f3ca6ce1efe42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &7972494504681457905
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -133,7 +147,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 920d5773f58f3914bbae90fd94dd69ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  productItems: []
+  productItems:
+  - {fileID: 11400000, guid: 1be185f2966a90b49a3bf83e60ece9a4, type: 2}
+  - {fileID: 11400000, guid: f311d6627e17d20419101a8823e10a02, type: 2}
+  - {fileID: 11400000, guid: 777eb4c0e0642d045b5077f1db84c59d, type: 2}
   customerSlots: 3
   minLinesPerJob: 1
   maxLinesPerJob: 3
@@ -160,3 +177,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   defaultUnlocked: []
+--- !u!114 &5587663500219867944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1933063713713379544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15a50705fee122e4782181167139ca2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clearAllOnStart: 1
+  clearRecipesOnStart: 0
+  clearShopOnStart: 0
+  enableHotkeys: 1
