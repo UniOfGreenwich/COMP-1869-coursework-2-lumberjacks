@@ -7,7 +7,6 @@ using UnityEngine.UI;
 
 public class Tutorial : MonoBehaviour
 {
-    //TODO: tutorial window should lock player movement and interaction until closed
     [SerializeField] private GameObject textPanel;
     private TMP_Text tutorialText;
     private GameObject taskPanel;
@@ -69,6 +68,8 @@ public class Tutorial : MonoBehaviour
             tutorialText = textPanel.GetComponentInChildren<TMP_Text>();
             taskPanel = GetComponentInChildren<RectTransform>().Find("Panel_Tasks").gameObject;
             taskPanel.SetActive(false);
+
+            //stage 1 trigger setup
             doorLoadingBay.GetComponentInChildren<Button>(true).onClick.AddListener(LoadingBayEnter);
             doorLumberYard.GetComponentInChildren<Button>(true).onClick.AddListener(LumberYardEnter);
             doorStorageRoom.GetComponentInChildren<Button>(true).onClick.AddListener(StorageRoomEnter);
@@ -76,6 +77,11 @@ public class Tutorial : MonoBehaviour
             doorFromLumberYard.GetComponentInChildren<Button>(true).onClick.AddListener(() => { currentRoom = "Workshop"; if(!stage1Complete) Stage1CompleteCheck();});
             doorFromStorageRoom.GetComponentInChildren<Button>(true).onClick.AddListener(() => { currentRoom = "Workshop"; if(!stage1Complete) Stage1CompleteCheck();});
             Stage1Intro();
+
+            //stage 2 trigger setup
+            customer.SetActive(false);
+            customer.GetComponentInChildren<Button>(true).onClick.AddListener(CustomerTutorialTrigger);
+            jobBoard.GetComponentInChildren<Button>(true).onClick.AddListener(JobBoardTutorial);
         }
     }
 
@@ -291,7 +297,7 @@ public class Tutorial : MonoBehaviour
         {
             if(dialogueIndex == 1)
             {
-                //customer walks in
+                customer.SetActive(true);
                 textPanel.SetActive(true);
                 tutorialTextActive = true;
                 tutorialText.text = "Oh look! A customer, let's talk to them and see what they want us to make for them.";
@@ -305,6 +311,12 @@ public class Tutorial : MonoBehaviour
             }
         }
     }
+
+    void CustomerTutorialTrigger()
+    {
+        
+    }
+
     void CustomerTutorial()
     {
         if(currentStage == 2)
