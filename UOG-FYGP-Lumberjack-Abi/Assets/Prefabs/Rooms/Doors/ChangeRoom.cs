@@ -19,7 +19,7 @@ public class ChangeRoom : MonoBehaviour
     {
         currentRoom = this.transform.parent.gameObject;
         changeRoomButton = GetComponentInChildren<RectTransform>().Find("changeRoomButton").gameObject;
-        changeRoomButton.GetComponentInChildren<TMP_Text>().text = "go to" + roomName;
+        changeRoomButton.GetComponentInChildren<TMP_Text>().text = "go to " + roomName;
         changeRoomButton.SetActive(false);
         Button button = changeRoomButton.GetComponent<Button>();
         button.onClick.AddListener(OnChangeRoomButtonPressed);
