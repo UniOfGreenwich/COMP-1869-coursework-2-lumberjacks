@@ -15,6 +15,7 @@ public class GameShopPanelUI : MonoBehaviour
     [Header("External")]
     public StorageManager storage;
     public Inventory inventory;
+    public GameObject computerPanel;
 
     [Header("Feedback")]
     public TextMeshProUGUI feedbackLabel;
@@ -202,10 +203,16 @@ public class GameShopPanelUI : MonoBehaviour
         if (item.prefabToPlace == null) return false;
         if (BuildingSystem.instance == null) return false;
 
-        Close(); // close shop before placement
+        Close(); // closes shop panel
+
+        if (computerPanel != null)
+            computerPanel.SetActive(false); //also close the whole computer panel
+
+        Debug.Log("[ShopPanel] Starting placement for " + item.displayName);
         BuildingSystem.instance.StartPlacement(item.prefabToPlace);
         return true;
     }
+
 
     bool BuyRecipe(ShopItemSO item)
     {

@@ -7750,7 +7750,7 @@ PrefabInstance:
       objectReference: {fileID: 1059122499}
     - target: {fileID: 5587663500219867944, guid: 81a7a913963e6164a8f5ad696b8b8699, type: 3}
       propertyPath: clearAllOnStart
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6183937941136724777, guid: 81a7a913963e6164a8f5ad696b8b8699, type: 3}
       propertyPath: jobBoardUI
@@ -8380,6 +8380,10 @@ PrefabInstance:
       propertyPath: inventory
       value: 
       objectReference: {fileID: 7972494505671464387}
+    - target: {fileID: 1132380688472963741, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
+      propertyPath: computerPanel
+      value: 
+      objectReference: {fileID: 5391857999436472170}
     - target: {fileID: 2829510612880265062, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
