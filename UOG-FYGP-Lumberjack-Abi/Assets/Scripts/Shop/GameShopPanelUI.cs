@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI; 
 using TMPro;
 
 public class GameShopPanelUI : MonoBehaviour
@@ -136,20 +137,28 @@ public class GameShopPanelUI : MonoBehaviour
 
         bool success = false;
 
-        switch (item.type)
+        try
         {
-            case ShopItemType.BuyItemToStorage:
-                success = BuyItemToStorage(item);
-                break;
+            switch (item.type)
+            {
+                case ShopItemType.BuyItemToStorage:
+                    success = BuyItemToStorage(item);
+                    break;
 
-            case ShopItemType.BuyMachineToPlace:
-            case ShopItemType.BuyFieldToPlace:
-                success = BuyPlaceable(item);
-                break;
+                case ShopItemType.BuyMachineToPlace:
+                case ShopItemType.BuyFieldToPlace:
+                    success = BuyPlaceable(item);
+                    break;
 
-            case ShopItemType.BuyRecipe:
-                success = BuyRecipe(item);
-                break;
+                case ShopItemType.BuyRecipe:
+                    success = BuyRecipe(item);
+                    break;
+            }
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("[ShopPanel] Exception during buy: " + ex);
+            success = false;
         }
 
         if (!success)
@@ -177,9 +186,23 @@ public class GameShopPanelUI : MonoBehaviour
                 feedbackLabel.text = "Bought " + item.displayName;
         }
 
-        // rebuild so row changes to "Owned"
-        BuildList();
+        // Rebuild rows safely
+        try
+        {
+            BuildList();
+
+            // Force Unity to refresh layout so ScrollRect doesn’t freeze
+            Canvas.ForceUpdateCanvases();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(contentRoot.GetComponent<RectTransform>());
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError("[ShopPanel] BuildList failed after buy: " + ex);
+            if (feedbackLabel != null)
+                feedbackLabel.text = "UI error.";
+        }
     }
+
 
     bool BuyItemToStorage(ShopItemSO item)
     {
