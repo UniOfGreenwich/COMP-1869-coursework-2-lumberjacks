@@ -317,6 +317,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6c6d2006c9584e43b67a1e814b8728e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  textPanel: {fileID: 1212957337433451948}
+  tutorialTextActive: 0
+  tutorialCompleted: 0
+  currentStage: 1
+  dialogueSection: 1
+  doorLoadingBay: {fileID: 0}
+  doorLumberYard: {fileID: 0}
+  doorStorageRoom: {fileID: 0}
+  customer: {fileID: 0}
+  jobBoard: {fileID: 0}
 --- !u!1 &7989567402826135016
 GameObject:
   m_ObjectHideFlags: 0
