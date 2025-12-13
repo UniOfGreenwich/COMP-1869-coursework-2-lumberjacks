@@ -206,10 +206,10 @@ public class GameShopPanelUI : MonoBehaviour
         Close(); // closes shop panel
 
         if (computerPanel != null)
-            computerPanel.SetActive(false); //also close the whole computer panel
+            computerPanel.SetActive(false); // close the whole computer panel
 
         Debug.Log("[ShopPanel] Starting placement for " + item.displayName);
-        BuildingSystem.instance.StartPlacement(item.prefabToPlace);
+        BuildingSystem.instance.StartPlacement(item.prefabToPlace, item.id);
         return true;
     }
 

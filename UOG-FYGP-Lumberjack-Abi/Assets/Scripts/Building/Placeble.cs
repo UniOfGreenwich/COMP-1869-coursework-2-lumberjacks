@@ -10,6 +10,7 @@ public class Placeble : MonoBehaviour
     MeshRenderer objectrenderer;
     Material originalMaterial;
     Material ghostMaterial;
+    public string prefabId;
 
     void Awake()
     {
@@ -151,7 +152,14 @@ public class Placeble : MonoBehaviour
     {
         placed = true;
         RestoreOriginalMaterial();
+        PlayerPrefs.SetFloat("MachinePosX_" + prefabId, transform.position.x);
+        PlayerPrefs.SetFloat("MachinePosY_" + prefabId, transform.position.y);
+        PlayerPrefs.SetFloat("MachinePosZ_" + prefabId, transform.position.z);
+        PlayerPrefs.SetFloat("MachineRotY_" + prefabId, transform.eulerAngles.y);
+        PlayerPrefs.SetInt("MachineOwned_" + prefabId, 1);
+        PlayerPrefs.Save();
     }
+
 
     void SetGhostColor(Color color)
     {
@@ -169,4 +177,5 @@ public class Placeble : MonoBehaviour
             objectrenderer.material = originalMaterial;
         }
     }
+
 }

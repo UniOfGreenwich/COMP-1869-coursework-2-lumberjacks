@@ -19,9 +19,14 @@ public class StorageManager : MonoBehaviour
         foreach (var e in startingItems)
         {
             if (!e.item) continue;
+
+            string key = "Storage_" + e.item.id;
+            if (PlayerPrefs.HasKey(key)) continue; 
+
             if (!stock.ContainsKey(e.item)) stock[e.item] = 0;
             stock[e.item] += Mathf.Max(0, e.count);
         }
+
     }
 
     public int GetCount(ItemSO item) => item && stock.TryGetValue(item, out var c) ? c : 0;
@@ -34,6 +39,17 @@ public class StorageManager : MonoBehaviour
         stock[item] = have - give;
         return give;
     }
+    public void SetCount(ItemSO item, int amount)
+    {
+        if (!item) return;
+        stock[item] = Mathf.Max(0, amount);
+    }
+    public void ClearAll()
+    {
+        stock.Clear(); // wipe all items from memory
+        PlayerPrefs.Save();
+        Debug.Log("[StorageManager] Cleared all storage items.");
+    }
     // Put amount back
     public void Put(ItemSO item, int amount)
     {
@@ -43,3 +59,4 @@ public class StorageManager : MonoBehaviour
     }
     public IEnumerable<KeyValuePair<ItemSO, int>> AllItems() => stock;
 }
+

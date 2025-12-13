@@ -45,7 +45,9 @@ public class BuildingSystem : MonoBehaviour
                 Vector3Int start = gridLayout.WorldToCell(objectToPlace.GetStartPosition());
                 TakeArea(start, objectToPlace.Size);
                 objectToPlace.Place();
+                SavePlacedObject(objectToPlace);
                 objectToPlace = null;
+
             }
             else
             {
@@ -60,7 +62,7 @@ public class BuildingSystem : MonoBehaviour
             objectToPlace = null;
         }
     }
-    public void StartPlacement(GameObject prefab)
+    public void StartPlacement(GameObject prefab, string itemId = "")
     {
         Vector3 mousePos = GetMouseWorldPosition();
         Vector3 snappedPos = SnapCoordinateToGrid(mousePos);
@@ -68,8 +70,15 @@ public class BuildingSystem : MonoBehaviour
         GameObject obj = Instantiate(prefab, snappedPos, Quaternion.identity);
         objectToPlace = obj.GetComponentInChildren<Placeble>();
         if (objectToPlace == null)
+        {
             Debug.LogError("Prefab " + prefab.name + " is missing a Placeble component.");
+        }
+        else
+        {
+            objectToPlace.prefabId = itemId; // assign ID from ShopItemSO
+        }
     }
+
 
     #region Utils
     public static Vector3 GetMouseWorldPosition()
@@ -192,4 +201,19 @@ public class BuildingSystem : MonoBehaviour
         );
     }
     #endregion
+    private void SavePlacedObject(Placeble placeble)
+    {
+        string id = placeble.prefabId;
+        if (string.IsNullOrEmpty(id)) return;
+
+        PlayerPrefs.SetFloat("MachinePosX_" + id, placeble.transform.position.x);
+        PlayerPrefs.SetFloat("MachinePosY_" + id, placeble.transform.position.y);
+        PlayerPrefs.SetFloat("MachinePosZ_" + id, placeble.transform.position.z);
+        PlayerPrefs.SetFloat("MachineRotY_" + id, placeble.transform.eulerAngles.y);
+        PlayerPrefs.SetInt("MachineOwned_" + id, 1);
+        PlayerPrefs.Save();
+
+        Debug.Log("[BuildingSystem] Saved placement for " + id);
+    }
+
 }
