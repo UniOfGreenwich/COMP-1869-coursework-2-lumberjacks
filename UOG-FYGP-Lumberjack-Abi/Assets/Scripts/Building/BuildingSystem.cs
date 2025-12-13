@@ -26,18 +26,17 @@ public class BuildingSystem : MonoBehaviour
 
     private void Update()
     {
-        // To start placing house
-        if (Input.GetKeyDown(KeyCode.H))
-            StartPlacement(housePrefab);
+        if (objectToPlace == null) return;   // guard first
 
-        if (objectToPlace == null) return;
-        if (Input.GetKeyDown(KeyCode.R) && objectToPlace != null)
+        if (Input.GetKeyDown(KeyCode.R))
         {
             objectToPlace.Rotate();
         }
+
         Vector3 mousePos = GetMouseWorldPosition();
         Vector3 snappedPos = SnapCoordinateToGrid(mousePos);
         objectToPlace.transform.position = snappedPos;
+
         if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
         {
             if (CanBePlaced(objectToPlace))
@@ -47,7 +46,6 @@ public class BuildingSystem : MonoBehaviour
                 objectToPlace.Place();
                 SavePlacedObject(objectToPlace);
                 objectToPlace = null;
-
             }
             else
             {
@@ -55,30 +53,27 @@ public class BuildingSystem : MonoBehaviour
             }
         }
 
-        // Cancel placement
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Destroy(objectToPlace.gameObject);
             objectToPlace = null;
         }
     }
-    public void StartPlacement(GameObject prefab, string itemId = "")
+
+    public void StartPlacement(ShopItemSO item)
     {
+        if (item == null || item.prefabToPlace == null) return;
+
         Vector3 mousePos = GetMouseWorldPosition();
         Vector3 snappedPos = SnapCoordinateToGrid(mousePos);
 
-        GameObject obj = Instantiate(prefab, snappedPos, Quaternion.identity);
+        GameObject obj = Instantiate(item.prefabToPlace, snappedPos, Quaternion.identity);
         objectToPlace = obj.GetComponentInChildren<Placeble>();
-        if (objectToPlace == null)
+        if (objectToPlace != null)
         {
-            Debug.LogError("Prefab " + prefab.name + " is missing a Placeble component.");
-        }
-        else
-        {
-            objectToPlace.prefabId = itemId; // assign ID from ShopItemSO
+            objectToPlace.prefabId = item.id; //  correct ID
         }
     }
-
 
     #region Utils
     public static Vector3 GetMouseWorldPosition()
@@ -204,7 +199,11 @@ public class BuildingSystem : MonoBehaviour
     private void SavePlacedObject(Placeble placeble)
     {
         string id = placeble.prefabId;
-        if (string.IsNullOrEmpty(id)) return;
+        if (string.IsNullOrEmpty(id))
+        {
+            Debug.LogError("[BuildingSystem] prefabId is empty, cannot save!");
+            return;
+        }
 
         PlayerPrefs.SetFloat("MachinePosX_" + id, placeble.transform.position.x);
         PlayerPrefs.SetFloat("MachinePosY_" + id, placeble.transform.position.y);

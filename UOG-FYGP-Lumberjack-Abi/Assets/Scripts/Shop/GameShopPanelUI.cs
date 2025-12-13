@@ -204,14 +204,14 @@ public class GameShopPanelUI : MonoBehaviour
         if (BuildingSystem.instance == null) return false;
 
         Close(); // closes shop panel
-
         if (computerPanel != null)
-            computerPanel.SetActive(false); // close the whole computer panel
+            computerPanel.SetActive(false);
 
         Debug.Log("[ShopPanel] Starting placement for " + item.displayName);
-        BuildingSystem.instance.StartPlacement(item.prefabToPlace, item.id);
+        BuildingSystem.instance.StartPlacement(item); //  ShopItemSO
         return true;
     }
+
 
 
     bool BuyRecipe(ShopItemSO item)

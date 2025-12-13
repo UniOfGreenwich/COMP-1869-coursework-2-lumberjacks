@@ -76,16 +76,25 @@ public class SaveLoader : MonoBehaviour
                     0f
                 );
 
+                Debug.Log("[SaveLoader] Reloading " + item.id + " at " + pos);
+
                 GameObject obj = buildingSystem.InitializeWithObject(item.prefabToPlace, pos);
                 obj.transform.rotation = rot;
+
                 var p = obj.GetComponentInChildren<Placeble>();
                 if (p != null)
                 {
                     p.prefabId = item.id;
-                    p.Load(); // restores material, disables ghost behaviour
+                    p.Load();
+                    Vector3Int start = buildingSystem.gridLayout.WorldToCell(p.GetStartPosition());
+                    buildingSystem.TakeArea(start, p.Size);
                 }
-
+                else
+                {
+                    Debug.LogError("[SaveLoader] No Placeble found on " + obj.name);
+                }
             }
         }
     }
+
 }
