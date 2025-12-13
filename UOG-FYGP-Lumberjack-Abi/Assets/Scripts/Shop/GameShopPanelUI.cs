@@ -116,29 +116,21 @@ public class GameShopPanelUI : MonoBehaviour
             return;
         }
 
-        if (item.price < 0)
+        if (item.price > 0 && !inventory.TrySpend(item.price))
         {
-            Debug.LogWarning("[ShopPanel] Negative price on " + item.name);
+            Debug.Log("[ShopPanel] Not enough money for " + item.displayName);
             if (feedbackLabel != null)
-                feedbackLabel.text = "Config error.";
+                feedbackLabel.text = "Not enough money.";
             return;
-        }
-
-        if (item.price > 0)
-        {
-            if (!inventory.TrySpend(item.price))
-            {
-                Debug.Log("[ShopPanel] Not enough money for " + item.displayName);
-                if (feedbackLabel != null)
-                    feedbackLabel.text = "Not enough money.";
-                return;
-            }
         }
 
         bool success = false;
 
         try
         {
+            // Always close shop before doing any buy
+            Close();
+
             switch (item.type)
             {
                 case ShopItemType.BuyItemToStorage:
@@ -168,8 +160,7 @@ public class GameShopPanelUI : MonoBehaviour
                 feedbackLabel.text = "Buy failed.";
 
             if (item.price > 0)
-                inventory.AddMoney(item.price);
-
+                inventory.AddMoney(item.price); // refund
             return;
         }
 
@@ -179,31 +170,10 @@ public class GameShopPanelUI : MonoBehaviour
         Debug.Log("[ShopPanel] Buy success for " + item.displayName);
 
         if (feedbackLabel != null)
-        {
-            if (item.singlePurchase)
-                feedbackLabel.text = "Owned " + item.displayName;
-            else
-                feedbackLabel.text = "Bought " + item.displayName;
-        }
+            feedbackLabel.text = "Bought " + item.displayName;
 
-        // Rebuild rows safely
-        try
-        {
-            BuildList();
-
-            // Force Unity to refresh layout so ScrollRect doesn’t freeze
-            Canvas.ForceUpdateCanvases();
-            LayoutRebuilder.ForceRebuildLayoutImmediate(contentRoot.GetComponent<RectTransform>());
-        }
-        catch (System.Exception ex)
-        {
-            Debug.LogError("[ShopPanel] BuildList failed after buy: " + ex);
-            if (feedbackLabel != null)
-                feedbackLabel.text = "UI error.";
-        }
+        BuildList();
     }
-
-
     bool BuyItemToStorage(ShopItemSO item)
     {
         if (storage == null)
@@ -229,41 +199,24 @@ public class GameShopPanelUI : MonoBehaviour
 
     bool BuyPlaceable(ShopItemSO item)
     {
-        if (item.prefabToPlace == null)
-        {
-            Debug.LogWarning("[ShopPanel] Prefab is missing for " + item.name);
-            return false;
-        }
+        if (item.prefabToPlace == null) return false;
+        if (BuildingSystem.instance == null) return false;
 
-        if (BuildingSystem.instance == null)
-        {
-            Debug.LogError("[ShopPanel] No BuildingSystem in scene.");
-            return false;
-        }
-
-        Debug.Log("[ShopPanel] Starting placement for " + item.displayName);
+        Close(); // close shop before placement
         BuildingSystem.instance.StartPlacement(item.prefabToPlace);
         return true;
     }
 
     bool BuyRecipe(ShopItemSO item)
     {
-        if (item.recipeToUnlock == null)
-        {
-            Debug.LogWarning("[ShopPanel] recipeToUnlock is null on " + item.name);
-            return false;
-        }
+        if (item.recipeToUnlock == null) return false;
+        if (string.IsNullOrEmpty(item.recipeToUnlock.id)) return false;
 
-        if (RecipeUnlockManager.Instance == null)
-        {
-            Debug.LogError("[ShopPanel] No RecipeUnlockManager in scene.");
-            return false;
-        }
-
-        RecipeUnlockManager.Instance.UnlockRecipe(item.recipeToUnlock);
-        Debug.Log("[ShopPanel] Unlocked recipe: " + item.recipeToUnlock.displayName);
+        PlayerPrefs.SetInt("RecipeUnlocked_" + item.recipeToUnlock.id, 1);
+        PlayerPrefs.Save();
         return true;
     }
+
 
     public bool IsOwned(ShopItemSO item)
     {
