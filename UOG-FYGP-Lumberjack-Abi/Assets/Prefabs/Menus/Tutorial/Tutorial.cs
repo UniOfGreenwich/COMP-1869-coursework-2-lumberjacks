@@ -1,7 +1,4 @@
 using TMPro;
-using Unity.VisualScripting;
-using UnityEditor.SceneManagement;
-using UnityEditor.ShaderGraph;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -29,6 +26,7 @@ public class Tutorial : MonoBehaviour
 
     [Header("Customer tutorial arrows")]
     [SerializeField] private GameObject customer;
+    [SerializeField] private GameObject customerUI;
     [SerializeField] private GameObject jobBoard;
 
     //Stage 1 tasks
@@ -41,6 +39,7 @@ public class Tutorial : MonoBehaviour
     //stage 2 tasks
     private bool stage2IntroDialogueComplete = false;
     private bool visitedCustomer = false;
+    private bool jobBoardIntroComplete = false;
     private bool visitedJobBoard = false;
     private bool visitedStockMarket = false;
     private bool visitedShop = false;
@@ -80,14 +79,25 @@ public class Tutorial : MonoBehaviour
 
             //stage 2 trigger setup
             customer.SetActive(false);
-            customer.GetComponentInChildren<Button>(true).onClick.AddListener(CustomerTutorialTrigger);
-            jobBoard.GetComponentInChildren<Button>(true).onClick.AddListener(JobBoardTutorial);
+            customerUI.GetComponentInChildren<CustomerCardUI>(true).OnShown.AddListener(CustomerTutorialTrigger);
+            jobBoard.GetComponentInChildren<TogglePanel>(true).Activated.AddListener(JobBoardTutorialTrigger);
         }
     }
 
     void Update()
     {
-        if(Input.touchCount > 0 || Input.GetMouseButtonDown(0))
+        bool pressed = false;
+
+        // Mobile
+        if (Input.touchCount > 0)
+        {
+            if (Input.GetTouch(0).phase == TouchPhase.Began)
+            {
+                pressed = true;
+            }
+        }
+
+        if(pressed || Input.GetMouseButtonDown(0))
         {
             if (tutorialTextActive)
             {
@@ -113,7 +123,6 @@ public class Tutorial : MonoBehaviour
                     {
                         StorageRoomTutorial();
                         return;
-
                     }
                     if(currentRoom != "Workshop" && stage1Complete == false)
                     {
@@ -127,6 +136,32 @@ public class Tutorial : MonoBehaviour
                     if(!stage2IntroDialogueComplete)
                     {
                         Stage2Intro();
+                        return;
+                    }
+                    if(!visitedCustomer)
+                    {
+                        CustomerTutorial();
+                        return;
+                    }
+                    if(!jobBoardIntroComplete)
+                    {
+                        JobBoardIntro();
+                        return;
+                    }
+                    if(!visitedJobBoard)
+                    {
+                        JobBoardTutorial();
+                        return;
+                    }
+                    if(!visitedShop)
+                    {
+                        ShopTutorial();
+                        return;
+                    }
+                    if(!visitedStockMarket)
+                    {
+                        StockMarketTutorial();
+                        return;
                     }
                 }
 
@@ -136,6 +171,7 @@ public class Tutorial : MonoBehaviour
                     {
                         StorageUITutorial();
                     }
+
                 }
             }
         }
@@ -160,6 +196,9 @@ public class Tutorial : MonoBehaviour
                 tutorialTextActive = false;
                 stage1IntroDialogueComplete = true;
                 dialogueIndex = 1;
+                doorLoadingBay.transform.Find("Canvas/Tutorial_Arrow").gameObject.SetActive(true);
+                doorLumberYard.transform.Find("Canvas/Tutorial_Arrow").gameObject.SetActive(true);
+                doorStorageRoom.transform.Find("Canvas/Tutorial_Arrow").gameObject.SetActive(true);
             }
         }
     }
@@ -169,6 +208,7 @@ public class Tutorial : MonoBehaviour
         if (currentStage == 1)
         {           
             currentRoom = "RoomLoadingBay";
+            doorLoadingBay.transform.Find("Canvas/Tutorial_Arrow").gameObject.SetActive(false);
             LoadingBayTutorial();
         }   
     }
@@ -188,8 +228,8 @@ public class Tutorial : MonoBehaviour
                 textPanel.SetActive(false);
                 tutorialTextActive = false;
                 visitedLoadingBay = true;
-                doorLoadingBay.GetComponentInChildren<Button>().onClick.RemoveListener(LoadingBayEnter);
                 dialogueIndex = 1;
+                doorLoadingBay.GetComponentInChildren<Button>().onClick.RemoveListener(LoadingBayEnter);
                 Stage1CompleteCheck();
             }
         }
@@ -200,6 +240,7 @@ public class Tutorial : MonoBehaviour
         if (currentStage == 1)
         {
             currentRoom = "RoomLumberYard";
+            doorLumberYard.transform.Find("Canvas/Tutorial_Arrow").gameObject.SetActive(false);
             LumberYardTutorial();
         }       
     }
@@ -239,6 +280,7 @@ public class Tutorial : MonoBehaviour
         if (currentStage == 1)
         {
             currentRoom = "RoomStorage";
+            doorStorageRoom.transform.Find("Canvas/Tutorial_Arrow").gameObject.SetActive(false);
             StorageRoomTutorial();
         }    
     }
@@ -314,7 +356,13 @@ public class Tutorial : MonoBehaviour
 
     void CustomerTutorialTrigger()
     {
-        
+        if(currentStage == 2 && !visitedCustomer)
+        {
+            customer.GetComponentInChildren<CustomerCardUI>(true).OnShown.RemoveListener(CustomerTutorialTrigger);
+            customerUI.transform.Find("Canvas/Tutorial_Arrow").gameObject.SetActive(true);
+            CustomerTutorial();
+
+        }
     }
 
     void CustomerTutorial()
@@ -339,9 +387,41 @@ public class Tutorial : MonoBehaviour
                 tutorialTextActive = false;
                 visitedCustomer = true;
                 dialogueIndex = 1;
+                customerUI.transform.Find("Canvas/Tutorial_Arrow").gameObject.SetActive(false);
+                JobBoardIntro();
             }
         }
-        
+    }
+    void JobBoardIntro()
+    {
+        if(currentStage == 2)
+        {
+            if(dialogueIndex == 1)
+            {
+                textPanel.SetActive(true);
+                tutorialTextActive = true;
+                tutorialText.text = "Great! Now that we've talked to the customer, let's check the job board to get the full details of the item we need to make for them."; 
+                jobBoard.transform.Find("Canvas/Tutorial_Arrow").gameObject.SetActive(true);
+            }
+            if (dialogueIndex > 1)
+            {
+                textPanel.SetActive(false);
+                tutorialTextActive = false;
+                jobBoardIntroComplete = true;
+                dialogueIndex = 1;
+            }
+        }
+    }
+
+    void JobBoardTutorialTrigger()
+    {
+        if(currentStage == 2 && !visitedJobBoard)
+        {
+            JobBoardTutorial();
+            jobBoard.GetComponentInChildren<TogglePanel>(true).Activated.RemoveListener(JobBoardTutorialTrigger);
+            jobBoard.transform.Find("Canvas/Tutorial_Arrow").gameObject.SetActive(false);
+            Debug.Log("Job Board Tutorial Triggered");
+        }
     }
 
     void JobBoardTutorial()
@@ -351,9 +431,7 @@ public class Tutorial : MonoBehaviour
             if(dialogueIndex == 1)
             {
                 textPanel.SetActive(true);
-                tutorialTextActive = true;
-                tutorialText.text = "Great! Now that we've talked to the customer, let's check the job board to get the full details of the item we need to make for them.";
-                // jobBoard.SetActive(true); arrow pointing to job board
+                tutorialTextActive = true;  
             }
             if(dialogueIndex == 2)
             {

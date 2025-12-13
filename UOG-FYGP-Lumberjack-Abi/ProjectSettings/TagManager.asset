@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - OverlayCanvas
+  - Arrow
   layers:
   - Default
   - TransparentFX

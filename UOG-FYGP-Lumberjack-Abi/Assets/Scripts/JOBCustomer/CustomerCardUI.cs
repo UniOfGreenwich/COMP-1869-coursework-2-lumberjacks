@@ -2,6 +2,7 @@ using System.Text;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 public class CustomerCardUI : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class CustomerCardUI : MonoBehaviour
     public Button acceptButton;
     public Button declineButton;
     public Button closeButton;
+
+    public UnityEvent OnShown;
 
     JobManager jobManager;
     JobOrder job;
@@ -36,7 +39,7 @@ public class CustomerCardUI : MonoBehaviour
         }
 
         if (!rootPanel) rootPanel = gameObject;
-        rootPanel.SetActive(true);
+        rootPanel.SetActive(true); OnShown?.Invoke();
 
         if (customerNameText)
         {

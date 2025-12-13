@@ -1,16 +1,20 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class TogglePanel : MonoBehaviour
 {
     [SerializeField] private GameObject panel, UIBlocker;
     private bool panelOpen = false;
+    
+    public UnityEvent Activated;
 
     public void OpenPanel()
     {
-        if(panelOpen = false) 
+        if(!panelOpen) 
         {
             panel.SetActive(true);
             UIBlocker.SetActive(true);
+            Activated.Invoke();
             panelOpen = true;
         }
     }
