@@ -13,6 +13,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float lookRotationSpeed = 8f;
     [SerializeField] private float maxTapMovement = 20f;
 
+    [Header("Tutorial Reference")]
+    [SerializeField] private Tutorial tutorial;
+
     private Vector2 touchStartPos;
     public static bool IsInputLocked = false;
     private void Awake()
@@ -48,6 +51,9 @@ public class PlayerController : MonoBehaviour
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
                 string hitLayer = LayerMask.LayerToName(hit.collider.gameObject.layer);
+
+                // Ignore input during tutorial text
+                if (tutorial.tutorialTextActive) return;
 
                 // Ignore interactables
                 if (hitLayer == "Interactable") return;
