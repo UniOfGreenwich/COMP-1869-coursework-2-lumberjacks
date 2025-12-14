@@ -10,8 +10,25 @@ public class SaveLoader : MonoBehaviour
 
     void Awake()
     {
+        if (storage == null)
+            storage = FindFirstObjectByType<StorageManager>();
+
+        if (buildingSystem == null)
+            buildingSystem = FindFirstObjectByType<BuildingSystem>();
+
+        if (inventory == null)
+        {
+            GameObject gm = GameObject.FindWithTag("GameController");
+            if (gm != null)
+                inventory = gm.GetComponent<Inventory>();
+        }
+
         LoadInventory();
         LoadStorage();
+    }
+
+    void Start()
+    {
         LoadPlacedObjects();
     }
 
@@ -21,24 +38,28 @@ public class SaveLoader : MonoBehaviour
         SaveStorage();
     }
 
-    private void SaveInventory()
+    void SaveInventory()
     {
+        if (inventory == null) return;
         PlayerPrefs.SetFloat("Money", inventory.money);
         PlayerPrefs.SetInt("Xp", inventory.xp);
         PlayerPrefs.SetInt("Lumber", inventory.lumber);
         PlayerPrefs.Save();
     }
 
-    private void LoadInventory()
+    void LoadInventory()
     {
+        if (inventory == null) return;
         inventory.money = PlayerPrefs.GetFloat("Money", 5000f);
         inventory.AddXp(PlayerPrefs.GetInt("Xp", 0));
         inventory.lumber = PlayerPrefs.GetInt("Lumber", 0);
         inventory.RefreshUI();
     }
 
-    private void SaveStorage()
+    void SaveStorage()
     {
+        if (storage == null) return;
+
         foreach (var kv in storage.AllItems())
         {
             if (kv.Key == null) continue;
@@ -47,8 +68,10 @@ public class SaveLoader : MonoBehaviour
         PlayerPrefs.Save();
     }
 
-    private void LoadStorage()
+    void LoadStorage()
     {
+        if (storage == null) return;
+
         foreach (var e in storage.startingItems)
         {
             if (!e.item) continue;
@@ -57,44 +80,58 @@ public class SaveLoader : MonoBehaviour
         }
     }
 
-    private void LoadPlacedObjects()
+    void LoadPlacedObjects()
     {
+        if (buildingSystem == null || buildingSystem.gridLayout == null)
+        {
+            Debug.LogError("[SaveLoader] BuildingSystem not ready, cannot load placed objects.");
+            return;
+        }
+
+        if (shopItems == null || shopItems.Length == 0)
+        {
+            Debug.LogError("[SaveLoader] shopItems is empty. Drag your ShopItemSO assets into SaveLoader.shopItems.");
+            return;
+        }
+
         foreach (var item in shopItems)
         {
-            if (item == null || item.prefabToPlace == null) continue;
+            if (item == null) continue;
+            if (item.prefabToPlace == null) continue;
+            if (string.IsNullOrEmpty(item.id)) continue;
 
-            if (PlayerPrefs.GetInt("MachineOwned_" + item.id, 0) == 1)
+            if (PlayerPrefs.GetInt("MachineOwned_" + item.id, 0) != 1)
+                continue;
+
+            Vector3 pos = new Vector3(
+                PlayerPrefs.GetFloat("MachinePosX_" + item.id, 0f),
+                PlayerPrefs.GetFloat("MachinePosY_" + item.id, 0f),
+                PlayerPrefs.GetFloat("MachinePosZ_" + item.id, 0f)
+            );
+
+            Quaternion rot = Quaternion.Euler(
+                0f,
+                PlayerPrefs.GetFloat("MachineRotY_" + item.id, 0f),
+                0f
+            );
+
+            GameObject obj = Instantiate(item.prefabToPlace, pos, rot);
+
+            var p = obj.GetComponentInChildren<Placeble>();
+            if (p == null)
             {
-                Vector3 pos = new Vector3(
-                    PlayerPrefs.GetFloat("MachinePosX_" + item.id, 0f),
-                    PlayerPrefs.GetFloat("MachinePosY_" + item.id, 0f),
-                    PlayerPrefs.GetFloat("MachinePosZ_" + item.id, 0f)
-                );
-                Quaternion rot = Quaternion.Euler(
-                    0f,
-                    PlayerPrefs.GetFloat("MachineRotY_" + item.id, 0f),
-                    0f
-                );
-
-                Debug.Log("[SaveLoader] Reloading " + item.id + " at " + pos);
-
-                GameObject obj = buildingSystem.InitializeWithObject(item.prefabToPlace, pos);
-                obj.transform.rotation = rot;
-
-                var p = obj.GetComponentInChildren<Placeble>();
-                if (p != null)
-                {
-                    p.prefabId = item.id;
-                    p.Load();
-                    Vector3Int start = buildingSystem.gridLayout.WorldToCell(p.GetStartPosition());
-                    buildingSystem.TakeArea(start, p.Size);
-                }
-                else
-                {
-                    Debug.LogError("[SaveLoader] No Placeble found on " + obj.name);
-                }
+                Debug.LogError("[SaveLoader] No Placeble found on " + obj.name + " for item " + item.id);
+                continue;
             }
+
+            p.prefabId = item.id;
+            p.Load();
+            p.ForceRefreshFootprint();
+
+            Vector3Int start = buildingSystem.gridLayout.WorldToCell(p.GetStartPosition());
+            buildingSystem.TakeArea(start, p.Size);
+
+            Debug.Log("[SaveLoader] Reloaded " + item.id + " at " + pos);
         }
     }
-
 }

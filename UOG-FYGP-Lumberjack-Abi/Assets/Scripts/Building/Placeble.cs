@@ -15,6 +15,9 @@ public class Placeble : MonoBehaviour
     void Awake()
     {
         objectrenderer = GetComponent<MeshRenderer>();
+        if (objectrenderer == null)
+            objectrenderer = GetComponentInChildren<MeshRenderer>();
+
         if (objectrenderer != null)
         {
             originalMaterial = objectrenderer.material;
@@ -29,6 +32,11 @@ public class Placeble : MonoBehaviour
         CacheBottomCorners();
     }
 
+    void Start()
+    {
+        CalculateSize();
+    }
+
     public void Load()
     {
         placed = true;
@@ -37,14 +45,14 @@ public class Placeble : MonoBehaviour
         if (drag) Destroy(drag);
     }
 
-    void Start()
+    public void ForceRefreshFootprint()
     {
+        CacheBottomCorners();
         CalculateSize();
     }
 
     public void Rotate()
     {
-        Debug.Log("Rotating: " + gameObject.name);
         transform.Rotate(Vector3.up, 90f, Space.World);
         CalculateSize();
     }
@@ -98,6 +106,12 @@ public class Placeble : MonoBehaviour
             return;
         }
 
+        if (BuildingSystem.instance == null || BuildingSystem.instance.gridLayout == null)
+        {
+            Size = new Vector3Int(1, 1, 1);
+            return;
+        }
+
         var grid = BuildingSystem.instance.gridLayout;
         Vector3Int[] cells = new Vector3Int[localBottomCorners.Length];
 
@@ -125,6 +139,9 @@ public class Placeble : MonoBehaviour
 
     public Vector3 GetStartPosition()
     {
+        if (BuildingSystem.instance == null || BuildingSystem.instance.gridLayout == null)
+            return transform.position;
+
         var grid = BuildingSystem.instance.gridLayout;
 
         if (localBottomCorners == null || localBottomCorners.Length == 0)
@@ -152,14 +169,9 @@ public class Placeble : MonoBehaviour
     {
         placed = true;
         RestoreOriginalMaterial();
-        PlayerPrefs.SetFloat("MachinePosX_" + prefabId, transform.position.x);
-        PlayerPrefs.SetFloat("MachinePosY_" + prefabId, transform.position.y);
-        PlayerPrefs.SetFloat("MachinePosZ_" + prefabId, transform.position.z);
-        PlayerPrefs.SetFloat("MachineRotY_" + prefabId, transform.eulerAngles.y);
-        PlayerPrefs.SetInt("MachineOwned_" + prefabId, 1);
-        PlayerPrefs.Save();
+        var drag = GetComponent<ObjectDrag>();
+        if (drag) Destroy(drag);
     }
-
 
     void SetGhostColor(Color color)
     {
@@ -173,9 +185,6 @@ public class Placeble : MonoBehaviour
     void RestoreOriginalMaterial()
     {
         if (objectrenderer != null && originalMaterial != null)
-        {
             objectrenderer.material = originalMaterial;
-        }
     }
-
 }

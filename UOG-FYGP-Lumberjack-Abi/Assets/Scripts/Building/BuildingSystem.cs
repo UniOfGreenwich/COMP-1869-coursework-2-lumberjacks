@@ -8,8 +8,8 @@ public class BuildingSystem : MonoBehaviour
     [Header("Grid + Tilemap")]
     public GridLayout gridLayout;
     private Grid grid;
-    [SerializeField] private Tilemap MainTilemap;   // marks occupied cells
-    [SerializeField] private TileBase OccupiedTile; // tile used to mark taken area
+    [SerializeField] private Tilemap MainTilemap;
+    [SerializeField] private TileBase OccupiedTile;
 
     [Header("Prefabs")]
     public GameObject housePrefab;
@@ -17,21 +17,25 @@ public class BuildingSystem : MonoBehaviour
     private Placeble objectToPlace;
     private int groundLayer;
 
-    private void Awake()
+    void Awake()
     {
         instance = this;
-        grid = gridLayout.gameObject.GetComponent<Grid>();
-        groundLayer = LayerMask.NameToLayer("Ground"); // Cache ground layer index
+
+        if (gridLayout == null)
+            gridLayout = GetComponentInChildren<GridLayout>();
+
+        if (gridLayout != null)
+            grid = gridLayout.gameObject.GetComponent<Grid>();
+
+        groundLayer = LayerMask.NameToLayer("Ground");
     }
 
-    private void Update()
+    void Update()
     {
-        if (objectToPlace == null) return;   // guard first
+        if (objectToPlace == null) return;
 
         if (Input.GetKeyDown(KeyCode.R))
-        {
             objectToPlace.Rotate();
-        }
 
         Vector3 mousePos = GetMouseWorldPosition();
         Vector3 snappedPos = SnapCoordinateToGrid(mousePos);
@@ -62,63 +66,93 @@ public class BuildingSystem : MonoBehaviour
 
     public void StartPlacement(ShopItemSO item)
     {
-        if (item == null || item.prefabToPlace == null) return;
+        if (item == null) return;
+        if (item.prefabToPlace == null) return;
+        if (string.IsNullOrEmpty(item.id))
+        {
+            Debug.LogError("[BuildingSystem] ShopItemSO id is empty on " + item.name);
+            return;
+        }
 
         Vector3 mousePos = GetMouseWorldPosition();
         Vector3 snappedPos = SnapCoordinateToGrid(mousePos);
 
         GameObject obj = Instantiate(item.prefabToPlace, snappedPos, Quaternion.identity);
         objectToPlace = obj.GetComponentInChildren<Placeble>();
-        if (objectToPlace != null)
+
+        if (objectToPlace == null)
         {
-            objectToPlace.prefabId = item.id; //  correct ID
+            Debug.LogError("[BuildingSystem] No Placeble component found on prefab " + item.prefabToPlace.name);
+            Destroy(obj);
+            return;
         }
+
+        objectToPlace.prefabId = item.id;
     }
 
-    #region Utils
     public static Vector3 GetMouseWorldPosition()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         int groundMask = LayerMask.GetMask("Ground");
         if (Physics.Raycast(ray, out RaycastHit hit, 1000f, groundMask))
             return hit.point;
+
         float t = -ray.origin.y / ray.direction.y;
         return ray.origin + ray.direction * t;
     }
 
     public Vector3 SnapCoordinateToGrid(Vector3 position)
     {
+        if (gridLayout == null || grid == null)
+            return position;
+
         Vector3Int cellPos = gridLayout.WorldToCell(position);
         Vector3 center = grid.GetCellCenterWorld(cellPos);
-
-        // Ground level
         center.y = 0f;
 
         if (objectToPlace != null)
         {
             float bottomLocalY = 0f;
 
-            // Use collider so it works with any pivot (center or bottom)
             var col = objectToPlace.GetComponent<BoxCollider>();
             if (col)
-            {
-                bottomLocalY = col.center.y - col.size.y * 0.5f; // local Y of the bottom
-            }
+                bottomLocalY = col.center.y - col.size.y * 0.5f;
             else
             {
-                // Fallback to renderer if there’s no collider
                 var r = objectToPlace.GetComponentInChildren<Renderer>();
                 if (r) bottomLocalY = -r.bounds.extents.y;
             }
 
-            // Lift so the collider bottom sits exactly on the ground
             center.y -= bottomLocalY;
         }
 
         return center;
     }
 
-    private static TileBase[] GetTilesBlock(BoundsInt area, Tilemap tilemap)
+    public bool CanBePlaced(Placeble placeble)
+    {
+        if (gridLayout == null || MainTilemap == null || OccupiedTile == null) return false;
+
+        Vector3Int start = gridLayout.WorldToCell(placeble.GetStartPosition());
+        BoundsInt area = new BoundsInt(start, placeble.Size);
+
+        if (!IsOverGround(placeble))
+        {
+            Debug.Log("[BuildingSystem] Cannot place — not over ground!");
+            return false;
+        }
+
+        TileBase[] baseArray = GetTilesBlock(area, MainTilemap);
+        foreach (var b in baseArray)
+        {
+            if (b == OccupiedTile)
+                return false;
+        }
+
+        return true;
+    }
+
+    static TileBase[] GetTilesBlock(BoundsInt area, Tilemap tilemap)
     {
         TileBase[] array = new TileBase[area.size.x * area.size.y * area.size.z];
         int counter = 0;
@@ -130,63 +164,21 @@ public class BuildingSystem : MonoBehaviour
         }
         return array;
     }
-    #endregion
 
-    #region Tile Handling
-    public bool CanBePlaced(Placeble placeble)
+    bool IsOverGround(Placeble placeble)
     {
-        Vector3Int start = gridLayout.WorldToCell(placeble.GetStartPosition());
-        BoundsInt area = new BoundsInt(start, placeble.Size);
-        // Check if over ground
-        if (!IsOverGround(placeble))
-        {
-            Debug.Log("[BuildingSystem] Cannot place — not over ground!");
-            return false;
-        }
-        // Check if the area is free (not occupied)
-        TileBase[] baseArray = GetTilesBlock(area, MainTilemap);
-        foreach (var b in baseArray)
-        {
-            if (b == OccupiedTile)
-                return false;
-        }
-
-        return true;
-    }
-    public GameObject InitializeWithObject(GameObject prefab, Vector3 pos)
-    {
-        // Snap position to grid
-        Vector3 snappedPos = SnapCoordinateToGrid(pos);
-
-        // Instantiate
-        GameObject obj = Instantiate(prefab, snappedPos, Quaternion.identity);
-
-        // Ensure it has a Placeble component
-        Placeble temp = obj.GetComponentInChildren<Placeble>();
-        if (temp == null)
-        {
-            Debug.LogError(prefab.name + "missing a Placeble component.");
-        }
-
-        return obj;
-    }
-
-    private bool IsOverGround(Placeble placeble)
-    {
-        // Start ray a little above the pivot to avoid collider self-hit
         Vector3 origin = placeble.transform.position + Vector3.up * 0.2f;
 
-        // Raycast straight down
         if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 5f))
-        {
             return hit.collider.gameObject.layer == groundLayer;
-        }
 
         return false;
     }
+
     public void TakeArea(Vector3Int start, Vector3Int size)
     {
-        // Mark occupied tiles ONCE when placed
+        if (MainTilemap == null || OccupiedTile == null) return;
+
         MainTilemap.BoxFill(
             start,
             OccupiedTile,
@@ -195,8 +187,8 @@ public class BuildingSystem : MonoBehaviour
             start.y + size.y - 1
         );
     }
-    #endregion
-    private void SavePlacedObject(Placeble placeble)
+
+    void SavePlacedObject(Placeble placeble)
     {
         string id = placeble.prefabId;
         if (string.IsNullOrEmpty(id))
@@ -214,5 +206,4 @@ public class BuildingSystem : MonoBehaviour
 
         Debug.Log("[BuildingSystem] Saved placement for " + id);
     }
-
 }
