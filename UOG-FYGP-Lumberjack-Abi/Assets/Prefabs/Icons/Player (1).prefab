@@ -139,7 +139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a0ab56393bd95f46ac14644df90645b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  alertIcon: {fileID: 0}
+  alertIcon: {fileID: 8943456177186669398}
   orderPopup: {fileID: 0}
 --- !u!1 &7184559312930038543
 GameObject:
