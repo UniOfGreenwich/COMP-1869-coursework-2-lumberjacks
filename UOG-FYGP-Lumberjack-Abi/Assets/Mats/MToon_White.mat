@@ -29,7 +29,7 @@ Material:
   - _IS_ANGELRING_OFF
   - _IS_CLIPPING_TRANSMODE
   - _IS_OUTLINE_CLIPPING_YES
-  - _OUTLINE_NML
+  - _OUTLINE_POS
   m_InvalidKeywords:
   - _METALLICSPECGLOSSMAP
   - _NORMALMAP
@@ -50,6 +50,8 @@ Material:
     m_Floats:
     - _Farthest_Distance: 100
     - _Is_BlendBaseColor: 0
+    - _OUTLINE: 1
+    - _Outline_Width: 1.5
     m_Colors:
     - _1st_ShadeColor: {r: 0.254717, g: 0.254717, b: 0.254717, a: 1}
     - _2nd_ShadeColor: {r: 1, g: 1, b: 1, a: 1}
