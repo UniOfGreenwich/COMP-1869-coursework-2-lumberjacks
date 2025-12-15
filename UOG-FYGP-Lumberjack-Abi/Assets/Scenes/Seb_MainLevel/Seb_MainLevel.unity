@@ -1516,12 +1516,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb77e5852fbe85d41b8a47a3d7b6caf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  realWorldData: {fileID: 0}
-  inventory: {fileID: 0}
+  stockMarketUIPanel: {fileID: 0}
   amountToSellUI: {fileID: 533601919}
-  totalPriceSell: {fileID: 1541628545}
-  amountToPurchaseUI: {fileID: 1603123784}
-  totalPriceBuy: {fileID: 952229451}
+  totalPriceSellUI: {fileID: 0}
+  amountToSell: 0
+  amountToBuyUI: {fileID: 0}
+  totalPriceBuyUI: {fileID: 0}
+  amountToBuy: 0
   moneyUI: {fileID: 259763067}
   lumberUI: {fileID: 1312746507}
 --- !u!114 &183995753
@@ -4525,7 +4526,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
+  m_VoxelSize: 0.1
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: f19b03ff1a4dfab42916ed4c6d1d9235, type: 2}
   m_BuildHeightMesh: 0
@@ -11354,9 +11355,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3dca72fbc029a37409778c307ffd8480, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lumber: {fileID: 2086320815}
+  lumberPrice: {fileID: 0}
   lerpDuration: 8
-  prices: {fileID: 0}
 --- !u!1 &1517554174
 GameObject:
   m_ObjectHideFlags: 0
@@ -15083,6 +15083,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvas: {fileID: 560696727}
+  usingSimulatedData: 1
 --- !u!114 &2062837425
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18312,15 +18313,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 392d945a2f4436048ae41a5859b32bf8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panel: {fileID: 7107564319397915740}
+  settingsPanelPrefab: {fileID: 0}
+  panelParentOverride: {fileID: 0}
   openButton: {fileID: 7361646383496036517}
-  closeButton: {fileID: 5881655076115039995}
   toggleKey: 27
   mixer: {fileID: 24100000, guid: 98fcd459ad6782b42a9cd3fa336f2e62, type: 2}
   musicParam: MusicVol
   sfxParam: SFXVol
-  musicSlider: {fileID: 5571165114744040550}
-  sfxSlider: {fileID: 6090262401574028754}
   pauseOnOpen: 1
   lockPlayerInputOnOpen: 1
 --- !u!114 &4761730040399924297
