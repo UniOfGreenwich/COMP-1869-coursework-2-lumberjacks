@@ -6,12 +6,18 @@ using System.Linq;
 public class SettingsMenu : MonoBehaviour
 {
     [Header("Prefab (from Project)")]
-    [SerializeField] private GameObject settingsPanelPrefab;   // Drag Settings_Panel prefab here
-    [SerializeField] private Transform panelParentOverride;    // Optional override
+    [SerializeField] private GameObject settingsPanelPrefab;   
+    [SerializeField] private Transform panelParentOverride;    
 
     [Header("Buttons")]
     [SerializeField] private Button openButton;
     [SerializeField] private KeyCode toggleKey = KeyCode.Escape;
+
+    [Header("Mobile Settings")]
+    [Tooltip("On mobile, tapping outside the panel closes it")]
+    [SerializeField] private bool tapOutsideToClose = true;
+    [Tooltip(" back button for mobile (Android back button behavior)")]
+    [SerializeField] private bool useAndroidBackButton = true;
 
     [Header("Audio Mixer")]
     [SerializeField] private AudioMixer mixer;
@@ -27,21 +33,18 @@ public class SettingsMenu : MonoBehaviour
     private Slider musicSlider;
     private Slider sfxSlider;
     private Button closeButton;
+    private RectTransform panelRect;
 
     private string MusicKey => $"VOL_{musicParam}";
     private string SfxKey => $"VOL_{sfxParam}";
 
     private void Awake()
     {
-        Debug.Log("[SettingsMenu] Awake");
-
         if (settingsPanelPrefab == null)
         {
-            Debug.LogError("[SettingsMenu] NO settings panel prefab assigned!");
             return;
         }
 
-        // Find parent canvas
         Transform parent = panelParentOverride;
         if (parent == null)
         {
@@ -49,42 +52,29 @@ public class SettingsMenu : MonoBehaviour
             parent = c != null ? c.transform : null;
         }
 
-        // Instantiate prefab
         panelInstance = Instantiate(settingsPanelPrefab, parent);
         panelInstance.name = settingsPanelPrefab.name + "_INSTANCE";
         panelInstance.SetActive(false);
-        Debug.Log("[SettingsMenu] Instantiated: " + panelInstance.name);
 
-        // Auto-wire open button
+        panelRect = panelInstance.GetComponent<RectTransform>();
+
         if (openButton != null)
         {
             openButton.onClick.AddListener(Toggle);
         }
-
-        // ------------------------------------
-        // AUTO-WIRE SLIDERS
-        // ------------------------------------
-        Debug.Log("[SettingsMenu] Auto-wiring sliders…");
-
-        // Find all sliders in the panel
         var sliders = panelInstance.GetComponentsInChildren<Slider>(true);
 
-        // Try match by name
         musicSlider = sliders.FirstOrDefault(s => s.name.ToLower().Contains("music"));
         sfxSlider = sliders.FirstOrDefault(s => s.name.ToLower().Contains("sfx"));
 
-        // Try tags (optional)
         if (musicSlider == null)
             musicSlider = sliders.FirstOrDefault(s => s.CompareTag("MusicVolume"));
         if (sfxSlider == null)
             sfxSlider = sliders.FirstOrDefault(s => s.CompareTag("SfxVolume"));
 
-        // Fallback: first 2 sliders
         if (musicSlider == null && sliders.Length > 0) musicSlider = sliders[0];
         if (sfxSlider == null && sliders.Length > 1) sfxSlider = sliders[1];
 
-        Debug.Log("[SettingsMenu] Found Music Slider: " + (musicSlider ? musicSlider.name : "NONE"));
-        Debug.Log("[SettingsMenu] Found SFX Slider: " + (sfxSlider ? sfxSlider.name : "NONE"));
 
         if (musicSlider != null)
         {
@@ -100,23 +90,15 @@ public class SettingsMenu : MonoBehaviour
             sfxSlider.onValueChanged.AddListener(SetSfxVolumeFromSlider);
         }
 
-        // ------------------------------------
-        // AUTO-WIRE CLOSE BUTTON
-        // ------------------------------------
         closeButton = panelInstance.GetComponentsInChildren<Button>(true)
                                    .FirstOrDefault(b => b.name.ToLower().Contains("close"));
 
         if (closeButton != null)
         {
             closeButton.onClick.AddListener(Close);
-            Debug.Log("[SettingsMenu] Found close button: " + closeButton.name);
-        }
-        else
-        {
-            Debug.LogWarning("[SettingsMenu] No close button found inside prefab.");
         }
 
-        // Load saved volume
+
         float savedMusic = PlayerPrefs.GetFloat(MusicKey, 1f);
         float savedSfx = PlayerPrefs.GetFloat(SfxKey, 1f);
 
@@ -129,10 +111,54 @@ public class SettingsMenu : MonoBehaviour
 
     private void Update()
     {
+        // PC keyboard toggle
         if (toggleKey != KeyCode.None && Input.GetKeyDown(toggleKey))
         {
             Toggle();
         }
+
+        if (useAndroidBackButton && Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (panelInstance != null && panelInstance.activeSelf)
+            {
+                Close();
+            }
+        }
+        if (tapOutsideToClose && panelInstance != null && panelInstance.activeSelf)
+        {
+            HandleTapOutsideToClose();
+        }
+    }
+
+    private void HandleTapOutsideToClose()
+    {
+        // Check for touch
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+            if (touch.phase == TouchPhase.Began)
+            {
+                if (!IsTouchOverPanel(touch.position))
+                {
+                    Close();
+                }
+            }
+        }
+        // Check for mouse click
+        else if (Input.GetMouseButtonDown(0))
+        {
+            if (!IsTouchOverPanel(Input.mousePosition))
+            {
+                Close();
+            }
+        }
+    }
+
+    private bool IsTouchOverPanel(Vector2 screenPosition)
+    {
+        if (panelRect == null) return false;
+
+        return RectTransformUtility.RectangleContainsScreenPoint(panelRect, screenPosition, null);
     }
 
     public void Open()

@@ -38,11 +38,6 @@ public class StockMarket : MonoBehaviour
             inventory = gameManager.GetComponent<Inventory>();
         }
 
-        if (inventory == null)
-        {
-            Debug.LogWarning("StockMarket missing Inventory reference");
-            return;
-        }
 
         amountToBuyUI.text = amountToBuy.ToString();
         amountToSellUI.text = amountToSell.ToString();

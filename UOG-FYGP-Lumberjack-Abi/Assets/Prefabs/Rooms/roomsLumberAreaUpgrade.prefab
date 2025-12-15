@@ -48,6 +48,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 85d49e30ebd04ab49859df4973980d3a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 103c0222b0460064fbf88ba017274078, type: 2}
     - target: {fileID: 919132149155446097, guid: 85d49e30ebd04ab49859df4973980d3a, type: 3}
       propertyPath: m_Name
       value: Fence2
@@ -72,7 +76,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 8ef13a413d1e4bc4e8934a70916f41d8, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8ef13a413d1e4bc4e8934a70916f41d8, type: 3}
       propertyPath: m_LocalPosition.y
@@ -80,7 +84,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8ef13a413d1e4bc4e8934a70916f41d8, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8ef13a413d1e4bc4e8934a70916f41d8, type: 3}
       propertyPath: m_LocalRotation.w
@@ -88,7 +92,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8ef13a413d1e4bc4e8934a70916f41d8, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8ef13a413d1e4bc4e8934a70916f41d8, type: 3}
       propertyPath: m_LocalRotation.y
@@ -96,7 +100,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8ef13a413d1e4bc4e8934a70916f41d8, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 8ef13a413d1e4bc4e8934a70916f41d8, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -120,7 +124,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 8ef13a413d1e4bc4e8934a70916f41d8, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -254,6 +258,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 85d49e30ebd04ab49859df4973980d3a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 103c0222b0460064fbf88ba017274078, type: 2}
     - target: {fileID: 919132149155446097, guid: 85d49e30ebd04ab49859df4973980d3a, type: 3}
       propertyPath: m_Name
       value: Fence
@@ -283,6 +291,10 @@ PrefabInstance:
     - target: {fileID: 3230374816228848953, guid: 813fbc85274298444994eb0594de2f54, type: 3}
       propertyPath: spawnPoint.x
       value: 4.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 3230374816228848953, guid: 813fbc85274298444994eb0594de2f54, type: 3}
+      propertyPath: cameraSpawnPoint.z
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 3670247780561613069, guid: 813fbc85274298444994eb0594de2f54, type: 3}
       propertyPath: m_Name

@@ -1,20 +1,21 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class WorldShopBuilding : MonoBehaviour
 {
     [Header("Panel References")]
-    [SerializeField] private GameObject computerUI;  // @ANDREI NEW
-    // shopPanel removed – now opened only from inside Computer_UI
+    [SerializeField] private GameObject computerUI;
 
     private void OnMouseDown()
     {
-        if (computerUI == null)
-        {
-            Debug.LogWarning("[WorldShopBuilding] Computer UI not assigned.");
+        if (PlayerController.IsInputLocked)
             return;
-        }
 
-        Debug.Log("[WorldShopBuilding] Opening Computer UI.");
+        if (EventSystem.current != null &&
+            EventSystem.current.IsPointerOverGameObject())
+            return;
+              
         computerUI.SetActive(true);
+        PlayerController.IsInputLocked = true;
     }
 }

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Collider))]
 public class StorageBuilding : MonoBehaviour
@@ -27,7 +28,6 @@ public class StorageBuilding : MonoBehaviour
     {
         cam = Camera.main;
 
-        // Find ANY valid screen-space canvas
         Canvas[] canvases = FindObjectsOfType<Canvas>(true);
         foreach (var c in canvases)
         {
@@ -41,12 +41,6 @@ public class StorageBuilding : MonoBehaviour
         if (canvas == null && canvases.Length > 0)
             canvas = canvases[0];
 
-        if (canvas == null)
-        {
-            Debug.LogError("StorageBuilding: No Canvas found in scene.");
-            return;
-        }
-
         // Create storage window
         if (windowPrefab)
         {
@@ -59,30 +53,39 @@ public class StorageBuilding : MonoBehaviour
     {
         if (!cam) cam = Camera.main;
 
-        if (Input.GetMouseButtonDown(0))
+        // Handle touch input
+        if (Input.touchCount > 0)
         {
-            if (PointerOverUI()) return;
-
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
+            Touch touch = Input.GetTouch(0);
+            if (touch.phase == TouchPhase.Began)
             {
-                if (hit.collider.GetComponentInParent<StorageBuilding>() == this)
-                {
-                    ShowButton();
-                }
+                HandleTapOrClick(touch.position);
             }
+        }
+        // Handle mouse input (PC fallback)
+        else if (Input.GetMouseButtonDown(0))
+        {
+            HandleTapOrClick(Input.mousePosition);
         }
 
         UpdateButtonPosition();
     }
 
-    // ---------------------------
-    // BUTTON HANDLING
-    // ---------------------------
+    private void HandleTapOrClick(Vector2 screenPosition)
+    {
+        if (PointerOverUI(screenPosition)) return;
 
+        Ray ray = cam.ScreenPointToRay(screenPosition);
+        if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
+        {
+            if (hit.collider.GetComponentInParent<StorageBuilding>() == this)
+            {
+                ShowButton();
+            }
+        }
+    }
     private void ShowButton()
     {
-        // Always destroy any old button (prevents invisible leftovers)
         if (button != null)
         {
             Destroy(button);
@@ -90,17 +93,13 @@ public class StorageBuilding : MonoBehaviour
             buttonRect = null;
         }
 
-        // Spawn new button
         button = Instantiate(storageButtonPrefab, canvas.transform);
         buttonRect = button.GetComponent<RectTransform>();
 
-        // Make sure it's visible and readable
         ForceText(button, "Open Storage");
 
-        // Bring to top
         button.transform.SetAsLastSibling();
 
-        // Hook events
         button.GetComponent<Button>().onClick.AddListener(OpenWindow);
     }
 
@@ -110,30 +109,24 @@ public class StorageBuilding : MonoBehaviour
 
         Vector3 screenPos = cam.WorldToScreenPoint(transform.position + buttonOffset);
 
-        // Hide when behind camera
         if (screenPos.z < 0)
         {
             buttonRect.gameObject.SetActive(false);
             return;
         }
 
-        // Ensure visible
         if (!buttonRect.gameObject.activeSelf)
             buttonRect.gameObject.SetActive(true);
 
         buttonRect.position = screenPos;
     }
 
-    // ---------------------------
-    // WINDOW HANDLING
-    // ---------------------------
 
     private void OpenWindow()
     {
         if (window != null)
             window.SetActive(true);
 
-        // Button no longer needed
         if (button != null)
             Destroy(button);
 
@@ -157,13 +150,23 @@ public class StorageBuilding : MonoBehaviour
             Destroy(button);
     }
 
-    // ---------------------------
-    // UTILS
-    // ---------------------------
-
-    private bool PointerOverUI()
+    private bool PointerOverUI(Vector2 screenPosition)
     {
-        return EventSystem.current && EventSystem.current.IsPointerOverGameObject();
+        if (EventSystem.current == null) return false;
+
+        // Check for touch
+        if (Input.touchCount > 0)
+        {
+            PointerEventData eventData = new PointerEventData(EventSystem.current);
+            eventData.position = screenPosition;
+
+            List<RaycastResult> results = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(eventData, results);
+
+            return results.Count > 0;
+        }
+
+        return EventSystem.current.IsPointerOverGameObject();
     }
 
     private void ForceText(GameObject root, string fallback)

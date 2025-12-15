@@ -321,12 +321,19 @@ MonoBehaviour:
   tutorialTextActive: 0
   tutorialCompleted: 0
   currentStage: 1
-  dialogueSection: 1
+  dialogueIndex: 1
   doorLoadingBay: {fileID: 0}
   doorLumberYard: {fileID: 0}
   doorStorageRoom: {fileID: 0}
-  customer: {fileID: 0}
+  doorFromLoadingBay: {fileID: 0}
+  doorFromLumberYard: {fileID: 0}
+  doorFromStorageRoom: {fileID: 0}
+  customerUI: {fileID: 0}
+  chairItemSO: {fileID: 11400000, guid: f311d6627e17d20419101a8823e10a02, type: 2}
   jobBoard: {fileID: 0}
+  jobBoardUI: {fileID: 0}
+  computer: {fileID: 0}
+  computerUI: {fileID: 0}
 --- !u!1 &7989567402826135016
 GameObject:
   m_ObjectHideFlags: 0

@@ -375,6 +375,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 875dd171a420faf409534a3b7d5a24ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  prefabId: 
 --- !u!208 &8361616491938508890
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -502,10 +503,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -1244453513778820301, guid: f4cf56cb3a2e2884d8653575ec5ff089, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 103c0222b0460064fbf88ba017274078, type: 2}
     - target: {fileID: 919132149155446097, guid: f4cf56cb3a2e2884d8653575ec5ff089, type: 3}
       propertyPath: m_Name
       value: SM_TableSaw
       objectReference: {fileID: 0}
+    - target: {fileID: 2825684652205854807, guid: f4cf56cb3a2e2884d8653575ec5ff089, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f26e50e8dcde1de4f982eba2173c43b7, type: 2}
+    - target: {fileID: 7075774345831966637, guid: f4cf56cb3a2e2884d8653575ec5ff089, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f26e50e8dcde1de4f982eba2173c43b7, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

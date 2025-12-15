@@ -14,7 +14,7 @@ public class DeliveryPanelUI : MonoBehaviour
 
     readonly List<DeliveryJobRowUI> rows = new List<DeliveryJobRowUI>();
 
-    void Awake()
+    void OnEnable()
     {
         if (closeButton != null)
         {
@@ -22,20 +22,35 @@ public class DeliveryPanelUI : MonoBehaviour
             closeButton.onClick.AddListener(Close);
         }
 
-        gameObject.SetActive(false);
+        Refresh();
     }
 
     public void Open()
     {
-        gameObject.SetActive(true);
-        Refresh();
-        PlayerController.IsInputLocked = true;
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.Open(gameObject);
+            Refresh();
+        }
+        else
+        {
+            gameObject.SetActive(true);
+            PlayerController.IsInputLocked = true;
+            Refresh();
+        }
     }
 
     public void Close()
     {
-        gameObject.SetActive(false);
-        PlayerController.IsInputLocked = false;
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.Close(gameObject);
+        }
+        else
+        {
+            gameObject.SetActive(false);
+            PlayerController.IsInputLocked = false;
+        }
     }
 
     public void Refresh()
@@ -51,9 +66,8 @@ public class DeliveryPanelUI : MonoBehaviour
         for (int i = 0; i < jobs.Count; i++)
         {
             var job = jobs[i];
-            if (job == null) continue;
-            if (!job.isAccepted || job.isCompleted || job.isFailed) continue;
-            if (!job.isReadyForDelivery) continue;
+            if (job == null || !job.isAccepted || job.isCompleted || job.isFailed || !job.isReadyForDelivery)
+                continue;
 
             GameObject rowGO = Instantiate(jobRowPrefab, jobListRoot);
             DeliveryJobRowUI row = rowGO.GetComponent<DeliveryJobRowUI>();
@@ -64,12 +78,7 @@ public class DeliveryPanelUI : MonoBehaviour
         }
 
         if (globalStatusText != null)
-        {
-            if (rows.Count == 0)
-                globalStatusText.text = "No finished jobs ready for delivery.";
-            else
-                globalStatusText.text = "";
-        }
+            globalStatusText.text = rows.Count == 0 ? "No finished jobs ready for delivery." : "";
     }
 
     public void TryDeliver(JobOrder job, DeliveryJobRowUI row)
@@ -82,8 +91,7 @@ public class DeliveryPanelUI : MonoBehaviour
         for (int i = 0; i < slots.Length; i++)
         {
             if (slots[i] == null) continue;
-            if (!slots[i].IsSatisfied())
-                allOk = false;
+            if (!slots[i].IsSatisfied()) allOk = false;
         }
 
         if (!allOk)
@@ -98,7 +106,6 @@ public class DeliveryPanelUI : MonoBehaviour
         if (globalStatusText != null) globalStatusText.text = "";
 
         jobManager.DeliverJob(job);
-
         Refresh();
     }
 }

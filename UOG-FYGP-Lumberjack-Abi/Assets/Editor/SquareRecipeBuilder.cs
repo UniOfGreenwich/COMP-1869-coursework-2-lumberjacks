@@ -46,12 +46,12 @@ public static class SquareRecipeBuilder
                 {
                     if (item.icon != sprite) item.icon = sprite;
                     linkedIcons++;
-                    Debug.Log($"[Squares] Icon linked -> Square_{a}x{b} :: {AssetDatabase.GetAssetPath(sprite)}");
+                    //Debug.Log($"[Squares] Icon linked -> Square_{a}x{b} :: {AssetDatabase.GetAssetPath(sprite)}");
                 }
                 else
                 {
                     missingIcons++;
-                    Debug.LogWarning($"[Squares] Icon missing -> Square_{a}x{b} expected {ICONS_FOLDER}/Square_{a}x{b}.png");
+                    //Debug.LogWarning($"[Squares] Icon missing -> Square_{a}x{b} expected {ICONS_FOLDER}/Square_{a}x{b}.png");
                 }
 
                 int cost = Mathf.Max(1, PLANKS_PER_WIDTH * a);
@@ -70,7 +70,7 @@ public static class SquareRecipeBuilder
 
         EditorUtility.SetDirty(db);
         AssetDatabase.SaveAssets();
-        Debug.Log($"[Squares] DB rebuilt :: entries={db.entries.Count} itemsMade={madeItems} iconsLinked={linkedIcons} iconsMissing={missingIcons}");
+        //Debug.Log($"[Squares] DB rebuilt :: entries={db.entries.Count} itemsMade={madeItems} iconsLinked={linkedIcons} iconsMissing={missingIcons}");
     }
 
     [MenuItem("Tools/Squares/Populate Scene Cutters")]
@@ -98,11 +98,11 @@ public static class SquareRecipeBuilder
             }
 
             EditorUtility.SetDirty(sc);
-            Debug.Log($"[Squares] Cutter populated -> {sc.name} :: recipes={sc.recipes.Count}");
+            //Debug.Log($"[Squares] Cutter populated -> {sc.name} :: recipes={sc.recipes.Count}");
         }
 
         AssetDatabase.SaveAssets();
-        Debug.Log($"[Squares] Scene cutters populated :: count={cutters.Length}");
+        //Debug.Log($"[Squares] Scene cutters populated :: count={cutters.Length}");
     }
 
     static void EnsureFolders()
@@ -141,7 +141,7 @@ public static class SquareRecipeBuilder
         {
             item = ScriptableObject.CreateInstance<ItemSO>();
             item.id = $"square_{a}x{b}";
-            item.displayName = $"Square {a}×{b}";
+            item.displayName = $"Square {a}ï¿½{b}";
             item.category = ItemCategory.Utility;
             item.maxStack = 20;
             AssetDatabase.CreateAsset(item, path);

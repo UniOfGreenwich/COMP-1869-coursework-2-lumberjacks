@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class JobBoardUI : MonoBehaviour
 {
@@ -6,8 +7,11 @@ public class JobBoardUI : MonoBehaviour
     public RectTransform listRoot;
     public GameObject rowPrefab;
 
+    public UnityEvent Opened;
+
     public void Open()
     {
+        Opened?.Invoke();
         gameObject.SetActive(true);
         Refresh();
         PlayerController.IsInputLocked = true;

@@ -2,6 +2,7 @@ using System.Text;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 public class CustomerCardUI : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class CustomerCardUI : MonoBehaviour
     public Button acceptButton;
     public Button declineButton;
     public Button closeButton;
+
+    public UnityEvent OnShown;
 
     JobManager jobManager;
     JobOrder job;
@@ -32,12 +35,15 @@ public class CustomerCardUI : MonoBehaviour
         if (jobManager == null || job == null)
         {
             Hide();
+            Debug.Log("job mananger or job was null in customer card UI");
             return;
         }
 
         if (!rootPanel) rootPanel = gameObject;
         rootPanel.SetActive(true);
-
+        
+        if (rootPanel.activeSelf) OnShown?.Invoke();
+            
         if (customerNameText)
         {
             customerNameText.text = GetCustomerName(job.customer);
@@ -69,7 +75,6 @@ public class CustomerCardUI : MonoBehaviour
 
         if (acceptButton)
         {
-            acceptButton.onClick.RemoveAllListeners();
             acceptButton.onClick.AddListener(OnAcceptClicked);
         }
 
@@ -88,6 +93,7 @@ public class CustomerCardUI : MonoBehaviour
 
     public void Hide()
     {
+        Debug.Log("customerUI hide panel was called");
         if (!rootPanel) rootPanel = gameObject;
         rootPanel.SetActive(false);
     }

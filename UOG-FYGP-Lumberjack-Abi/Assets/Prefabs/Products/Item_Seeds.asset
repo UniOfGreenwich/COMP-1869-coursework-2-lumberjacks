@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: Item_Seeds
   m_EditorClassIdentifier: 
   id: Seed
-  displayName: TreeSeed
-  icon: {fileID: 2111746380, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
+  displayName: Tree Seeds
+  icon: {fileID: 459548766, guid: 767311ea5efcf3d4e9643afec4021f6c, type: 3}
   category: 0
   maxStack: 20
   gridWidth: 1
   gridHeight: 1
+  isProductionSquarePiece: 0
+  worldPrefab: {fileID: 0}
