@@ -75,6 +75,20 @@ public class Tutorial : MonoBehaviour
             tutorialText = textPanel.GetComponentInChildren<TMP_Text>();
             taskPanel = GetComponentInChildren<RectTransform>().Find("Panel_Tasks").gameObject;
             taskPanel.SetActive(false);
+            //this is to have one spawner at start one tutrial complete true it will get you 3 spawners
+            var jobManager = FindFirstObjectByType<JobManager>();
+            if (jobManager != null)
+            {
+                jobManager.customerSlots = 1;
+                jobManager.minLinesPerJob = 1;
+                jobManager.maxLinesPerJob = 1;
+                jobManager.minQuantityPerLine = 1;
+                jobManager.maxQuantityPerLine = 1;
+
+                jobManager.GenerateInitialJobs();
+                jobManager.NotifyChanged();
+            }
+
 
             //stage 1 trigger setup
             doorLoadingBay.GetComponentInChildren<Button>(true).onClick.AddListener(LoadingBayEnter);
@@ -217,7 +231,7 @@ public class Tutorial : MonoBehaviour
         }
     }
 
-    void LoadingBayEnter()
+void LoadingBayEnter()
     {
         if (currentStage == 1)
         {           
@@ -751,6 +765,20 @@ public class Tutorial : MonoBehaviour
                 tutorialTextActive = false;
                 dialogueIndex = 1;
                 tutorialCompleted = true;
+                //this adds 3 spawner which spawn 3 customer
+                var jobManager = FindFirstObjectByType<JobManager>();
+                if (jobManager != null)
+                {
+                    jobManager.customerSlots = 3;
+                    jobManager.minLinesPerJob = 1;
+                    jobManager.maxLinesPerJob = 3;
+                    jobManager.minQuantityPerLine = 1;
+                    jobManager.maxQuantityPerLine = 4;
+
+                    jobManager.GenerateInitialJobs();
+                    jobManager.NotifyChanged();
+                }
+
                 gameObject.SetActive(false);
             }
         }

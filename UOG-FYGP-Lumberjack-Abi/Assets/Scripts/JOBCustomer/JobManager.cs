@@ -157,7 +157,7 @@ public class JobManager : MonoBehaviour
         }
     }
 
-    void GenerateInitialJobs()
+    public void GenerateInitialJobs()
     {
         availableJobs.Clear();
         for (int slot = 0; slot < customerSlots; slot++)
@@ -494,7 +494,7 @@ public class JobManager : MonoBehaviour
         availableJobs.Add(newJob);
     }
 
-    void NotifyChanged()
+   public void NotifyChanged()
     {
         if (worldSpawner)
         {
