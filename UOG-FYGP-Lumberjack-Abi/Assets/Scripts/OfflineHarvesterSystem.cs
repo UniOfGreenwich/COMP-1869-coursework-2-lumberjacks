@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -6,11 +7,11 @@ using TMPro;
 public class OfflineHarvesterNPC : MonoBehaviour
 {
     [Header("Items")]
-    public ItemSO logItem;                    // log item asset
-    public ItemSO seedItem;                   // seed item asset
+    public ItemSO logItem;
+    public ItemSO seedItem;
 
     [Header("Offline Rates")]
-    [Min(0f)] public float logsPerMinute = 2f;
+    [Min(0f)] public float logsPerMinute = 10f;
     [Min(1)] public int logsPerSeedBatch = 5;
     [Min(1)] public int seedsPerBatch = 3;
 
@@ -43,8 +44,11 @@ public class OfflineHarvesterNPC : MonoBehaviour
     public int blimpTextFontSizeMax = 36;
 
     private StorageManager storage;
+
     private int pendingLogs;
     private int pendingSeeds;
+    private float logRemainder;
+    private int seedProgressLogs;
 
     private Canvas logsCanvas;
     private TextMeshProUGUI logsText;
@@ -55,107 +59,113 @@ public class OfflineHarvesterNPC : MonoBehaviour
     private Button seedsButton;
 
     private float nextProbeTime;
-    private const string PrefKey = "OfflineHarvester_LastQuit";
+
+    private const string PrefKeyLast = "OfflineHarvester_LastQuit";
+    private const string PrefKeyPendingLogs = "OfflineHarvester_PendingLogs";
+    private const string PrefKeyPendingSeeds = "OfflineHarvester_PendingSeeds";
+    private const string PrefKeyLogRemainder = "OfflineHarvester_LogRemainder";
+    private const string PrefKeySeedProgress = "OfflineHarvester_SeedProgressLogs";
 
     void Awake()
     {
         storage = FindFirstObjectByType<StorageManager>();
         EnsureBlimps();
+
         if (flyCurve == null || flyCurve.keys.Length == 0)
             flyCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.playModeStateChanged += OnPlayModeChanged;
+#endif
+    }
+
+    void OnDestroy()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.playModeStateChanged -= OnPlayModeChanged;
+#endif
     }
 
     void Start()
     {
-        LoadOfflineProduction();
+        LoadState();
+        ApplyOfflineProduction();
         UpdateBlimpUI();
-        TryAutoWireStorage();
+        AutoWireStorage();
+        SaveState(NowUnix());
     }
 
     void Update()
     {
         FaceCanvases();
 
-        if ((overlayCanvas == null || storageAnchor == null) &&
-            Time.unscaledTime >= nextProbeTime)
+        if ((overlayCanvas == null || storageAnchor == null) && Time.unscaledTime >= nextProbeTime)
         {
             nextProbeTime = Time.unscaledTime + uiProbeInterval;
-            TryAutoWireStorage();
+            AutoWireStorage();
         }
     }
 
     void OnApplicationQuit()
     {
-        SaveQuitTime();
+        SaveState(NowUnix());
     }
 
     void OnApplicationPause(bool pause)
     {
-        if (pause) SaveQuitTime();
+        if (pause) SaveState(NowUnix());
     }
+
+#if UNITY_EDITOR
+    private void OnPlayModeChanged(UnityEditor.PlayModeStateChange state)
+    {
+        if (state == UnityEditor.PlayModeStateChange.ExitingPlayMode)
+            SaveState(NowUnix());
+    }
+#endif
 
     void EnsureBlimps()
     {
-        logsCanvas = BuildBlimpCanvas("LogsBlimp", new Vector3(-0.6f, blimpHeight, 0f),
-            out logsText, out logsButton);
- 
+        logsCanvas = BuildBlimpCanvas("LogsBlimp", new Vector3(-0.6f, blimpHeight, 0f), out logsText, out logsButton);
+        seedsCanvas = BuildBlimpCanvas("SeedsBlimp", new Vector3(0.6f, blimpHeight, 0f), out seedsText, out seedsButton);
 
-        seedsCanvas = BuildBlimpCanvas("SeedsBlimp", new Vector3(0.6f, blimpHeight, 0f),
-            out seedsText, out seedsButton);
+        if (logsButton && logsButton.image) logsButton.image.sprite = logsBlimpSprite;
+        if (seedsButton && seedsButton.image) seedsButton.image.sprite = seedsBlimpSprite;
 
+        ApplyTextStyle(logsText);
+        ApplyTextStyle(seedsText);
 
-        // LOGS styling
-        logsButton.image.sprite = logsBlimpSprite;
-        logsText.font = blimpFont;
-        logsText.color = blimpTextColor;
+        if (logsButton) logsButton.onClick.AddListener(CollectLogs);
+        if (seedsButton) seedsButton.onClick.AddListener(CollectSeeds);
 
-        logsText.enableAutoSizing = blimpTextAutoSize;
-        if (blimpTextAutoSize)
-        {
-            logsText.fontSizeMin = blimpTextFontSizeMin;
-            logsText.fontSizeMax = blimpTextFontSizeMax;
-        }
-        else
-        {
-            logsText.fontSize = blimpTextFontSizeMax; // fixed size if autosize off
-        }
-
-        logsText.fontStyle = blimpTextBold ? FontStyles.Bold : FontStyles.Normal;
-
-
-        // SEEDS styling
-        seedsButton.image.sprite = seedsBlimpSprite;
-        seedsText.font = blimpFont;
-        seedsText.color = blimpTextColor;
-
-        seedsText.enableAutoSizing = blimpTextAutoSize;
-        if (blimpTextAutoSize)
-        {
-            seedsText.fontSizeMin = blimpTextFontSizeMin;
-            seedsText.fontSizeMax = blimpTextFontSizeMax;
-        }
-        else
-        {
-            seedsText.fontSize = blimpTextFontSizeMax;
-        }
-
-        seedsText.fontStyle = blimpTextBold ? FontStyles.Bold : FontStyles.Normal;
-
-
-
-
-        logsButton.onClick.AddListener(CollectLogs);
-        seedsButton.onClick.AddListener(CollectSeeds);
-
-        logsCanvas.gameObject.SetActive(false);
-        seedsCanvas.gameObject.SetActive(false);
+        if (logsCanvas) logsCanvas.gameObject.SetActive(false);
+        if (seedsCanvas) seedsCanvas.gameObject.SetActive(false);
     }
 
-    Canvas BuildBlimpCanvas(string name, Vector3 localOffset,
-        out TextMeshProUGUI textOut, out Button buttonOut)
+    void ApplyTextStyle(TextMeshProUGUI t)
     {
-        var canvasObj = new GameObject(name + "_Canvas",
-            typeof(Canvas), typeof(GraphicRaycaster));
+        if (!t) return;
+
+        t.font = blimpFont;
+        t.color = blimpTextColor;
+        t.enableAutoSizing = blimpTextAutoSize;
+
+        if (blimpTextAutoSize)
+        {
+            t.fontSizeMin = blimpTextFontSizeMin;
+            t.fontSizeMax = blimpTextFontSizeMax;
+        }
+        else
+        {
+            t.fontSize = blimpTextFontSizeMax;
+        }
+
+        t.fontStyle = blimpTextBold ? FontStyles.Bold : FontStyles.Normal;
+    }
+
+    Canvas BuildBlimpCanvas(string name, Vector3 localOffset, out TextMeshProUGUI textOut, out Button buttonOut)
+    {
+        var canvasObj = new GameObject(name + "_Canvas", typeof(Canvas), typeof(GraphicRaycaster));
         canvasObj.transform.SetParent(transform, false);
         canvasObj.transform.localPosition = localOffset;
 
@@ -167,12 +177,13 @@ public class OfflineHarvesterNPC : MonoBehaviour
         var rc = c.GetComponent<RectTransform>();
         rc.anchorMin = rc.anchorMax = rc.pivot = new Vector2(0.5f, 0.5f);
         rc.sizeDelta = blimpSize;
+
         float scale = 0.6f / Mathf.Max(1f, blimpSize.x);
         c.transform.localScale = new Vector3(scale, scale, scale);
 
-        var btnObj = new GameObject(name, typeof(RectTransform),
-            typeof(Image), typeof(Button));
+        var btnObj = new GameObject(name, typeof(RectTransform), typeof(Image), typeof(Button));
         btnObj.transform.SetParent(canvasObj.transform, false);
+
         var btnRc = btnObj.GetComponent<RectTransform>();
         btnRc.anchorMin = btnRc.anchorMax = btnRc.pivot = new Vector2(0.5f, 0.5f);
         btnRc.sizeDelta = blimpSize;
@@ -188,9 +199,9 @@ public class OfflineHarvesterNPC : MonoBehaviour
             bg.color = new Color(0f, 0f, 0f, 0.55f);
         }
 
-        var textObj = new GameObject("Count", typeof(RectTransform),
-            typeof(TextMeshProUGUI));
+        var textObj = new GameObject("Count", typeof(RectTransform), typeof(TextMeshProUGUI));
         textObj.transform.SetParent(btnObj.transform, false);
+
         var textRc = textObj.GetComponent<RectTransform>();
         textRc.anchorMin = textRc.anchorMax = new Vector2(0.5f, 0.5f);
         textRc.pivot = new Vector2(0.5f, 0.5f);
@@ -199,37 +210,60 @@ public class OfflineHarvesterNPC : MonoBehaviour
         var tmp = textObj.GetComponent<TextMeshProUGUI>();
         tmp.text = "x0";
         tmp.alignment = TextAlignmentOptions.Center;
-        tmp.enableAutoSizing = true;
-        tmp.fontSizeMin = 22;
-        tmp.fontSizeMax = 36;
-        tmp.color = Color.white;
 
         textOut = tmp;
         buttonOut = btnObj.GetComponent<Button>();
         return c;
     }
 
-    void LoadOfflineProduction()
+    void LoadState()
     {
-        if (!PlayerPrefs.HasKey(PrefKey)) return;
+        pendingLogs = PlayerPrefs.GetInt(PrefKeyPendingLogs, 0);
+        pendingSeeds = PlayerPrefs.GetInt(PrefKeyPendingSeeds, 0);
+        seedProgressLogs = PlayerPrefs.GetInt(PrefKeySeedProgress, 0);
+
+        string remStr = PlayerPrefs.GetString(PrefKeyLogRemainder, "0");
+        if (!float.TryParse(remStr, NumberStyles.Float, CultureInfo.InvariantCulture, out logRemainder))
+            logRemainder = 0f;
+    }
+
+    void ApplyOfflineProduction()
+    {
+        if (!PlayerPrefs.HasKey(PrefKeyLast)) return;
+
+        if (!double.TryParse(PlayerPrefs.GetString(PrefKeyLast, "0"), NumberStyles.Float, CultureInfo.InvariantCulture, out double last))
+            return;
 
         double now = NowUnix();
-        double last = double.Parse(PlayerPrefs.GetString(PrefKey, "0"));
         double deltaSeconds = Mathf.Max(0f, (float)(now - last));
         float minutes = (float)(deltaSeconds / 60.0);
 
-        int producedLogs = Mathf.FloorToInt(minutes * logsPerMinute);
-        int seedBatches = producedLogs / logsPerSeedBatch;
-        int producedSeeds = seedBatches * seedsPerBatch;
+        float totalLogsFloat = minutes * Mathf.Max(0f, logsPerMinute) + Mathf.Max(0f, logRemainder);
+        int producedLogs = Mathf.FloorToInt(totalLogsFloat);
+        logRemainder = Mathf.Max(0f, totalLogsFloat - producedLogs);
+
+        if (producedLogs <= 0) return;
 
         pendingLogs += producedLogs;
-        pendingSeeds += producedSeeds;
+
+        seedProgressLogs += producedLogs;
+        int batchSize = Mathf.Max(1, logsPerSeedBatch);
+        int seedBatches = seedProgressLogs / batchSize;
+
+        if (seedBatches > 0)
+        {
+            pendingSeeds += seedBatches * Mathf.Max(1, seedsPerBatch);
+            seedProgressLogs -= seedBatches * batchSize;
+        }
     }
 
-    void SaveQuitTime()
+    void SaveState(double now)
     {
-        double now = NowUnix();
-        PlayerPrefs.SetString(PrefKey, now.ToString());
+        PlayerPrefs.SetString(PrefKeyLast, now.ToString(CultureInfo.InvariantCulture));
+        PlayerPrefs.SetInt(PrefKeyPendingLogs, pendingLogs);
+        PlayerPrefs.SetInt(PrefKeyPendingSeeds, pendingSeeds);
+        PlayerPrefs.SetInt(PrefKeySeedProgress, seedProgressLogs);
+        PlayerPrefs.SetString(PrefKeyLogRemainder, logRemainder.ToString(CultureInfo.InvariantCulture));
         PlayerPrefs.Save();
     }
 
@@ -262,6 +296,7 @@ public class OfflineHarvesterNPC : MonoBehaviour
         if (overlayCanvas && storageAnchor && logIcon)
             StartCoroutine(FlyToStorageRoutine(startWorld, amount, logIcon));
 
+        SaveState(NowUnix());
         UpdateBlimpUI();
     }
 
@@ -277,6 +312,7 @@ public class OfflineHarvesterNPC : MonoBehaviour
         if (overlayCanvas && storageAnchor && seedIcon)
             StartCoroutine(FlyToStorageRoutine(startWorld, amount, seedIcon));
 
+        SaveState(NowUnix());
         UpdateBlimpUI();
     }
 
@@ -285,8 +321,17 @@ public class OfflineHarvesterNPC : MonoBehaviour
         var cam = Camera.main;
         if (!cam) return;
 
-        if (logsCanvas) FaceCanvas(logsCanvas.transform, cam);
-        if (seedsCanvas) FaceCanvas(seedsCanvas.transform, cam);
+        if (logsCanvas)
+        {
+            if (logsCanvas.worldCamera == null) logsCanvas.worldCamera = cam;
+            FaceCanvas(logsCanvas.transform, cam);
+        }
+
+        if (seedsCanvas)
+        {
+            if (seedsCanvas.worldCamera == null) seedsCanvas.worldCamera = cam;
+            FaceCanvas(seedsCanvas.transform, cam);
+        }
     }
 
     void FaceCanvas(Transform t, Camera cam)
@@ -297,22 +342,21 @@ public class OfflineHarvesterNPC : MonoBehaviour
             t.rotation = Quaternion.LookRotation(dir);
     }
 
-    void TryAutoWireStorage()
+    void AutoWireStorage()
     {
         if (overlayCanvas == null)
         {
             foreach (var c in Resources.FindObjectsOfTypeAll<Canvas>())
             {
                 if (!c || !c.gameObject.scene.IsValid()) continue;
-                if (!string.IsNullOrEmpty(overlayCanvasTag) &&
-                    c.CompareTag(overlayCanvasTag))
+
+                if (!string.IsNullOrEmpty(overlayCanvasTag) && c.CompareTag(overlayCanvasTag))
                 {
                     overlayCanvas = c;
                     break;
                 }
 
-                if (c.renderMode == RenderMode.ScreenSpaceOverlay ||
-                    c.renderMode == RenderMode.ScreenSpaceCamera)
+                if (c.renderMode == RenderMode.ScreenSpaceOverlay || c.renderMode == RenderMode.ScreenSpaceCamera)
                 {
                     overlayCanvas = c;
                     break;
@@ -341,15 +385,10 @@ public class OfflineHarvesterNPC : MonoBehaviour
         RectTransform overlayRect = overlayCanvas.transform as RectTransform;
 
         Vector2 startScreen = RectTransformUtility.WorldToScreenPoint(Camera.main, startWorld);
-        Vector2 startLocal;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            overlayRect, startScreen, overlayCanvas.worldCamera, out startLocal);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(overlayRect, startScreen, overlayCanvas.worldCamera, out Vector2 startLocal);
 
-        Vector2 endScreen = RectTransformUtility.WorldToScreenPoint(
-            overlayCanvas ? overlayCanvas.worldCamera : null, storageAnchor.position);
-        Vector2 endLocal;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            overlayRect, endScreen, overlayCanvas ? overlayCanvas.worldCamera : null, out endLocal);
+        Vector2 endScreen = RectTransformUtility.WorldToScreenPoint(overlayCanvas.worldCamera, storageAnchor.position);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(overlayRect, endScreen, overlayCanvas.worldCamera, out Vector2 endLocal);
 
         Vector2 control = Vector2.Lerp(startLocal, endLocal, 0.5f) + Vector2.up * 80f;
 
@@ -359,14 +398,13 @@ public class OfflineHarvesterNPC : MonoBehaviour
         yield return new WaitForSeconds(flyDuration + 0.15f);
     }
 
-    IEnumerator SingleFlyIcon(Vector2 start, Vector2 control, Vector2 end,
-        Sprite icon, float delay)
+    IEnumerator SingleFlyIcon(Vector2 start, Vector2 control, Vector2 end, Sprite icon, float delay)
     {
         if (delay > 0f) yield return new WaitForSeconds(delay);
 
         RectTransform overlayRect = overlayCanvas.transform as RectTransform;
-        var iconObj = new GameObject("FlyIcon", typeof(RectTransform),
-            typeof(CanvasGroup), typeof(Image));
+
+        var iconObj = new GameObject("FlyIcon", typeof(RectTransform), typeof(CanvasGroup), typeof(Image));
         iconObj.transform.SetParent(overlayRect, false);
 
         var iconRc = iconObj.GetComponent<RectTransform>();
