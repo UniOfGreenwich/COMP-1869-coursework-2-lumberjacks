@@ -88,6 +88,19 @@ public class Tutorial : MonoBehaviour
                 jobManager.GenerateInitialJobs();
                 jobManager.NotifyChanged();
             }
+            //this is to have 0 spawner at start one tutrial complete true it will get you 3 spawners
+            var jobManager = FindFirstObjectByType<JobManager>();
+            if (jobManager != null)
+            {
+                jobManager.customerSlots = 0;
+                jobManager.minLinesPerJob = 0;
+                jobManager.maxLinesPerJob = 0;
+                jobManager.minQuantityPerLine = 0;
+                jobManager.maxQuantityPerLine = 0;
+
+                jobManager.GenerateInitialJobs();
+                jobManager.NotifyChanged();
+            }
 
 
             //stage 1 trigger setup
@@ -152,6 +165,19 @@ public class Tutorial : MonoBehaviour
                         Stage1CompleteCheck();
                         return;
                     }
+                }
+                //this is to have one spawner at start one tutrial complete true it will get you 3 spawners
+                var jobManager = FindFirstObjectByType<JobManager>();
+                if (jobManager != null)
+                {
+                    jobManager.customerSlots = 1;
+                    jobManager.minLinesPerJob = 1;
+                    jobManager.maxLinesPerJob = 1;
+                    jobManager.minQuantityPerLine = 1;
+                    jobManager.maxQuantityPerLine = 1;
+
+                    jobManager.GenerateInitialJobs();
+                    jobManager.NotifyChanged();
                 }
 
                 if (currentStage == 2)
