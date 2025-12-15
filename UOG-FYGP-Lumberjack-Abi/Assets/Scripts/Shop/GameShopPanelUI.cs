@@ -34,8 +34,6 @@ public class GameShopPanelUI : MonoBehaviour
                 inventory = gm.GetComponent<Inventory>();
         }
 
-        Debug.Log("[ShopPanel] Awake, storage = " + (storage ? storage.name : "null") +
-                  ", inventory = " + (inventory ? inventory.name : "null"));
     }
 
     void Start()
@@ -55,7 +53,6 @@ public class GameShopPanelUI : MonoBehaviour
             feedbackLabel.text = string.Empty;
 
         PlayerController.IsInputLocked = true;
-        Debug.Log("[ShopPanel] Opened.");
     }
 
     public void Close()
@@ -66,14 +63,12 @@ public class GameShopPanelUI : MonoBehaviour
             gameObject.SetActive(false);
 
         PlayerController.IsInputLocked = false;
-        Debug.Log("[ShopPanel] Closed.");
     }
 
     void BuildList()
     {
         if (contentRoot == null || rowPrefab == null)
         {
-            Debug.LogError("[ShopPanel] contentRoot or rowPrefab not set.");
             return;
         }
 
@@ -82,7 +77,7 @@ public class GameShopPanelUI : MonoBehaviour
 
         if (items == null || items.Length == 0)
         {
-            Debug.LogWarning("[ShopPanel] No items configured.");
+            Debug.LogWarning(" No items there");
             return;
         }
 
@@ -95,7 +90,6 @@ public class GameShopPanelUI : MonoBehaviour
             row.Bind(this, item, owned);
         }
 
-        Debug.Log("[ShopPanel] Built " + items.Length + " rows.");
     }
 
     public void HandleBuy(ShopItemSO item)
@@ -104,14 +98,12 @@ public class GameShopPanelUI : MonoBehaviour
 
         if (inventory == null)
         {
-            Debug.LogError("[ShopPanel] No Inventory found.");
             return;
         }
 
         // stop extra buys for single-purchase items
         if (item.singlePurchase && IsOwned(item))
         {
-            Debug.Log("[ShopPanel] " + item.displayName + " already owned, skipping buy.");
             if (feedbackLabel != null)
                 feedbackLabel.text = "Owned.";
             return;
@@ -119,7 +111,6 @@ public class GameShopPanelUI : MonoBehaviour
 
         if (item.price > 0 && !inventory.TrySpend(item.price))
         {
-            Debug.Log("[ShopPanel] Not enough money for " + item.displayName);
             if (feedbackLabel != null)
                 feedbackLabel.text = "Not enough money.";
             return;
@@ -150,13 +141,11 @@ public class GameShopPanelUI : MonoBehaviour
         }
         catch (System.Exception ex)
         {
-            Debug.LogError("[ShopPanel] Exception during buy: " + ex);
             success = false;
         }
 
         if (!success)
         {
-            Debug.LogWarning("[ShopPanel] Buy failed for " + item.displayName);
             if (feedbackLabel != null)
                 feedbackLabel.text = "Buy failed.";
 
@@ -167,8 +156,6 @@ public class GameShopPanelUI : MonoBehaviour
 
         if (item.singlePurchase)
             SetOwned(item);
-
-        Debug.Log("[ShopPanel] Buy success for " + item.displayName);
 
         if (feedbackLabel != null)
             feedbackLabel.text = "Bought " + item.displayName;
@@ -182,19 +169,16 @@ public class GameShopPanelUI : MonoBehaviour
             storage = FindFirstObjectByType<StorageManager>();
             if (storage == null)
             {
-                Debug.LogError("[ShopPanel] No StorageManager found.");
+                Debug.LogError(" No StorageManager found.");
                 return false;
             }
         }
-
         if (item.item == null || item.itemCount <= 0)
         {
-            Debug.LogWarning("[ShopPanel] Item config is not valid for " + item.name);
             return false;
         }
 
         storage.Put(item.item, item.itemCount);
-        Debug.Log("[ShopPanel] Added " + item.itemCount + " x " + item.item.displayName + " to storage.");
         return true;
     }
 
@@ -207,7 +191,6 @@ public class GameShopPanelUI : MonoBehaviour
         if (computerPanel != null)
             computerPanel.SetActive(false);
 
-        Debug.Log("[ShopPanel] Starting placement for " + item.displayName);
         BuildingSystem.instance.StartPlacement(item); //  ShopItemSO
         return true;
     }
@@ -238,6 +221,5 @@ public class GameShopPanelUI : MonoBehaviour
         PlayerPrefs.SetInt(PrefOwnedPrefix + item.id, 1);
         PlayerPrefs.Save();
 
-        Debug.Log("[ShopPanel] Marked owned: " + item.displayName);
     }
 }

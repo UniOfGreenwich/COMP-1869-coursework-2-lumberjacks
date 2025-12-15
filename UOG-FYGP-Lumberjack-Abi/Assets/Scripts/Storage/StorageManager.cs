@@ -9,7 +9,6 @@ public class StorageManager : MonoBehaviour
         public int count;
     }
 
-    [Header("Starting Items (edit in Inspector)")]
     public List<Entry> startingItems = new();
 
     private Dictionary<ItemSO, int> stock = new();
@@ -48,8 +47,7 @@ public class StorageManager : MonoBehaviour
     {
         stock.Clear(); // wipe all items from memory
         PlayerPrefs.Save();
-        Debug.Log("[StorageManager] Cleared all storage items.");
-    }
+   }
     // Put amount back
     public void Put(ItemSO item, int amount)
     {

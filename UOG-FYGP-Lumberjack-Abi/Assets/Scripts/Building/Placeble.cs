@@ -24,10 +24,6 @@ public class Placeble : MonoBehaviour
             ghostMaterial = new Material(originalMaterial);
             objectrenderer.material = ghostMaterial;
         }
-        else
-        {
-            Debug.LogError("[Placeble] No MeshRenderer found on " + gameObject.name);
-        }
 
         CacheBottomCorners();
     }
@@ -74,7 +70,6 @@ public class Placeble : MonoBehaviour
 
         if (b == null)
         {
-            Debug.LogError("[Placeble] No BoxCollider found on " + gameObject.name);
             localBottomCorners = new Vector3[0];
             Size = new Vector3Int(1, 1, 1);
             return;

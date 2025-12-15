@@ -34,7 +34,6 @@ public class ShopRowUI : MonoBehaviour
             buyButton.onClick.AddListener(OnBuyClicked);
         }
 
-        Debug.Log("[ShopRow] Bound row for " + nameLabel.text + " owned=" + owned);
     }
 
     void RefreshPriceAndButton()
@@ -60,7 +59,7 @@ public class ShopRowUI : MonoBehaviour
     {
         if (owner == null || data == null)
         {
-            Debug.LogWarning("[ShopRow] Owner or data is missing.");
+            Debug.Log("add owner");
             return;
         }
 

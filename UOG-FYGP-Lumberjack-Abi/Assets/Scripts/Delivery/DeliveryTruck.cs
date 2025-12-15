@@ -10,13 +10,7 @@ public class DeliveryTruck : MonoBehaviour
     {
         if (PlayerController.IsInputLocked) return;
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
-
-        if (deliveryPanel == null)
-        {
-            Debug.LogWarning("[DeliveryTruck] DeliveryPanelUI reference not set.");
-            return;
-        }
-
+     
         if (deliveryPanel.gameObject.activeSelf)
             deliveryPanel.Close();
         else

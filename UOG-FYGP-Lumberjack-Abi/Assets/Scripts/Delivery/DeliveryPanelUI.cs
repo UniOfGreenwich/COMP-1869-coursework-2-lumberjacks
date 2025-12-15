@@ -27,7 +27,6 @@ public class DeliveryPanelUI : MonoBehaviour
 
     public void Open()
     {
-        Debug.Log("[DeliveryPanelUI] Open called");
         if (UIManager.Instance != null)
         {
             UIManager.Instance.Open(gameObject);
@@ -35,7 +34,6 @@ public class DeliveryPanelUI : MonoBehaviour
         }
         else
         {
-            Debug.LogError("[DeliveryPanelUI] UIManager.Instance is null!");
             gameObject.SetActive(true);
             PlayerController.IsInputLocked = true;
             Refresh();
@@ -44,7 +42,6 @@ public class DeliveryPanelUI : MonoBehaviour
 
     public void Close()
     {
-        Debug.Log("[DeliveryPanelUI] Close called");
         if (UIManager.Instance != null)
         {
             UIManager.Instance.Close(gameObject);

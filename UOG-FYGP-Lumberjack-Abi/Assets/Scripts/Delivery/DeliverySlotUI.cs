@@ -28,7 +28,7 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
 
         if (debugLog)
         {
-            Debug.Log("[DeliverySlotUI] Awake on " + GetPath(this.transform) +
+            Debug.Log("DeliverySlotUI Awake on " + GetPath(this.transform) +
                       " TargetItem=" + (TargetItem ? TargetItem.displayName : "null"));
         }
 
@@ -36,7 +36,6 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
         UpdateIcon();
     }
 
-    // Called when we build the row for a job line
     public void Configure(ItemSO item, int quantity)
     {
         TargetItem = item;
@@ -45,7 +44,7 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
 
         if (debugLog)
         {
-            Debug.Log("[DeliverySlotUI] Configure on " + GetPath(this.transform) +
+            Debug.Log("DeliverySlotUI Configure on " + GetPath(this.transform) +
                       " target=" + (TargetItem ? TargetItem.displayName : "null") +
                       " qty=" + RequiredQuantity);
         }
@@ -73,7 +72,7 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
         {
             if (debugLog)
             {
-                Debug.Log("[DeliverySlotUI] OnDrop empty payload from " + drag.name +
+                Debug.Log(" OnDrop empty payload from " + drag.name +
                           " on slot " + GetPath(this.transform));
             }
             drag.ReturnRemainder(payload);
@@ -84,7 +83,7 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
 
         if (debugLog)
         {
-            Debug.Log("[DeliverySlotUI] OnDrop slot='" + GetPath(this.transform) +
+            Debug.Log(" OnDrop slot='" + GetPath(this.transform) +
                       "' expected=" + (TargetItem ? TargetItem.displayName : "null") +
                       " dropped=" + (droppedItem ? droppedItem.displayName : "null") +
                       " count=" + payload.count);
@@ -95,7 +94,7 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
         {
             if (debugLog)
             {
-                Debug.LogWarning("[DeliverySlotUI] TargetItem is null on slot " +
+                Debug.LogWarning(" TargetItem is null on slot " +
                                  GetPath(this.transform) +
                                  ". You are probably dropping onto a template slot.");
             }
@@ -104,12 +103,11 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
             return;
         }
 
-        // Wrong item -> reject everything
         if (droppedItem != TargetItem)
         {
             if (debugLog)
             {
-                Debug.Log("[DeliverySlotUI] Wrong item on slot " + GetPath(this.transform) +
+                Debug.Log(" Wrong item on slot " + GetPath(this.transform) +
                           ". Expected=" + TargetItem.name +
                           " got=" + (droppedItem ? droppedItem.name : "null"));
             }
@@ -119,13 +117,12 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
             return;
         }
 
-        // Slot already full -> accept nothing, flash green
         int remainingNeeded = Mathf.Max(0, RequiredQuantity - DeliveredCount);
         if (remainingNeeded <= 0)
         {
             if (debugLog)
             {
-                Debug.Log("[DeliverySlotUI] Slot " + GetPath(this.transform) +
+                Debug.Log("Slot " + GetPath(this.transform) +
                           " already full. Returning all.");
             }
 
@@ -134,14 +131,14 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
             return;
         }
 
-        // Take only what we need
+    
         int taken = Mathf.Min(remainingNeeded, payload.count);
         DeliveredCount += taken;
         payload.count -= taken;
 
         if (debugLog)
         {
-            Debug.Log("[DeliverySlotUI] Slot " + GetPath(this.transform) +
+            Debug.Log("Slot " + GetPath(this.transform) +
                       " took=" + taken +
                       " now=" + DeliveredCount + "/" + RequiredQuantity +
                       " leftover=" + payload.count);
@@ -153,7 +150,6 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
         RefreshLabel();
         UpdateIcon();
 
-        // Put leftover back to original source (HotBar / Storage)
         drag.ReturnRemainder(payload);
 
         Flash(true);
@@ -164,7 +160,6 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
         return DeliveredCount >= RequiredQuantity;
     }
 
-    // Used if you want to reset only counts but keep same target item
     public void ClearCountsOnly()
     {
         DeliveredCount = 0;
@@ -227,8 +222,6 @@ public class DeliverySlotUI : MonoBehaviour, IDropHandler
         outlineImage.color = baseOutlineColor;
         flashRoutine = null;
     }
-
-    // Helper to see exactly which object is being used
     static string GetPath(Transform t)
     {
         string path = t.name;
