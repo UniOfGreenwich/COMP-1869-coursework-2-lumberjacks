@@ -100,9 +100,9 @@ public class Tutorial : MonoBehaviour
 
             //stage 2 trigger setup
             customerUI.GetComponentInChildren<CustomerCardUI>(true).OnShown.AddListener(CustomerTutorialTrigger);
-            jobBoardUI.GetComponentInChildren<TogglePanel>(true).Activated.AddListener(JobBoardTutorialTrigger);
-            computerUI.GetComponentInChildren<TogglePanel>(true).Activated.AddListener(ShopTutorial);
-            customerUI.transform.Find("Accept").gameObject.GetComponent<Button>().onClick.AddListener(() =>  { if (visitedCustomer) JobBoardIntro();});
+            customerUI.transform.Find("Accept").gameObject.GetComponent<Button>().onClick.AddListener(JobBoardIntroTrigger);
+            jobBoardUI.GetComponentInChildren<JobBoardUI>(true).Opened.AddListener(JobBoardTutorialTrigger);
+            computerUI.GetComponentInChildren<WorkshopComputer>(true).Opened.AddListener(ShopTutorial);
         }
     }
 
@@ -442,6 +442,17 @@ public class Tutorial : MonoBehaviour
         }
     }
 
+    void JobBoardIntroTrigger()
+    {
+        if(currentStage == 2)
+        {
+            jobBoard.transform.Find("Canvas/Tutorial_Arrow").gameObject.SetActive(true);
+            customerUI.transform.Find("Accept").gameObject.GetComponent<Button>().onClick.RemoveListener(JobBoardIntroTrigger);
+            dialogueIndex = 1;
+            JobBoardIntro();
+        }
+    }
+
     void JobBoardIntro()
     {
         if(currentStage == 2)
@@ -452,7 +463,6 @@ public class Tutorial : MonoBehaviour
                 textPanel.SetActive(true);
                 tutorialTextActive = true;
                 tutorialText.text = "Great! Now that we've talked to the customer, let's check the job board to get the full details of the item we need to make for them."; 
-                jobBoard.transform.Find("Canvas/Tutorial_Arrow").gameObject.SetActive(true);
             }
             if (dialogueIndex > 1)
             {
@@ -471,6 +481,7 @@ public class Tutorial : MonoBehaviour
             JobBoardTutorial();
             jobBoardUI.GetComponentInChildren<TogglePanel>(true).Activated.RemoveListener(JobBoardTutorialTrigger);
             jobBoard.transform.Find("Canvas/Tutorial_Arrow").gameObject.SetActive(false);
+            dialogueIndex = 1;
             Debug.Log("Job Board Tutorial Triggered");
         }
     }
@@ -483,16 +494,14 @@ public class Tutorial : MonoBehaviour
             {
                 textPanel.SetActive(true);
                 tutorialTextActive = true;  
+                tutorialText.text = "Here we can see the same information as the customer's order, but we can also see what star rating they will give us based on our current progress.";
+
             }
             if(dialogueIndex == 2)
             {
-                tutorialText.text = "Here we can see the same information as the customer's order, but we can also see what star rating they will give us based on our current progress.";
-            }
-            if(dialogueIndex == 3)
-            {
                 tutorialText.text = "As we get more customers we can see all their orders on the job board and prioritise which ones to complete first based on their deadlines and payment amounts.";
             }
-            if(dialogueIndex > 3)
+            if(dialogueIndex > 2)
             {
                 textPanel.SetActive(false);
                 tutorialTextActive = false;
@@ -530,8 +539,8 @@ public class Tutorial : MonoBehaviour
         {
             if(dialogueIndex == 1)
             {
-                computerUI.GetComponentInChildren<TogglePanel>(true).Activated.RemoveListener(ShopTutorial);
-                computerUI.transform.Find("Canvas/Tutorial_Arrow").gameObject.SetActive(true);
+                computerUI.GetComponentInChildren<WorkshopComputer>(true).Opened.RemoveListener(ShopTutorial);
+                computerUI.transform.Find("Tutorial_Arrow").gameObject.SetActive(true);
                 textPanel.SetActive(true);
                 tutorialTextActive = true;
                 computer.transform.Find("Canvas/Tutorial_Arrow").gameObject.SetActive(false);

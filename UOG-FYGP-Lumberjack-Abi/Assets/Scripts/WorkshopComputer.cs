@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
 public class WorkshopComputer : MonoBehaviour
@@ -8,6 +9,7 @@ public class WorkshopComputer : MonoBehaviour
     public StockMarket stockMarket;
 
     bool panelOpen;
+    public UnityEvent Opened;
 
     void OnMouseDown()
     {
@@ -21,7 +23,11 @@ public class WorkshopComputer : MonoBehaviour
     {
         panelOpen = !panelOpen;
 
-        if (panelOpen) UIManager.Instance.Open(computerPanel);
+        if (panelOpen) 
+        {
+            UIManager.Instance.Open(computerPanel);
+            Opened?.Invoke();
+        }
         else UIManager.Instance.Close(computerPanel);
     }
 
