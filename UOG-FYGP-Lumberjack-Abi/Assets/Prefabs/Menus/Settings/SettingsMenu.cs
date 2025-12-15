@@ -38,7 +38,6 @@ public class SettingsMenu : MonoBehaviour
             return;
         }
 
-        // Find parent canvas
         Transform parent = panelParentOverride;
         if (parent == null)
         {
@@ -46,42 +45,27 @@ public class SettingsMenu : MonoBehaviour
             parent = c != null ? c.transform : null;
         }
 
-        // Instantiate prefab
         panelInstance = Instantiate(settingsPanelPrefab, parent);
         panelInstance.name = settingsPanelPrefab.name + "_INSTANCE";
         panelInstance.SetActive(false);
-        //Debug.Log("[SettingsMenu] Instantiated: " + panelInstance.name);
 
-        // Auto-wire open button
         if (openButton != null)
         {
             openButton.onClick.AddListener(Toggle);
         }
-
-        // ------------------------------------
-        // AUTO-WIRE SLIDERS
-        // ------------------------------------
-        //Debug.Log("[SettingsMenu] Auto-wiring sliders�");
-
-        // Find all sliders in the panel
         var sliders = panelInstance.GetComponentsInChildren<Slider>(true);
 
-        // Try match by name
         musicSlider = sliders.FirstOrDefault(s => s.name.ToLower().Contains("music"));
         sfxSlider = sliders.FirstOrDefault(s => s.name.ToLower().Contains("sfx"));
 
-        // Try tags (optional)
         if (musicSlider == null)
             musicSlider = sliders.FirstOrDefault(s => s.CompareTag("MusicVolume"));
         if (sfxSlider == null)
             sfxSlider = sliders.FirstOrDefault(s => s.CompareTag("SfxVolume"));
 
-        // Fallback: first 2 sliders
         if (musicSlider == null && sliders.Length > 0) musicSlider = sliders[0];
         if (sfxSlider == null && sliders.Length > 1) sfxSlider = sliders[1];
 
-        //Debug.Log("[SettingsMenu] Found Music Slider: " + (musicSlider ? musicSlider.name : "NONE"));
-        //Debug.Log("[SettingsMenu] Found SFX Slider: " + (sfxSlider ? sfxSlider.name : "NONE"));
 
         if (musicSlider != null)
         {
@@ -97,23 +81,15 @@ public class SettingsMenu : MonoBehaviour
             sfxSlider.onValueChanged.AddListener(SetSfxVolumeFromSlider);
         }
 
-        // ------------------------------------
-        // AUTO-WIRE CLOSE BUTTON
-        // ------------------------------------
         closeButton = panelInstance.GetComponentsInChildren<Button>(true)
                                    .FirstOrDefault(b => b.name.ToLower().Contains("close"));
 
         if (closeButton != null)
         {
             closeButton.onClick.AddListener(Close);
-            Debug.Log("[SettingsMenu] Found close button: " + closeButton.name);
         }
-        else
-        {
-            Debug.LogWarning("[SettingsMenu] No close button found inside prefab.");
-        }
+        
 
-        // Load saved volume
         float savedMusic = PlayerPrefs.GetFloat(MusicKey, 1f);
         float savedSfx = PlayerPrefs.GetFloat(SfxKey, 1f);
 

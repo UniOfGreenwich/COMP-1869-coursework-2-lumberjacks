@@ -48,8 +48,6 @@ public class ProductionMachineUI : MonoBehaviour
             }
         }
 
-        Debug.Log("[ProductionMachineUI] Init with " + recipes.Count + " recipes.");
-
         WireButtons();
         BuildProductButtons();
 
@@ -112,8 +110,6 @@ public class ProductionMachineUI : MonoBehaviour
             ProductionRecipeSO captured = recipe;
             btn.onClick.AddListener(() => SelectRecipe(captured));
         }
-
-        Debug.Log("[ProductionMachineUI] Built " + recipes.Count + " recipe buttons.");
     }
 
     void SelectRecipe(ProductionRecipeSO recipe)
@@ -130,7 +126,6 @@ public class ProductionMachineUI : MonoBehaviour
         UpdateHintImage(recipe);
         ShowNeedPiecesMessage();
 
-        Debug.Log("[ProductionMachineUI] Selected recipe " + (recipe != null ? recipe.displayName : "null"));
     }
 
     void UpdateHintImage(ProductionRecipeSO recipe)
@@ -179,7 +174,6 @@ public class ProductionMachineUI : MonoBehaviour
         RecipeUnlockManager unlockMgr = RecipeUnlockManager.Instance;
         if (unlockMgr != null && !unlockMgr.IsUnlocked(currentRecipe))
         {
-            Debug.Log("[ProductionMachineUI] Assemble blocked, recipe locked.");
             ShowLockedMessage();
             return;
         }
@@ -187,7 +181,6 @@ public class ProductionMachineUI : MonoBehaviour
         if (AnyRequiredSlotEmpty())
         {
             ShowNeedPiecesMessage();
-            Debug.Log("[ProductionMachineUI] Assemble blocked, some slots are empty.");
             return;
         }
 
@@ -197,14 +190,12 @@ public class ProductionMachineUI : MonoBehaviour
         if (scrapThreshold > 0 && errors >= scrapThreshold)
         {
             ScrapAllSlotsWithMessage(errors);
-            Debug.Log("[ProductionMachineUI] Scrap triggered, errors=" + errors);
             return;
         }
 
         UpdateErrorLabel(errors);
         owner.OnAssemble(currentRecipe, errors);
 
-        Debug.Log("[ProductionMachineUI] Assemble accepted, errors=" + errors);
 
         if (autoCloseOnSuccess)
             BeginAutoClose();
@@ -221,7 +212,6 @@ public class ProductionMachineUI : MonoBehaviour
         gameObject.SetActive(false);
         PlayerController.IsInputLocked = false;
 
-        Debug.Log("[ProductionMachineUI] Panel closed.");
     }
 
     void BeginAutoClose()
@@ -238,7 +228,6 @@ public class ProductionMachineUI : MonoBehaviour
 
         if (gameObject.activeInHierarchy)
         {
-            Debug.Log("[ProductionMachineUI] Auto closing panel after assemble.");
             OnCloseClicked();
         }
 

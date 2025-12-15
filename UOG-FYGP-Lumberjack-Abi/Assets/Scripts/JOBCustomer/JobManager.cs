@@ -115,11 +115,13 @@ public class JobManager : MonoBehaviour
     public float basePayPerItem = 20f;
     public int baseXpPerJob = 50;
 
-    [Header("UI Hooks")]
+    [Header("UI")]
     public JobBoardUI jobBoardUI;
 
-    [Header("World Customers")]
+    [Header("Customers")]
     public CustomerSpawner worldSpawner;
+    [SerializeField] private ItemSO chairItemSO;
+    [SerializeField] private bool isTutorialMode = false;
 
     readonly List<JobOrder> availableJobs = new List<JobOrder>();
     readonly List<JobOrder> activeJobs = new List<JobOrder>();
@@ -190,7 +192,16 @@ public class JobManager : MonoBehaviour
         for (int i = 0; i < lineCount; i++)
         {
             var line = new JobLine();
-            line.product = GetRandomProduct(used);
+
+            if (isTutorialMode)
+            {
+                line.product = chairItemSO;
+            }
+            else
+            {
+                line.product = GetRandomProduct(used);
+            }
+
             if (line.product != null)
             {
                 used.Add(line.product);
@@ -501,4 +512,10 @@ public class JobManager : MonoBehaviour
             jobBoardUI.Refresh();
         }
     }
+    public void AddJob(JobOrder job)
+    {
+        availableJobs.Add(job);
+        NotifyChanged(); 
+    }
+
 }

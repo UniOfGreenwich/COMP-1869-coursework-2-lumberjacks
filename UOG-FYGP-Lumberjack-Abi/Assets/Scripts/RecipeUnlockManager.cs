@@ -72,17 +72,10 @@ public class RecipeUnlockManager : MonoBehaviour
     {
         if (recipe == null || string.IsNullOrEmpty(recipe.id)) return;
 
-        if (IsUnlocked(recipe))
-        {
-            Debug.Log("[RecipeUnlockManager] Already unlocked: " + recipe.displayName);
-            return;
-        }
-
         unlockedIds.Add(recipe.id);
         PlayerPrefs.SetInt(PrefPrefix + recipe.id, 1);
         PlayerPrefs.Save();
 
-        Debug.Log("[RecipeUnlockManager] Unlocked recipe: " + recipe.displayName);
     }
 
     public List<ProductionRecipeSO> FilterUnlocked(IList<ProductionRecipeSO> all)

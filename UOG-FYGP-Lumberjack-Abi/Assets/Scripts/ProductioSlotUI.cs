@@ -72,10 +72,8 @@ public class ProductioSlotUI : MonoBehaviour, IDropHandler
 
         ItemSO item = payload.item;
 
-        // Only allow square Utility pieces that are marked for production.
         if (!IsAllowedItem(item))
         {
-            Debug.Log("[ProductioSlotUI] Rejected item " + (item ? item.displayName : "null") + " not a valid square piece.");
             drag.ReturnRemainder(payload);   // Goes back to where it came from.
             ShowResult(false);               // Flash red.
             return;

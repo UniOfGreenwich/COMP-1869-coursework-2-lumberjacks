@@ -8,56 +8,51 @@ using UnityEngine.UI;
 public class SquareCutter : MonoBehaviour, IDropHandler
 {
     [Header("Item Setup")]
-    public ItemSO plankItem;                          // input plank item
-    public ItemSO defaultSquareItem;                  // fallback output item
+    public ItemSO plankItem;                          
+    public ItemSO defaultSquareItem;                  
 
     [Header("Rules")]
-    [Min(1)] public int maxDimension = 8;             // max dimension size
-    [Min(1)] public int planksPerWidthUnit = 1;       // cost equals width
-    [Min(0.1f)] public float secondsForTwoByTwo = 3f; // 2x2 baseline time
+    [Min(1)] public int maxDimension = 8;             
+    [Min(1)] public int planksPerWidthUnit = 1;       
+    [Min(0.1f)] public float secondsForTwoByTwo = 3f; 
 
-    [Header("Optional Recipes")]
+    [Header("Recipes")]
     public List<Recipe> recipes = new();
     [System.Serializable]
     public struct Recipe
     {
-        [Min(1)] public int width;                    // recipe width
-        [Min(1)] public int height;                   // recipe height
-        public ItemSO outputItem;                     // explicit output
-        [Min(0)] public int planksCost;               // explicit cost
-        [Min(0f)] public float seconds;               // explicit time
+        [Min(1)] public int width;                    
+        [Min(1)] public int height;                   
+        public ItemSO outputItem;                     
+        [Min(0)] public int planksCost;               
+        [Min(0f)] public float seconds;               
     }
 
     [Header("World Effects")]
-    public Transform inputPoint;                      // vfx input
-    public Transform outputPoint;                     // vfx output
-    public GameObject inputEffectPrefab;              // input effect
-    public GameObject outputEffectPrefab;             // output effect
-    public float effectLifetime = 1.5f;               // effect life
+    public Transform inputPoint;                      
+    public Transform outputPoint;                     
+    public GameObject inputEffectPrefab;              
+    public GameObject outputEffectPrefab;             
+    public float effectLifetime = 1.5f;               
 
     [Header("Drop Zone")]
-    [Min(0.2f)] public float dropZoneWorldSize = 1.2f;   // world size
-    public bool showDropZone = true;                  // show zone
-    public Vector3 dropZoneLocalOffset = new(0f, 1.6f, 0f); // zone offset
-    public Sprite dropZoneSprite;                     // zone sprite
-    public Color dropZoneColor = new(0f, 1f, 0f, 0.25f); // zone color
+    [Min(0.2f)] public float dropZoneWorldSize = 1.2f;
+    public bool showDropZone = true;                  
+    public Vector3 dropZoneLocalOffset = new(0f, 1.6f, 0f);
+    public Sprite dropZoneSprite;                     
+    public Color dropZoneColor = new(0f, 1f, 0f, 0.25f);
 
-    // NEW: customizable drop zone UI options
     [Header("Drop Zone Layout")]
-    public Vector2 dropZoneUISize = new(300f, 300f);      // UI rect size
-    [Tooltip("Extra scale multiplier for the whole drop zone UI (on top of world size logic).")]
+    public Vector2 dropZoneUISize = new(300f, 300f); 
     public float dropZoneScaleMultiplier = 1f;
 
-    [Tooltip("Anchors for the hint text inside the DropZone rect.")]
     public Vector2 dropHintAnchorMin = new(0.5f, 0f);
     public Vector2 dropHintAnchorMax = new(0.5f, 0f);
     public Vector2 dropHintPivot = new(0.5f, 0f);
 
-    [Tooltip("Offset of the hint text inside the DropZone rect.")]
     public Vector2 dropHintOffset = new(0f, 10f);
     public Vector2 dropHintSize = new(280f, 60f);
 
-    [Tooltip("Optional custom font for the hint text.")]
     public TMP_FontAsset dropHintFont;
     public bool dropHintBold = false;
 
@@ -67,13 +62,12 @@ public class SquareCutter : MonoBehaviour, IDropHandler
     public int dropHintFontSizeMin = 20;
     public int dropHintFontSizeMax = 32;
 
-    [Header("Blimp And Timer")]
     public bool enableBlimp = true;                   // enable blimp
     public float blimpHeight = 1.6f;                  // blimp height
     public Vector2 blimpSize = new(140, 90);          // blimp size
     public Sprite blimpBackgroundSprite;
     public float blimpScale = 1f; // blimp sprite
-    public bool showTimer = true;                     // enable timer
+    public bool showTimer = true;                     
     public Sprite hourglassSprite;                    // timer sprite
     public Vector2 timerSize = new(64, 64);           // timer size
     public float timerSpinSpeed = 180f;               // timer spin
@@ -85,44 +79,40 @@ public class SquareCutter : MonoBehaviour, IDropHandler
     public bool blimpBold = false;
     public Color blimpTextColor = Color.black;
 
-    // Auto-size options
     public bool blimpAutoSize = true;
     public int blimpFontSizeMin = 20;
     public int blimpFontSizeMax = 40;
 
-    // Manual font size if auto-size is off
     public float blimpFontSize = 28f;
 
 
 
     [Header("Fly To Storage")]
-    public Canvas overlayCanvas;                      // overlay canvas
-    public RectTransform storageAnchor;               // storage anchor
-    public Sprite outputIcon;                         // flying icon
-    public Vector2 flyIconSize = new(36, 36);         // icon size
-    public float flyDuration = 0.7f;                  // fly time
-    public int flyBurst = 6;                          // icon burst
-    public AnimationCurve flyCurve;                   // fly curve
+    public Canvas overlayCanvas;                 
+    public RectTransform storageAnchor;          
+    public Sprite outputIcon;                    
+    public Vector2 flyIconSize = new(36, 36);    
+    public float flyDuration = 0.7f;             
+    public int flyBurst = 6;                     
+    public AnimationCurve flyCurve;              
 
-    [Header("Auto Wiring")]
-    public bool autoFindStorageUI = true;             // auto find
-    public string overlayCanvasTag = "OverlayCanvas"; // overlay tag
-    public string storageAnchorName = "StorageAnchor";// anchor name
-    public float uiProbeInterval = 0.5f;              // probe rate
+    public bool autoFindStorageUI = true;            
+    public string overlayCanvasTag = "OverlayCanvas";
+    public string storageAnchorName = "StorageAnchor";
+    public float uiProbeInterval = 0.5f;              
 
     [Header("Dimension UI")]
-    public GameObject dimensionPanel;                 // panel root
-    public TMP_InputField widthField;                 // width field
-    public TMP_InputField heightField;                // height field
-    public TextMeshProUGUI dimSummary;                // summary text
-    public Button dimOkButton;                        // ok button
-    public Button dimCancelButton;                    // cancel button
-    public bool rememberLastDimension = true;         // remember flag
+    public GameObject dimensionPanel;               
+    public TMP_InputField widthField;               
+    public TMP_InputField heightField;               
+    public TextMeshProUGUI dimSummary;                
+    public Button dimOkButton;                       
+    public Button dimCancelButton;                   
+    public bool rememberLastDimension = true;        
 
     [Header("Debug")]
-    public bool debugLogs = false;                    // log toggle
+    public bool debugLogs = false;               
 
-    // runtime state
     private StorageManager storage;
     private Placeble placeble;
     private Canvas dropCanvas;
@@ -145,21 +135,21 @@ public class SquareCutter : MonoBehaviour, IDropHandler
 
     private void Awake()
     {
-        storage = FindFirstObjectByType<StorageManager>();  // find storage
-        placeble = GetComponent<Placeble>();                // find placeble
+        storage = FindFirstObjectByType<StorageManager>();  
+        placeble = GetComponent<Placeble>();                
 
-        EnsureDropZone();                                   // build zone
-        EnsureBlimp();                                      // build blimp
-        EnsureTimer();                                      // build timer
-        SetupDimensionUI();                                 // wire panel
+        EnsureDropZone();                                   
+        EnsureBlimp();                                      
+        EnsureTimer();                                      
+        SetupDimensionUI();                                 
 
-        if (flyCurve == null || flyCurve.keys.Length == 0)  // ensure curve
+        if (flyCurve == null || flyCurve.keys.Length == 0)  
             flyCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
-        AutoWireStorage();                               // find overlay
-        ComputeDimensionParams();                           // compute now
+        AutoWireStorage();                               
+        ComputeDimensionParams();                        
 
-        if (dropCanvas) dropCanvas.gameObject.SetActive(false); // hide zone
+        if (dropCanvas) dropCanvas.gameObject.SetActive(false);
     }
 
     private void Update()
@@ -266,7 +256,7 @@ public class SquareCutter : MonoBehaviour, IDropHandler
         SetTimer(false);
         busy = false;
         if (dropHint) dropHint.text = $"Drop {costPlanks} planks here";
-        if (debugLogs) Debug.Log("[SquareCutter] Piece completed.");
+        if (debugLogs) Debug.Log(" Piece completed.");
     }
 
     private void ComputeDimensionParams()
@@ -303,19 +293,18 @@ public class SquareCutter : MonoBehaviour, IDropHandler
         {
             string itemName = currentOutput ? currentOutput.displayName : "NULL";
             string iconState = (currentOutput && currentOutput.icon) ? "ICON_OK" : "ICON_MISSING";
-            Debug.Log($"[SquareCutter] Dim={selW}x{selH} Item={itemName} Cost={costPlanks} Secs={secondsPerPiece:0.#} {iconState}");
         }
     }
 
     private int ComputeCostFor(int w)
     {
-        return Mathf.Max(1, planksPerWidthUnit * Mathf.Max(1, w)); // width cost
+        return Mathf.Max(1, planksPerWidthUnit * Mathf.Max(1, w)); 
     }
 
     private float ComputeSecondsFor(int w, int h)
     {
-        float area = Mathf.Max(1, w * h);                   // area cells
-        return secondsForTwoByTwo * (area / 4f);            // scale time
+        float area = Mathf.Max(1, w * h);                  
+        return secondsForTwoByTwo * (area / 4f);           
     }
 
     private void OpenDimensionUI()
@@ -418,12 +407,10 @@ public class SquareCutter : MonoBehaviour, IDropHandler
         rc.anchorMin = rc.anchorMax = rc.pivot = new Vector2(0.5f, 0.5f);
         rc.sizeDelta = dropZoneUISize;
 
-        // base scale from world size, then allow artist to tweak with multiplier
         float baseScale = Mathf.Max(0.001f, dropZoneWorldSize / rc.sizeDelta.x);
         float finalScale = baseScale * Mathf.Max(0.001f, dropZoneScaleMultiplier);
         dropCanvas.transform.localScale = new Vector3(finalScale, finalScale, finalScale);
 
-        // Drop zone image
         var zoneObj = new GameObject("DropZone", typeof(RectTransform), typeof(Image));
         zoneObj.transform.SetParent(canvasObj.transform, false);
         var zoneRc = zoneObj.GetComponent<RectTransform>();
@@ -440,7 +427,6 @@ public class SquareCutter : MonoBehaviour, IDropHandler
         var proxy = zoneObj.AddComponent<SquareDropProxy>();
         proxy.square = this;
 
-        // Hint text
         var hintObj = new GameObject("DropHint", typeof(RectTransform), typeof(TextMeshProUGUI));
         hintObj.transform.SetParent(zoneObj.transform, false);
         var hintRc = hintObj.GetComponent<RectTransform>();
@@ -472,7 +458,6 @@ public class SquareCutter : MonoBehaviour, IDropHandler
             dropHint.fontSize = dropHintFontSize;
         }
 
-        // initial placeholder; correct value comes from ComputeDimensionParams()
         dropHint.text = "Drop planks here";
     }
 
@@ -520,17 +505,13 @@ public class SquareCutter : MonoBehaviour, IDropHandler
         countText.text = "COLLECT: x0";
         countText.alignment = TextAlignmentOptions.Center;
 
-        // Font
         if (blimpFont != null)
             countText.font = blimpFont;
 
-        // Bold
         countText.fontStyle = blimpBold ? FontStyles.Bold : FontStyles.Normal;
 
-        // Colour
         countText.color = blimpTextColor;
 
-        // Auto-size logic
         countText.enableAutoSizing = blimpAutoSize;
 
         if (blimpAutoSize)

@@ -26,6 +26,7 @@ public class Tutorial : MonoBehaviour
 
     [Header("Customer tutorial arrows")]
     [SerializeField] private GameObject customerUI;
+    [SerializeField] private ItemSO chairItemSO;
 
     [Header("Job Board tutorial arrows")]
     [SerializeField] private GameObject jobBoard;
@@ -145,7 +146,7 @@ public class Tutorial : MonoBehaviour
                         StorageRoomTutorial();
                         return;
                     }
-                    if(currentRoom != "Workshop" && stage1Complete == false)
+                    if(currentRoom != "Workshop" && !stage1Complete )
                     {
                         Stage1CompleteCheck();
                         return;
@@ -366,13 +367,21 @@ public class Tutorial : MonoBehaviour
         if (jobManager != null)
         {
             jobManager.customerSlots = 1;
-            jobManager.minLinesPerJob = 1;
-            jobManager.maxLinesPerJob = 1;
-            jobManager.minQuantityPerLine = 1;
-            jobManager.maxQuantityPerLine = 1;
-
-            jobManager.GenerateInitialJobs();
-            jobManager.NotifyChanged();
+            jobManager.GenerateInitialJobs(); 
+            var tutorialJob = new JobOrder
+            {
+                id = "JOB_TUTORIAL",
+                customer = CustomerKind.Charlie,
+                deadlineSeconds = 3 * 60 * 2, 
+                goldReward = 50,
+                xpReward = 0
+            };
+            tutorialJob.lines.Add(new JobLine
+            {
+                product = chairItemSO,
+                quantity = 1
+            });
+            jobManager.AddJob(tutorialJob); 
         }
     }
 
@@ -399,8 +408,9 @@ public class Tutorial : MonoBehaviour
 
     void CustomerTutorialTrigger()
     {
-        if(currentStage == 2 && !visitedCustomer)
+        if(currentStage == 2 && stage2IntroDialogueComplete)
         {
+            Debug.Log("customer tutorial triggered!");
             customerUI.GetComponentInChildren<CustomerCardUI>(true).OnShown.RemoveListener(CustomerTutorialTrigger);
             customerUI.transform.Find("Tutorial_Arrow").gameObject.SetActive(true);
             CustomerTutorial();
@@ -416,7 +426,6 @@ public class Tutorial : MonoBehaviour
                 textPanel.SetActive(true);
                 tutorialTextActive = true;
                 tutorialText.text = "This is the customer's order, here you can see what they want, how much they are willing to pay and the deadline for when they need it by.";
-                //TODO: make customer want a chair and will pay £50, deadline in 3 hours
             }
             if(dialogueIndex == 2)
             {

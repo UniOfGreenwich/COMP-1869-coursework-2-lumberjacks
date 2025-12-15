@@ -10,7 +10,6 @@ public class DevSaveTools : MonoBehaviour
     public bool clearRecipesOnStart = false;
     public bool clearShopOnStart = false;
 
-    [Header("Keyboard shortcuts")]
     public bool enableHotkeys = true;
 
     void Awake()
@@ -36,13 +35,11 @@ public class DevSaveTools : MonoBehaviour
             if (clearRecipesOnStart)
             {
                 ClearRecipeUnlocks();
-                Debug.Log("[DevSaveTools] Cleared recipe unlocks on start.");
             }
 
             if (clearShopOnStart)
             {
                 ClearShopOwnership();
-                Debug.Log("[DevSaveTools] Cleared shop ownership on start.");
             }
         }
     }
@@ -54,19 +51,16 @@ public class DevSaveTools : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F5))
         {
             ClearRecipeUnlocks();
-            Debug.Log("[DevSaveTools] F5 pressed, cleared recipe unlocks.");
         }
 
         if (Input.GetKeyDown(KeyCode.F6))
         {
             ClearShopOwnership();
-            Debug.Log("[DevSaveTools] F6 pressed, cleared shop ownership.");
         }
 
         if (Input.GetKeyDown(KeyCode.F7))
         {
             ClearAllPlayerPrefs();
-            Debug.Log("[DevSaveTools] F7 pressed, cleared ALL PlayerPrefs.");
         }
     }
 
@@ -74,7 +68,6 @@ public class DevSaveTools : MonoBehaviour
     {
         PlayerPrefs.DeleteAll();
         PlayerPrefs.Save();
-        Debug.Log("[DevSaveTools] Cleared ALL PlayerPrefs.");
     }
 
     public void ClearRecipeUnlocks()
@@ -90,7 +83,6 @@ public class DevSaveTools : MonoBehaviour
         }
 
         PlayerPrefs.Save();
-        Debug.Log("[DevSaveTools] Cleared recipe unlocks for " + count + " recipes.");
     }
 
     public void ClearShopOwnership()
@@ -106,6 +98,5 @@ public class DevSaveTools : MonoBehaviour
         }
 
         PlayerPrefs.Save();
-        Debug.Log("[DevSaveTools] Cleared shop ownership for " + count + " items.");
     }
 }
