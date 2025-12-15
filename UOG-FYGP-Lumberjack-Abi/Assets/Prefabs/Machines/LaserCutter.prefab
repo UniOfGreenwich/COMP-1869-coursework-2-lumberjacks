@@ -687,6 +687,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: b2eba02207b463d429205edda6fdc80a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d8044ef9b3762794b86c74638e187961, type: 2}
+    - target: {fileID: -7511558181221131132, guid: b2eba02207b463d429205edda6fdc80a, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: de67e52d09bbfad4082db5ca2beea97b, type: 2}
+    - target: {fileID: -7511558181221131132, guid: b2eba02207b463d429205edda6fdc80a, type: 3}
+      propertyPath: 'm_Materials.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f1753549db93cf4408b593ba3805e246, type: 2}
+    - target: {fileID: -7511558181221131132, guid: b2eba02207b463d429205edda6fdc80a, type: 3}
+      propertyPath: 'm_Materials.Array.data[3]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d8044ef9b3762794b86c74638e187961, type: 2}
+    - target: {fileID: -3924934729321778958, guid: b2eba02207b463d429205edda6fdc80a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f1753549db93cf4408b593ba3805e246, type: 2}
     - target: {fileID: 919132149155446097, guid: b2eba02207b463d429205edda6fdc80a, type: 3}
       propertyPath: m_Name
       value: SM_LaserCutter
