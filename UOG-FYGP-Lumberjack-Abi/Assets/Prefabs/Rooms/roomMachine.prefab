@@ -423,6 +423,10 @@ PrefabInstance:
       propertyPath: spawnPoint.z
       value: -4.25
       objectReference: {fileID: 0}
+    - target: {fileID: 3230374816228848953, guid: 813fbc85274298444994eb0594de2f54, type: 3}
+      propertyPath: cameraSpawnPoint.z
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 3670247780561613069, guid: 813fbc85274298444994eb0594de2f54, type: 3}
       propertyPath: m_Name
       value: DoorCollider_Lumber
@@ -1411,6 +1415,10 @@ PrefabInstance:
       propertyPath: spawnPoint.x
       value: -4.5
       objectReference: {fileID: 0}
+    - target: {fileID: 3230374816228848953, guid: 813fbc85274298444994eb0594de2f54, type: 3}
+      propertyPath: cameraSpawnPoint.x
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 3670247780561613069, guid: 813fbc85274298444994eb0594de2f54, type: 3}
       propertyPath: m_Name
       value: DoorCollider_Storage
@@ -1871,6 +1879,10 @@ PrefabInstance:
     - target: {fileID: 3230374816228848953, guid: 813fbc85274298444994eb0594de2f54, type: 3}
       propertyPath: spawnPoint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3230374816228848953, guid: 813fbc85274298444994eb0594de2f54, type: 3}
+      propertyPath: cameraSpawnPoint.x
+      value: -50
       objectReference: {fileID: 0}
     - target: {fileID: 3670247780561613069, guid: 813fbc85274298444994eb0594de2f54, type: 3}
       propertyPath: m_Name
