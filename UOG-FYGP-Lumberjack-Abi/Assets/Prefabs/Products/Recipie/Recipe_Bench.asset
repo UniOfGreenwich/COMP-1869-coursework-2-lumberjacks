@@ -21,6 +21,6 @@ MonoBehaviour:
     label: 1
     requiredWidth: 1
     requiredHeight: 1
-  unlockedByDefault: 0
+  unlockedByDefault: 1
   unlockCost: 150
   hintSprite: {fileID: 1560589445, guid: 0529001915e1a8b43bf7e5c1d6e1eb50, type: 3}
