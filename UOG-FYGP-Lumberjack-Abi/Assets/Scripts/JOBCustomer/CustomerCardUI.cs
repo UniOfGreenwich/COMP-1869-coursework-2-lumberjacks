@@ -38,8 +38,12 @@ public class CustomerCardUI : MonoBehaviour
             return;
         }
 
-        if (!rootPanel) rootPanel = gameObject;
-        rootPanel.SetActive(true); OnShown?.Invoke();
+        if (!rootPanel) 
+        {
+            rootPanel = gameObject;
+            rootPanel.SetActive(true);
+            //OnShown?.Invoke();
+        }
 
         if (customerNameText)
         {
@@ -87,6 +91,7 @@ public class CustomerCardUI : MonoBehaviour
             closeButton.onClick.RemoveAllListeners();
             closeButton.onClick.AddListener(Hide);
         }
+        
     }
 
     public void Hide()

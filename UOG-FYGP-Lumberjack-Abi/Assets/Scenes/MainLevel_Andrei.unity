@@ -2663,10 +2663,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1608067278}
     - target: {fileID: 5166004058622701364, guid: 5198f4944726506489e5ad090b545a82, type: 3}
-      propertyPath: customer
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 5166004058622701364, guid: 5198f4944726506489e5ad090b545a82, type: 3}
       propertyPath: jobBoard
       value: 
       objectReference: {fileID: 773320956}
@@ -2682,10 +2678,6 @@ PrefabInstance:
       propertyPath: jobBoardUI
       value: 
       objectReference: {fileID: 808601643}
-    - target: {fileID: 5166004058622701364, guid: 5198f4944726506489e5ad090b545a82, type: 3}
-      propertyPath: chairItemSO
-      value: 
-      objectReference: {fileID: 11400000, guid: f311d6627e17d20419101a8823e10a02, type: 2}
     - target: {fileID: 5166004058622701364, guid: 5198f4944726506489e5ad090b545a82, type: 3}
       propertyPath: doorLoadingBay
       value: 
@@ -2713,10 +2705,6 @@ PrefabInstance:
     - target: {fileID: 7178057430136678901, guid: 5198f4944726506489e5ad090b545a82, type: 3}
       propertyPath: m_Name
       value: Panel_Tutorial
-      objectReference: {fileID: 0}
-    - target: {fileID: 7178057430136678901, guid: 5198f4944726506489e5ad090b545a82, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4049,10 +4037,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 136005034941305157, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1321312162878313986, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
       propertyPath: shopPanel
       value: 
@@ -4177,14 +4161,6 @@ PrefabInstance:
       propertyPath: storageAnchor
       value: 
       objectReference: {fileID: 2146245986561863478}
-    - target: {fileID: 6344399276647217871, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6344399276647217871, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -0.3
-      objectReference: {fileID: 0}
     - target: {fileID: 7669343763947279619, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
       propertyPath: nextRoom
       value: 
@@ -4217,13 +4193,8 @@ PrefabInstance:
       propertyPath: customersRoot
       value: 
       objectReference: {fileID: 769732659}
-    - target: {fileID: 9192241797516466712, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
-      propertyPath: orderPopup
-      value: 
-      objectReference: {fileID: 1134747740}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 2887726485038865172, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
@@ -7365,6 +7336,10 @@ PrefabInstance:
       propertyPath: MainTilemap
       value: 
       objectReference: {fileID: 1059122499}
+    - target: {fileID: 5587663500219867944, guid: 81a7a913963e6164a8f5ad696b8b8699, type: 3}
+      propertyPath: clearAllOnStart
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6183937941136724777, guid: 81a7a913963e6164a8f5ad696b8b8699, type: 3}
       propertyPath: jobBoardUI
       value: 
