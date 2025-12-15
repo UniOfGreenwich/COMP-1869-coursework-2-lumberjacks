@@ -5,12 +5,11 @@ using TMPro;
 [RequireComponent(typeof(Collider))]
 public class CustomerFBX : MonoBehaviour
 {
-    public SpriteRenderer alertIcon;//andrei
+    public SpriteRenderer alertIcon;
     public CustomerCardUI orderPopup;
 
     JobManager jobManager;
     JobOrder job;
-
 
     void LateUpdate()
     {
@@ -19,26 +18,18 @@ public class CustomerFBX : MonoBehaviour
             alertIcon.transform.forward = Camera.main.transform.forward;
         }
     }
-
-
     public void Setup(JobManager manager, JobOrder order)
     {
         jobManager = manager;
         job = order;
-        
-        // Enable icon only if there is an order ANDREI
         if (alertIcon != null)
             alertIcon.enabled = (order != null);
-
 
         if (orderPopup == null)
         {
             orderPopup = FindFirstObjectByType<CustomerCardUI>();
         }
     }
-
- 
-
     void OnMouseDown()
     {
         if (PlayerController.IsInputLocked)

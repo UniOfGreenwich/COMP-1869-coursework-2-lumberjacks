@@ -9,7 +9,6 @@ public class UIManager : MonoBehaviour
         Instance = this;
         PlayerController.IsInputLocked = false; // always unlocked at start
     }
-
     public void Open(GameObject panel)
     {
         if (!panel) return;
