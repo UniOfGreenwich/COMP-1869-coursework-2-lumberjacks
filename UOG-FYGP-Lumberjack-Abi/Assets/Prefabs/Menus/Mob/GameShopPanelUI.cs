@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI; 
 using TMPro;
+using UnityEngine.EventSystems;
 
 public class GameShopPanelUI : MonoBehaviour
 {
@@ -19,6 +20,10 @@ public class GameShopPanelUI : MonoBehaviour
 
     [Header("Feedback")]
     public TextMeshProUGUI feedbackLabel;
+
+    [Header("Debug")]
+    [Tooltip("When enabled, logs UI and physics raycast results when the shop is open and the user clicks/taps.")]
+    public bool debugRaycastOnClick = false;
 
     const string PrefOwnedPrefix = "ShopOwned_";
 
@@ -40,6 +45,90 @@ public class GameShopPanelUI : MonoBehaviour
     {
         BuildList();
         Close();
+    }
+
+    void Update()
+    {
+        if (!debugRaycastOnClick) return;
+
+        // If shop is visible, log raycast info for clicks/taps to help debug blocking UI
+        bool visible = (rootPanel != null ? rootPanel.activeInHierarchy : gameObject.activeInHierarchy);
+        if (!visible) return;
+
+        // Touch
+        if (Input.touchCount > 0)
+        {
+            var t = Input.GetTouch(0);
+            if (t.phase == TouchPhase.Began)
+                DebugRaycastAt(t.position);
+        }
+
+        // Mouse
+        if (Input.GetMouseButtonDown(0))
+        {
+            DebugRaycastAt(Input.mousePosition);
+        }
+    }
+
+    private void DebugRaycastAt(Vector2 screenPos)
+    {
+        Debug.Log($"[GameShopPanelUI] DebugRaycastAt screenPos={screenPos}");
+
+        // UI raycast
+        if (EventSystem.current != null)
+        {
+            var ped = new PointerEventData(EventSystem.current) { position = screenPos };
+            var results = new System.Collections.Generic.List<RaycastResult>();
+            EventSystem.current.RaycastAll(ped, results);
+
+            if (results.Count == 0)
+            {
+                Debug.Log("[GameShopPanelUI] UI Raycast: no results");
+            }
+            else
+            {
+                Debug.Log($"[GameShopPanelUI] UI Raycast: {results.Count} results (top first):");
+                for (int i = 0; i < results.Count; i++)
+                {
+                    var r = results[i];
+                    string moduleName = r.module != null ? r.module.GetType().Name : "null";
+                    Debug.Log($"  [{i}] go={r.gameObject?.name ?? "null"} module={moduleName} depth={r.depth} index={r.index} worldPosition={r.worldPosition}");
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("[GameShopPanelUI] No EventSystem present");
+        }
+
+        // Physics raycast from camera
+        Camera cam = Camera.main;
+        if (cam != null)
+        {
+            Ray ray = cam.ScreenPointToRay(screenPos);
+            if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
+            {
+                Debug.Log($"[GameShopPanelUI] Physics Raycast hit: collider={hit.collider.name} go={hit.collider.gameObject.name} distance={hit.distance}");
+
+                // show hierarchy path
+                var path = hit.collider.gameObject.name;
+                var t = hit.collider.transform.parent;
+                while (t != null)
+                {
+                    path = t.name + "/" + path;
+                    t = t.parent;
+                }
+                Debug.Log($"[GameShopPanelUI] Hit path: {path}");
+            }
+            else
+            {
+                Debug.Log("[GameShopPanelUI] Physics Raycast: no hit");
+            }
+        }
+        else
+        {
+            Debug.Log("[GameShopPanelUI] No Camera.main available for physics raycast");
+        }
     }
 
     public void Open()
