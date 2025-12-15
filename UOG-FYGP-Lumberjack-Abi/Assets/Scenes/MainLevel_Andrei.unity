@@ -7548,6 +7548,14 @@ PrefabInstance:
       propertyPath: worldSpawner
       value: 
       objectReference: {fileID: 748789973}
+    - target: {fileID: 6183937941136724777, guid: 81a7a913963e6164a8f5ad696b8b8699, type: 3}
+      propertyPath: productItems.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6183937941136724777, guid: 81a7a913963e6164a8f5ad696b8b8699, type: 3}
+      propertyPath: 'productItems.Array.data[3]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 777eb4c0e0642d045b5077f1db84c59d, type: 2}
     - target: {fileID: 7649624113578640004, guid: 81a7a913963e6164a8f5ad696b8b8699, type: 3}
       propertyPath: canvas
       value: 
