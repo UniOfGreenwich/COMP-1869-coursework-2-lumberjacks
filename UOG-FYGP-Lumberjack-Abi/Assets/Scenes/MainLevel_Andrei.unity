@@ -4303,7 +4303,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 136005034941305157, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1321312162878313986, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
       propertyPath: shopPanel
