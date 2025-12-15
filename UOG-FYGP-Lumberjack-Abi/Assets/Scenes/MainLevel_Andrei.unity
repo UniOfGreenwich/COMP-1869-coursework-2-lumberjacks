@@ -2609,17 +2609,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   panSpeed: 0.5
   zoomSpeed: 3
-  zoomSmoothness: 0
-  minZoom: 5
-  maxZoom: 5
+  zoomSmoothness: 5
+  minZoom: 3
+  maxZoom: 15
   rotationSpeed: 1
   rooms:
   - {fileID: 1602320275735178208}
   - {fileID: 723659802}
   - {fileID: 860437816}
   - {fileID: 915157565}
-  currentRoomIndex: 3
-  useManualBounds: 1
+  currentRoomIndex: 0
+  useManualBounds: 0
   manualRoomSize: {x: 20, y: 20}
   roomCenters:
   - {x: 0, y: 0, z: 0}
