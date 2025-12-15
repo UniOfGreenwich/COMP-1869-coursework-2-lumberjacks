@@ -638,6 +638,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75fa2db40102db0449a345bece49bc3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &460925569 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -2780553511171788338, guid: f5febf8a32892934ba2b594040108ca5, type: 3}
+  m_PrefabInstance: {fileID: 118547076689700767}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &492365029
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2336,17 +2347,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1389798099 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6827804947925403228, guid: f5febf8a32892934ba2b594040108ca5, type: 3}
-  m_PrefabInstance: {fileID: 118547076689700767}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1389798100 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1037345907813036163, guid: f5febf8a32892934ba2b594040108ca5, type: 3}
@@ -2682,6 +2682,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 754784379}
     - target: {fileID: 5166004058622701364, guid: 5198f4944726506489e5ad090b545a82, type: 3}
+      propertyPath: tutorialCompleted
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5166004058622701364, guid: 5198f4944726506489e5ad090b545a82, type: 3}
       propertyPath: doorFromLoadingBay
       value: 
       objectReference: {fileID: 388196813}
@@ -2696,6 +2700,10 @@ PrefabInstance:
     - target: {fileID: 7178057430136678901, guid: 5198f4944726506489e5ad090b545a82, type: 3}
       propertyPath: m_Name
       value: Panel_Tutorial
+      objectReference: {fileID: 0}
+    - target: {fileID: 7178057430136678901, guid: 5198f4944726506489e5ad090b545a82, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2788,11 +2796,6 @@ GameObject:
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5223307380291112947, guid: edfb264482722804e9ad214bf292ce6d, type: 3}
   m_PrefabInstance: {fileID: 8238529111622446960}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1774073945 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 123813392767527206, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
-  m_PrefabInstance: {fileID: 1602320275735178207}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1812195910 stripped
 GameObject:
@@ -4192,7 +4195,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 769732659}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 1473856213795066397, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
+    - {fileID: 123813392767527206, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
+    - {fileID: 2917072199308497066, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5458ee8dfdc80f641aeb4b9a73e518c4, type: 3}
@@ -5698,7 +5704,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1774073945}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: 
         m_Mode: 1
@@ -7336,7 +7342,7 @@ PrefabInstance:
       objectReference: {fileID: 1059122499}
     - target: {fileID: 5587663500219867944, guid: 81a7a913963e6164a8f5ad696b8b8699, type: 3}
       propertyPath: clearAllOnStart
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6183937941136724777, guid: 81a7a913963e6164a8f5ad696b8b8699, type: 3}
       propertyPath: jobBoardUI
@@ -7357,7 +7363,7 @@ PrefabInstance:
     - target: {fileID: 7972494504681457905, guid: 81a7a913963e6164a8f5ad696b8b8699, type: 3}
       propertyPath: moneyUI
       value: 
-      objectReference: {fileID: 1389798099}
+      objectReference: {fileID: 460925569}
     - target: {fileID: 7972494504681457905, guid: 81a7a913963e6164a8f5ad696b8b8699, type: 3}
       propertyPath: lumberUI
       value: 
@@ -7982,6 +7988,30 @@ PrefabInstance:
       propertyPath: m_Name
       value: Computer_UI
       objectReference: {fileID: 0}
+    - target: {fileID: 4287548637213982311, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8513548400199866357, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8900117016597559579, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8900117016597559579, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8900117016597559579, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: -41.90564
+      objectReference: {fileID: 0}
+    - target: {fileID: 8900117016597559579, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2399618792422097511, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
     m_RemovedGameObjects: []
@@ -8502,7 +8532,10 @@ MonoBehaviour:
   computerPanel: {fileID: 5391857999436472170}
   shopPanel: {fileID: 9143664797217872784}
   stockMarket: {fileID: 7312901002185521089}
-  Opened:
+  ShopOpened:
+    m_PersistentCalls:
+      m_Calls: []
+  StockMarketOpened:
     m_PersistentCalls:
       m_Calls: []
 --- !u!114 &8716927177604590504

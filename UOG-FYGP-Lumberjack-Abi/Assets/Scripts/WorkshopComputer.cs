@@ -1,3 +1,4 @@
+using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -9,7 +10,8 @@ public class WorkshopComputer : MonoBehaviour
     public StockMarket stockMarket;
 
     bool panelOpen;
-    public UnityEvent Opened;
+    public UnityEvent ShopOpened;
+    public UnityEvent StockMarketOpened;
 
     void OnMouseDown()
     {
@@ -22,11 +24,10 @@ public class WorkshopComputer : MonoBehaviour
     public void ToggleComputerPanel()
     {
         panelOpen = !panelOpen;
-
         if (panelOpen) 
         {
             UIManager.Instance.Open(computerPanel);
-            Opened?.Invoke();
+            Debug.Log("computer panel toggled");
         }
         else UIManager.Instance.Close(computerPanel);
     }
@@ -35,8 +36,10 @@ public class WorkshopComputer : MonoBehaviour
     {
         // Open stock market UI first to avoid the close consuming the click
         if (stockMarket != null)
+        {
             stockMarket.toggleStockMarketUI();
-
+            StockMarketOpened?.Invoke();
+        }
         if (UIManager.Instance != null)
             UIManager.Instance.Close(computerPanel);
         panelOpen = false;
@@ -46,8 +49,11 @@ public class WorkshopComputer : MonoBehaviour
     {
         // Open shop UI before closing the computer panel to ensure the click is delivered
         if (shopPanel != null)
+        {
             shopPanel.Open();
-
+            ShopOpened?.Invoke();
+        }
+            
         if (UIManager.Instance != null)
             UIManager.Instance.Close(computerPanel);
         panelOpen = false;
