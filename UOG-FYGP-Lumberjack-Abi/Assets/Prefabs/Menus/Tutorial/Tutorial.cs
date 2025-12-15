@@ -146,7 +146,7 @@ public class Tutorial : MonoBehaviour
                         StorageRoomTutorial();
                         return;
                     }
-                    if(currentRoom != "Workshop" && stage1Complete == false)
+                    if(currentRoom != "Workshop" && !stage1Complete )
                     {
                         Stage1CompleteCheck();
                         return;
@@ -426,7 +426,6 @@ public class Tutorial : MonoBehaviour
                 textPanel.SetActive(true);
                 tutorialTextActive = true;
                 tutorialText.text = "This is the customer's order, here you can see what they want, how much they are willing to pay and the deadline for when they need it by.";
-                //TODO: make customer want a chair and will pay £50, deadline in 3 hours
             }
             if(dialogueIndex == 2)
             {
