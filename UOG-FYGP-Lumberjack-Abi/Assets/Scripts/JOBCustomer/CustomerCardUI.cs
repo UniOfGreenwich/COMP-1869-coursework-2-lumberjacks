@@ -41,7 +41,9 @@ public class CustomerCardUI : MonoBehaviour
 
         if (!rootPanel) rootPanel = gameObject;
         rootPanel.SetActive(true);
-
+        
+        if (rootPanel.activeSelf) OnShown?.Invoke();
+            
         if (customerNameText)
         {
             customerNameText.text = GetCustomerName(job.customer);
@@ -73,7 +75,6 @@ public class CustomerCardUI : MonoBehaviour
 
         if (acceptButton)
         {
-            acceptButton.onClick.RemoveAllListeners();
             acceptButton.onClick.AddListener(OnAcceptClicked);
         }
 
@@ -88,11 +89,11 @@ public class CustomerCardUI : MonoBehaviour
             closeButton.onClick.RemoveAllListeners();
             closeButton.onClick.AddListener(Hide);
         }
-        OnShown?.Invoke();
     }
 
     public void Hide()
     {
+        Debug.Log("customerUI hide panel was called");
         if (!rootPanel) rootPanel = gameObject;
         rootPanel.SetActive(false);
     }
