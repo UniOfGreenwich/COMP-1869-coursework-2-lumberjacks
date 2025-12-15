@@ -11,14 +11,12 @@ public class ProductionMachine : MonoBehaviour
     public ProductionMachineUI ui;
     public List<ProductionRecipeSO> recipes = new List<ProductionRecipeSO>();
 
-    [Header("World Points")]
     public Transform inputPoint;
     public Transform outputPoint;
     public GameObject inputEffectPrefab;
     public GameObject outputEffectPrefab;
     public float effectLifetime = 1.5f;
 
-    [Header("Timing")]
     [Min(0.1f)] public float secondsPerProduct = 4f;
 
     [Header("Rules")]
@@ -37,7 +35,6 @@ public class ProductionMachine : MonoBehaviour
     public float timerSpinSpeed = 180f;
     public Vector3 timerOffset = new Vector3(0.3f, 0f, 0f);
 
-    [Header("Storage Visuals")]
     public Canvas overlayCanvas;
     public RectTransform storageAnchor;
     public Vector2 flyIconSize = new Vector2(36f, 36f);
@@ -49,7 +46,6 @@ public class ProductionMachine : MonoBehaviour
     public string storageAnchorName = "StorageAnchor";
     public float uiProbeInterval = 0.5f;
 
-    [Header("World Output")]
     public bool spawnWorldOutputPrefab = true;
     public float worldPrefabLifetime = 2.5f;
 
@@ -145,7 +141,6 @@ public class ProductionMachine : MonoBehaviour
         ui.Init(this, source);
         PlayerController.IsInputLocked = true;
 
-        Debug.Log("[ProductionMachine] Open UI with " + recipeCount + " unlocked recipes.");
     }
 
 
@@ -154,20 +149,16 @@ public class ProductionMachine : MonoBehaviour
         if (recipe == null) return;
         if (busy)
         {
-            Debug.Log("[ProductionMachine] Ignored assemble, machine busy.");
             return;
         }
 
         currentOutput = recipe.finishedProduct;
         if (!currentOutput)
         {
-            Debug.LogWarning("[ProductionMachine] No finishedProduct on recipe " + recipe.displayName);
             return;
         }
 
         currentHasMisfits = errors > 0;
-
-        Debug.Log("[ProductionMachine] Starting assemble for " + currentOutput.displayName + " errors=" + errors);
 
         StartCoroutine(ProcessOneProduct(secondsPerProduct));
     }
@@ -207,7 +198,6 @@ public class ProductionMachine : MonoBehaviour
         if (jobManager != null && currentOutput != null)
             jobManager.ReportProductBuilt(currentOutput, currentHasMisfits);
 
-        Debug.Log("[ProductionMachine] Built " + currentOutput.displayName + " misfitFlag=" + currentHasMisfits);
 
         SetTimer(false);
         busy = false;

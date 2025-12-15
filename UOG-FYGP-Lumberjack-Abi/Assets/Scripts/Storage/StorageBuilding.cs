@@ -27,7 +27,6 @@ public class StorageBuilding : MonoBehaviour
     {
         cam = Camera.main;
 
-        // Find ANY valid screen-space canvas
         Canvas[] canvases = FindObjectsOfType<Canvas>(true);
         foreach (var c in canvases)
         {
@@ -40,12 +39,6 @@ public class StorageBuilding : MonoBehaviour
 
         if (canvas == null && canvases.Length > 0)
             canvas = canvases[0];
-
-        if (canvas == null)
-        {
-            Debug.LogError("StorageBuilding: No Canvas found in scene.");
-            return;
-        }
 
         // Create storage window
         if (windowPrefab)
@@ -76,13 +69,8 @@ public class StorageBuilding : MonoBehaviour
         UpdateButtonPosition();
     }
 
-    // ---------------------------
-    // BUTTON HANDLING
-    // ---------------------------
-
     private void ShowButton()
     {
-        // Always destroy any old button (prevents invisible leftovers)
         if (button != null)
         {
             Destroy(button);
@@ -90,17 +78,13 @@ public class StorageBuilding : MonoBehaviour
             buttonRect = null;
         }
 
-        // Spawn new button
         button = Instantiate(storageButtonPrefab, canvas.transform);
         buttonRect = button.GetComponent<RectTransform>();
 
-        // Make sure it's visible and readable
         ForceText(button, "Open Storage");
 
-        // Bring to top
         button.transform.SetAsLastSibling();
 
-        // Hook events
         button.GetComponent<Button>().onClick.AddListener(OpenWindow);
     }
 
@@ -110,30 +94,24 @@ public class StorageBuilding : MonoBehaviour
 
         Vector3 screenPos = cam.WorldToScreenPoint(transform.position + buttonOffset);
 
-        // Hide when behind camera
         if (screenPos.z < 0)
         {
             buttonRect.gameObject.SetActive(false);
             return;
         }
 
-        // Ensure visible
         if (!buttonRect.gameObject.activeSelf)
             buttonRect.gameObject.SetActive(true);
 
         buttonRect.position = screenPos;
     }
 
-    // ---------------------------
-    // WINDOW HANDLING
-    // ---------------------------
 
     private void OpenWindow()
     {
         if (window != null)
             window.SetActive(true);
 
-        // Button no longer needed
         if (button != null)
             Destroy(button);
 
@@ -156,10 +134,6 @@ public class StorageBuilding : MonoBehaviour
         if (button != null)
             Destroy(button);
     }
-
-    // ---------------------------
-    // UTILS
-    // ---------------------------
 
     private bool PointerOverUI()
     {

@@ -12,8 +12,6 @@ public class StorageUI : MonoBehaviour
         if (closeButton != null)
             closeButton.onClick.AddListener(Close);
 
-       // if (titleText != null)
-            //titleText.text = "STORAGE";
     }
 
     public void Open()
@@ -25,7 +23,6 @@ public class StorageUI : MonoBehaviour
     {
         gameObject.SetActive(false);
 
-        // Resume player movement
         PlayerController.IsInputLocked = false;
     }
 }

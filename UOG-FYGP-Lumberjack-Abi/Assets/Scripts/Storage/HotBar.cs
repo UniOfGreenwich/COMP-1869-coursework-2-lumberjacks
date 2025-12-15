@@ -13,7 +13,6 @@ public class HotBar : MonoBehaviour, IDropHandler
     [Header("Capacity")]
     [Min(1)] public int slotCapacity = 20; // how much this slot can hold
 
-    [Header("State (read only in Inspector)")]
     [SerializeField] private NoOfItems stack;
 
     public NoOfItems Peek() => stack; // allow drag to read what we have

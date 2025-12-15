@@ -15,8 +15,8 @@ public class ItemSO : ScriptableObject
     [Min(1)] public int gridHeight = 1;
 
     [Header("Production Tags")]
-    public bool isProductionSquarePiece;     // Tick this only on your square pieces.
+    public bool isProductionSquarePiece;     
 
     [Header("World Visuals")]
-    public GameObject worldPrefab;          // Optional world prefab for visual pop-out.
+    public GameObject worldPrefab;          
 }

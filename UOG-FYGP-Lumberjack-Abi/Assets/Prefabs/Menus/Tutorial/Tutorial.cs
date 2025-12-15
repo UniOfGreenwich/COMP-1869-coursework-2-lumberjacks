@@ -35,6 +35,9 @@ public class Tutorial : MonoBehaviour
     [Header("Computer/Shop tutorial arrows")]
     [SerializeField] private GameObject computer;
     [SerializeField] private GameObject computerUI;
+    [SerializeField] private ItemSO chairItemSO;
+
+
 
     //Stage 1 tasks
     private bool stage1IntroDialogueComplete = false;
@@ -157,13 +160,21 @@ public class Tutorial : MonoBehaviour
                 if (jobManager != null)
                 {
                     jobManager.customerSlots = 1;
-                    jobManager.minLinesPerJob = 1;
-                    jobManager.maxLinesPerJob = 1;
-                    jobManager.minQuantityPerLine = 1;
-                    jobManager.maxQuantityPerLine = 1;
-
-                    jobManager.GenerateInitialJobs();
-                    jobManager.NotifyChanged();
+                    jobManager.GenerateInitialJobs(); 
+                    var tutorialJob = new JobOrder
+                    {
+                        id = "JOB_TUTORIAL",
+                        customer = CustomerKind.Charlie,
+                        deadlineSeconds = 3 * 60 * 2, 
+                        goldReward = 50,
+                        xpReward = 0
+                    };
+                    tutorialJob.lines.Add(new JobLine
+                    {
+                        product = chairItemSO,
+                        quantity = 1
+                    });
+                    jobManager.AddJob(tutorialJob); 
                 }
 
                 if (currentStage == 2)

@@ -2939,6 +2939,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 808601643}
     - target: {fileID: 5166004058622701364, guid: 5198f4944726506489e5ad090b545a82, type: 3}
+      propertyPath: chairItemSO
+      value: 
+      objectReference: {fileID: 11400000, guid: f311d6627e17d20419101a8823e10a02, type: 2}
+    - target: {fileID: 5166004058622701364, guid: 5198f4944726506489e5ad090b545a82, type: 3}
       propertyPath: doorLoadingBay
       value: 
       objectReference: {fileID: 987151944}

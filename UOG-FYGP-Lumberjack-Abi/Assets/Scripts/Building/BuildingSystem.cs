@@ -51,10 +51,6 @@ public class BuildingSystem : MonoBehaviour
                 SavePlacedObject(objectToPlace);
                 objectToPlace = null;
             }
-            else
-            {
-                Debug.Log("[BuildingSystem] Blocked! Cannot place here.");
-            }
         }
 
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -70,7 +66,7 @@ public class BuildingSystem : MonoBehaviour
         if (item.prefabToPlace == null) return;
         if (string.IsNullOrEmpty(item.id))
         {
-            Debug.LogError("[BuildingSystem] ShopItemSO id is empty on " + item.name);
+            Debug.LogError("ShopItemSO id is empty on " + item.name);
             return;
         }
 
@@ -82,7 +78,7 @@ public class BuildingSystem : MonoBehaviour
 
         if (objectToPlace == null)
         {
-            Debug.LogError("[BuildingSystem] No Placeble component found on prefab " + item.prefabToPlace.name);
+            Debug.LogError(" No Placeble component found on prefab " + item.prefabToPlace.name);
             Destroy(obj);
             return;
         }
@@ -138,7 +134,7 @@ public class BuildingSystem : MonoBehaviour
 
         if (!IsOverGround(placeble))
         {
-            Debug.Log("[BuildingSystem] Cannot place — not over ground!");
+            Debug.Log(" Cannot place — not over ground!");
             return false;
         }
 
@@ -193,7 +189,7 @@ public class BuildingSystem : MonoBehaviour
         string id = placeble.prefabId;
         if (string.IsNullOrEmpty(id))
         {
-            Debug.LogError("[BuildingSystem] prefabId is empty, cannot save!");
+            Debug.LogError(" prefabId is empty, cannot save!");
             return;
         }
 
@@ -204,6 +200,6 @@ public class BuildingSystem : MonoBehaviour
         PlayerPrefs.SetInt("MachineOwned_" + id, 1);
         PlayerPrefs.Save();
 
-        Debug.Log("[BuildingSystem] Saved placement for " + id);
+        Debug.Log(" Saved placement for " + id);
     }
 }

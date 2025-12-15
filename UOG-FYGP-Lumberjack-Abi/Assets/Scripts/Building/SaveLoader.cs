@@ -90,7 +90,7 @@ public class SaveLoader : MonoBehaviour
 
         if (shopItems == null || shopItems.Length == 0)
         {
-            Debug.LogError("[SaveLoader] shopItems is empty. Drag your ShopItemSO assets into SaveLoader.shopItems.");
+            Debug.LogError(" no item");
             return;
         }
 
@@ -120,7 +120,6 @@ public class SaveLoader : MonoBehaviour
             var p = obj.GetComponentInChildren<Placeble>();
             if (p == null)
             {
-                Debug.LogError("[SaveLoader] No Placeble found on " + obj.name + " for item " + item.id);
                 continue;
             }
 
@@ -131,7 +130,6 @@ public class SaveLoader : MonoBehaviour
             Vector3Int start = buildingSystem.gridLayout.WorldToCell(p.GetStartPosition());
             buildingSystem.TakeArea(start, p.Size);
 
-            Debug.Log("[SaveLoader] Reloaded " + item.id + " at " + pos);
         }
     }
 }
