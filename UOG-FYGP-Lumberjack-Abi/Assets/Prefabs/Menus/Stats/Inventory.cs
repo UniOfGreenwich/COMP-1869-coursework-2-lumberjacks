@@ -15,11 +15,10 @@ public class Inventory : MonoBehaviour
 
     void Awake()
     {
-        // Load saved values or defaults
         money = PlayerPrefs.GetFloat("Money", 5000f);
-        xp = PlayerPrefs.GetInt("Xp", 0);
-        lumber = PlayerPrefs.GetInt("Lumber", 0);
-        gold = PlayerPrefs.GetInt("Gold", 0);
+        xp = PlayerPrefs.GetInt("Xp", 50);
+        lumber = PlayerPrefs.GetInt("Lumber", 20);
+        gold = PlayerPrefs.GetInt("Gold", 1000);
         copper = PlayerPrefs.GetInt("Copper", 0);
 
         RefreshUI();
@@ -34,7 +33,7 @@ public class Inventory : MonoBehaviour
 
     public void AddMoney(float amount)
     {
-        if (amount <= 0f) return;
+        if (Mathf.Approximately(amount, 0f)) return;
         money += amount;
         PlayerPrefs.SetFloat("Money", money);
         PlayerPrefs.Save();
@@ -54,8 +53,8 @@ public class Inventory : MonoBehaviour
 
     public void AddXp(int amount)
     {
-        if (amount <= 0) return;
-        xp += amount;
+        if (amount == 0) return;
+        xp = Mathf.Max(0, xp + amount); // no going below 0
         PlayerPrefs.SetInt("Xp", xp);
         PlayerPrefs.Save();
         RefreshUI();
