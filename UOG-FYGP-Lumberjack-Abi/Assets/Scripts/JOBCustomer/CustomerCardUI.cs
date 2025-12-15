@@ -38,12 +38,9 @@ public class CustomerCardUI : MonoBehaviour
             return;
         }
 
-        if (!rootPanel) 
-        {
-            rootPanel = gameObject;
-            rootPanel.SetActive(true);
-            //OnShown?.Invoke();
-        }
+        if (!rootPanel) rootPanel = gameObject;
+        rootPanel.SetActive(true);
+        OnShown?.Invoke();
 
         if (customerNameText)
         {
