@@ -19,8 +19,18 @@ public class DevSaveTools : MonoBehaviour
         {
             PlayerPrefs.DeleteAll();
             PlayerPrefs.Save();
-            Debug.Log("[DevSaveTools] Cleared ALL PlayerPrefs on start.");
+
+            if (FindObjectOfType<StorageManager>() is StorageManager sm)
+                sm.ClearAll(); // add a method to reset stock dictionary
+
+            if (FindObjectOfType<Inventory>() is Inventory inv)
+            {
+                inv.money = 0;
+                inv.lumber = 0;
+                inv.RefreshUI();
+            }
         }
+
         else
         {
             if (clearRecipesOnStart)

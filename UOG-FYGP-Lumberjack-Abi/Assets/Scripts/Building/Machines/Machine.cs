@@ -355,19 +355,29 @@ public class Machine : MonoBehaviour, IDropHandler
         if (!promptPanel)
         {
             Transform quantityTransform = null;
-            foreach (var t in Resources.FindObjectsOfTypeAll<Transform>())
-                if (t && t.name == "PlankQuantityUI" && t.hideFlags == HideFlags.None) { quantityTransform = t; break; }
-            if (!quantityTransform)
-                foreach (var t in Resources.FindObjectsOfTypeAll<Transform>())
-                    if (t && t.name == "QuantityUI" && t.hideFlags == HideFlags.None) { quantityTransform = t; break; }
-            if (!quantityTransform)
+
+            foreach (var canvas in FindObjectsOfType<Canvas>(true))
             {
-                if (TagDefined("QuantityUI"))
+                if (!canvas) continue;
+                foreach (Transform t in canvas.GetComponentsInChildren<Transform>(true))
                 {
-                    var tagged = GameObject.FindGameObjectWithTag("QuantityUI");
-                    if (tagged) quantityTransform = tagged.transform;
+                    if (!t) continue;
+                    string n = t.name;
+                    if (n == "PlankQuantityUI" || n == "QuantityUI" || n.Contains("QuantityUI"))
+                    {
+                        quantityTransform = t;
+                        break;
+                    }
                 }
+                if (quantityTransform) break;
             }
+
+            if (!quantityTransform && TagDefined("QuantityUI"))
+            {
+                var tagged = GameObject.FindGameObjectWithTag("QuantityUI");
+                if (tagged) quantityTransform = tagged.transform;
+            }
+
             if (quantityTransform)
             {
                 var panel = quantityTransform.gameObject;
@@ -391,17 +401,20 @@ public class Machine : MonoBehaviour, IDropHandler
                 if (promptValue) promptValue.text = "x" + ((int)v).ToString();
             });
         }
+
         if (okButton)
         {
             okButton.onClick.RemoveAllListeners();
             okButton.onClick.AddListener(() => ClosePrompt(true));
         }
+
         if (cancelButton)
         {
             cancelButton.onClick.RemoveAllListeners();
             cancelButton.onClick.AddListener(() => ClosePrompt(false));
         }
     }
+
 
     private System.Action<int> _onConfirm;
     private System.Action _onCancel;
@@ -419,6 +432,7 @@ public class Machine : MonoBehaviour, IDropHandler
 
         promptPanel.SetActive(true);
     }
+
 
     private void ClosePrompt(bool confirmed)
     {

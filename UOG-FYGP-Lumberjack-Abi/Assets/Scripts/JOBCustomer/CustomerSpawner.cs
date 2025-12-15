@@ -6,6 +6,8 @@ public class CustomerSpawner : MonoBehaviour
     public JobManager jobManager;
     public Transform[] deskPoints;
 
+    public Transform customersRoot;
+
     public GameObject charliePrefab;
     public GameObject gabbyPrefab;
     public GameObject spongePrefab;
@@ -19,10 +21,23 @@ public class CustomerSpawner : MonoBehaviour
         {
             jobManager.worldSpawner = this;
         }
+
+        EnsureCustomersRoot();
+    }
+
+    void EnsureCustomersRoot()
+    {
+        if (customersRoot != null) return;
+
+        GameObject existing = GameObject.Find("CustomersRoot");
+        if (existing == null) existing = new GameObject("CustomersRoot");
+        customersRoot = existing.transform;
     }
 
     public void SyncCustomers(IReadOnlyList<JobOrder> availableJobs)
     {
+        EnsureCustomersRoot();
+
         HashSet<int> usedSlots = new HashSet<int>();
 
         for (int i = 0; i < availableJobs.Count; i++)
@@ -41,11 +56,7 @@ public class CustomerSpawner : MonoBehaviour
         {
             if (!usedSlots.Contains(kvp.Key))
             {
-                if (kvp.Value != null)
-                {
-                    Destroy(kvp.Value.gameObject);
-                }
-
+                if (kvp.Value != null) Destroy(kvp.Value.gameObject);
                 toRemove.Add(kvp.Key);
             }
         }
@@ -58,11 +69,7 @@ public class CustomerSpawner : MonoBehaviour
 
     void EnsureAvatarForJob(int slotIndex, JobOrder job)
     {
-        if (deskPoints == null || slotIndex < 0 || slotIndex >= deskPoints.Length)
-        {
-            Debug.LogWarning("No desk for slot " + slotIndex);
-            return;
-        }
+        if (deskPoints == null || slotIndex < 0 || slotIndex >= deskPoints.Length) return;
 
         CustomerFBX avatar;
         if (avatarsBySlot.TryGetValue(slotIndex, out avatar))
@@ -76,20 +83,12 @@ public class CustomerSpawner : MonoBehaviour
 
         Transform spawnPoint = deskPoints[slotIndex];
         GameObject prefab = GetPrefab(job.customer);
+        if (prefab == null) return;
 
-        if (prefab == null)
-        {
-            Debug.LogWarning("No prefab assigned for " + job.customer);
-            return;
-        }
-
-        GameObject go = Instantiate(prefab, spawnPoint.position, spawnPoint.rotation);
+        GameObject go = Instantiate(prefab, spawnPoint.position, spawnPoint.rotation, customersRoot);
 
         avatar = go.GetComponent<CustomerFBX>();
-        if (avatar == null)
-        {
-            avatar = go.AddComponent<CustomerFBX>();
-        }
+        if (avatar == null) avatar = go.AddComponent<CustomerFBX>();
 
         avatar.Setup(jobManager, job);
         avatarsBySlot[slotIndex] = avatar;

@@ -33,11 +33,8 @@ public class SettingsMenu : MonoBehaviour
 
     private void Awake()
     {
-        Debug.Log("[SettingsMenu] Awake");
-
         if (settingsPanelPrefab == null)
         {
-            Debug.LogError("[SettingsMenu] NO settings panel prefab assigned!");
             return;
         }
 
@@ -53,7 +50,7 @@ public class SettingsMenu : MonoBehaviour
         panelInstance = Instantiate(settingsPanelPrefab, parent);
         panelInstance.name = settingsPanelPrefab.name + "_INSTANCE";
         panelInstance.SetActive(false);
-        Debug.Log("[SettingsMenu] Instantiated: " + panelInstance.name);
+        //Debug.Log("[SettingsMenu] Instantiated: " + panelInstance.name);
 
         // Auto-wire open button
         if (openButton != null)
@@ -64,7 +61,7 @@ public class SettingsMenu : MonoBehaviour
         // ------------------------------------
         // AUTO-WIRE SLIDERS
         // ------------------------------------
-        Debug.Log("[SettingsMenu] Auto-wiring sliders…");
+        //Debug.Log("[SettingsMenu] Auto-wiring slidersï¿½");
 
         // Find all sliders in the panel
         var sliders = panelInstance.GetComponentsInChildren<Slider>(true);
@@ -83,8 +80,8 @@ public class SettingsMenu : MonoBehaviour
         if (musicSlider == null && sliders.Length > 0) musicSlider = sliders[0];
         if (sfxSlider == null && sliders.Length > 1) sfxSlider = sliders[1];
 
-        Debug.Log("[SettingsMenu] Found Music Slider: " + (musicSlider ? musicSlider.name : "NONE"));
-        Debug.Log("[SettingsMenu] Found SFX Slider: " + (sfxSlider ? sfxSlider.name : "NONE"));
+        //Debug.Log("[SettingsMenu] Found Music Slider: " + (musicSlider ? musicSlider.name : "NONE"));
+        //Debug.Log("[SettingsMenu] Found SFX Slider: " + (sfxSlider ? sfxSlider.name : "NONE"));
 
         if (musicSlider != null)
         {

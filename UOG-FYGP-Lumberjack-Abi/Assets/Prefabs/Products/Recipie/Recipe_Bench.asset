@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e3a9f86b94436e44bc85486453f318c, type: 3}
+  m_Name: Recipe_Bench
+  m_EditorClassIdentifier: 
+  id: Bench
+  displayName: Bench
+  finishedProduct: {fileID: 11400000, guid: 1be185f2966a90b49a3bf83e60ece9a4, type: 2}
+  blueprint: {fileID: 0}
+  slots:
+  - slotId: BackRest
+    label: BackRest
+    requiredWidth: 5
+    requiredHeight: 3
+  - slotId: Seat
+    label: Seat
+    requiredWidth: 5
+    requiredHeight: 3
+  - slotId: Leg1
+    label: Leg1
+    requiredWidth: 1
+    requiredHeight: 3
+  - slotId: Leg2
+    label: Leg2
+    requiredWidth: 1
+    requiredHeight: 3
+  - slotId: Leg3
+    label: Leg3
+    requiredWidth: 1
+    requiredHeight: 3
+  - slotId: Leg4
+    label: Leg4
+    requiredWidth: 1
+    requiredHeight: 3
+  unlockedByDefault: 0
+  unlockCost: 150
+  hintSprite: {fileID: 1560589445, guid: 0529001915e1a8b43bf7e5c1d6e1eb50, type: 3}

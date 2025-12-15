@@ -9,5 +9,6 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         current = this;
+        PlayerController.IsInputLocked = false; // extra safety
     }
 }
