@@ -6,12 +6,18 @@ using System.Linq;
 public class SettingsMenu : MonoBehaviour
 {
     [Header("Prefab (from Project)")]
-    [SerializeField] private GameObject settingsPanelPrefab;   // Drag Settings_Panel prefab here
-    [SerializeField] private Transform panelParentOverride;    // Optional override
+    [SerializeField] private GameObject settingsPanelPrefab;   
+    [SerializeField] private Transform panelParentOverride;    
 
     [Header("Buttons")]
     [SerializeField] private Button openButton;
     [SerializeField] private KeyCode toggleKey = KeyCode.Escape;
+
+    [Header("Mobile Settings")]
+    [Tooltip("On mobile, tapping outside the panel closes it")]
+    [SerializeField] private bool tapOutsideToClose = true;
+    [Tooltip(" back button for mobile (Android back button behavior)")]
+    [SerializeField] private bool useAndroidBackButton = true;
 
     [Header("Audio Mixer")]
     [SerializeField] private AudioMixer mixer;
@@ -27,6 +33,7 @@ public class SettingsMenu : MonoBehaviour
     private Slider musicSlider;
     private Slider sfxSlider;
     private Button closeButton;
+    private RectTransform panelRect;
 
     private string MusicKey => $"VOL_{musicParam}";
     private string SfxKey => $"VOL_{sfxParam}";
@@ -48,6 +55,8 @@ public class SettingsMenu : MonoBehaviour
         panelInstance = Instantiate(settingsPanelPrefab, parent);
         panelInstance.name = settingsPanelPrefab.name + "_INSTANCE";
         panelInstance.SetActive(false);
+
+        panelRect = panelInstance.GetComponent<RectTransform>();
 
         if (openButton != null)
         {
@@ -88,7 +97,7 @@ public class SettingsMenu : MonoBehaviour
         {
             closeButton.onClick.AddListener(Close);
         }
-        
+
 
         float savedMusic = PlayerPrefs.GetFloat(MusicKey, 1f);
         float savedSfx = PlayerPrefs.GetFloat(SfxKey, 1f);
@@ -102,10 +111,54 @@ public class SettingsMenu : MonoBehaviour
 
     private void Update()
     {
+        // PC keyboard toggle
         if (toggleKey != KeyCode.None && Input.GetKeyDown(toggleKey))
         {
             Toggle();
         }
+
+        if (useAndroidBackButton && Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (panelInstance != null && panelInstance.activeSelf)
+            {
+                Close();
+            }
+        }
+        if (tapOutsideToClose && panelInstance != null && panelInstance.activeSelf)
+        {
+            HandleTapOutsideToClose();
+        }
+    }
+
+    private void HandleTapOutsideToClose()
+    {
+        // Check for touch
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+            if (touch.phase == TouchPhase.Began)
+            {
+                if (!IsTouchOverPanel(touch.position))
+                {
+                    Close();
+                }
+            }
+        }
+        // Check for mouse click
+        else if (Input.GetMouseButtonDown(0))
+        {
+            if (!IsTouchOverPanel(Input.mousePosition))
+            {
+                Close();
+            }
+        }
+    }
+
+    private bool IsTouchOverPanel(Vector2 screenPosition)
+    {
+        if (panelRect == null) return false;
+
+        return RectTransformUtility.RectangleContainsScreenPoint(panelRect, screenPosition, null);
     }
 
     public void Open()

@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 
@@ -68,7 +69,7 @@ public class TreePlot : MonoBehaviour
             progressSlider.value = 0f;
         }
 
-        TryAutoWireStorage();
+        AutoWireStorage();
         SetState(State.Empty);
     }
 
@@ -82,11 +83,47 @@ public class TreePlot : MonoBehaviour
     {
         // Only plant by tap
         if (state == State.Empty)
-            TryPlant();
+            Plant();
         // No harvest here now
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+            if (touch.phase == TouchPhase.Began)
+            {
+                HandleTapOrClick(touch.position);
+            }
+        }
+    }
+    void HandleTapOrClick(Vector2 screenPosition)
+    {
+        // Check if tapping on UI
+        if (EventSystem.current != null && IsPointerOverUI(screenPosition)) return;
+
+        // Raycast to check if this object was tapped
+        Ray ray = Camera.main.ScreenPointToRay(screenPosition);
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f))
+        {
+            if (hit.collider.gameObject == gameObject || hit.collider.transform.IsChildOf(transform))
+            {
+                // Only plant by tap when empty
+                if (state == State.Empty)
+                    Plant();
+            }
+        }
     }
 
-    void TryPlant()
+    bool IsPointerOverUI(Vector2 screenPosition)
+    {
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = screenPosition;
+
+        var results = new System.Collections.Generic.List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, results);
+
+        return results.Count > 0;
+    }
+
+    void Plant()
     {
         if (!storage || seedItem == null) return;
 
@@ -159,7 +196,7 @@ public class TreePlot : MonoBehaviour
         }
     }
 
-    void TryAutoWireStorage()
+    void AutoWireStorage()
     {
         if (overlayCanvas == null)
         {

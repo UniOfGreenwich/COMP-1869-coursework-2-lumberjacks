@@ -12,8 +12,25 @@ public class TogglePanel : MonoBehaviour
     {
         if(!panelOpen) 
         {
-            panel.SetActive(true);
-            UIBlocker.SetActive(true);
+            if (panel != null)
+                panel.SetActive(true);
+
+            if (UIBlocker != null)
+            {
+                UIBlocker.SetActive(true);
+
+                // Try to ensure blocker is behind the panel so the panel's controls remain interactive
+                var parent = panel != null ? panel.transform.parent : null;
+                if (parent != null)
+                {
+                    UIBlocker.transform.SetParent(parent, false);
+                    int panelIndex = panel.transform.GetSiblingIndex();
+                    // place blocker at same index as panel (behind it) and move panel to top
+                    UIBlocker.transform.SetSiblingIndex(panelIndex);
+                    panel.transform.SetAsLastSibling();
+                }
+            }
+
             Activated.Invoke();
             panelOpen = true;
         }
@@ -23,8 +40,10 @@ public class TogglePanel : MonoBehaviour
     {
         if(panelOpen) 
         {
-            panel.SetActive(false);
-            UIBlocker.SetActive(false);
+            if (panel != null)
+                panel.SetActive(false);
+            if (UIBlocker != null)
+                UIBlocker.SetActive(false);
             panelOpen = false;
         }
     }

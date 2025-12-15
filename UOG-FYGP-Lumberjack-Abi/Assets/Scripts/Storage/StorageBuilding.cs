@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Collider))]
 public class StorageBuilding : MonoBehaviour
@@ -52,23 +53,37 @@ public class StorageBuilding : MonoBehaviour
     {
         if (!cam) cam = Camera.main;
 
-        if (Input.GetMouseButtonDown(0))
+        // Handle touch input
+        if (Input.touchCount > 0)
         {
-            if (PointerOverUI()) return;
-
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
+            Touch touch = Input.GetTouch(0);
+            if (touch.phase == TouchPhase.Began)
             {
-                if (hit.collider.GetComponentInParent<StorageBuilding>() == this)
-                {
-                    ShowButton();
-                }
+                HandleTapOrClick(touch.position);
             }
+        }
+        // Handle mouse input (PC fallback)
+        else if (Input.GetMouseButtonDown(0))
+        {
+            HandleTapOrClick(Input.mousePosition);
         }
 
         UpdateButtonPosition();
     }
 
+    private void HandleTapOrClick(Vector2 screenPosition)
+    {
+        if (PointerOverUI(screenPosition)) return;
+
+        Ray ray = cam.ScreenPointToRay(screenPosition);
+        if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
+        {
+            if (hit.collider.GetComponentInParent<StorageBuilding>() == this)
+            {
+                ShowButton();
+            }
+        }
+    }
     private void ShowButton()
     {
         if (button != null)
@@ -135,9 +150,23 @@ public class StorageBuilding : MonoBehaviour
             Destroy(button);
     }
 
-    private bool PointerOverUI()
+    private bool PointerOverUI(Vector2 screenPosition)
     {
-        return EventSystem.current && EventSystem.current.IsPointerOverGameObject();
+        if (EventSystem.current == null) return false;
+
+        // Check for touch
+        if (Input.touchCount > 0)
+        {
+            PointerEventData eventData = new PointerEventData(EventSystem.current);
+            eventData.position = screenPosition;
+
+            List<RaycastResult> results = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(eventData, results);
+
+            return results.Count > 0;
+        }
+
+        return EventSystem.current.IsPointerOverGameObject();
     }
 
     private void ForceText(GameObject root, string fallback)

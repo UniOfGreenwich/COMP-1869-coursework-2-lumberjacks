@@ -33,25 +33,30 @@ public class WorkshopComputer : MonoBehaviour
 
     public void OnStockMarketButtonClicked()
     {
-        UIManager.Instance.Close(computerPanel);
-        panelOpen = false;
-
+        // Open stock market UI first to avoid the close consuming the click
         if (stockMarket != null)
             stockMarket.toggleStockMarketUI();
+
+        if (UIManager.Instance != null)
+            UIManager.Instance.Close(computerPanel);
+        panelOpen = false;
     }
 
     public void OnShopButtonClicked()
     {
-        UIManager.Instance.Close(computerPanel);
-        panelOpen = false;
-
+        // Open shop UI before closing the computer panel to ensure the click is delivered
         if (shopPanel != null)
             shopPanel.Open();
+
+        if (UIManager.Instance != null)
+            UIManager.Instance.Close(computerPanel);
+        panelOpen = false;
     }
 
     public void OnCloseComputerPanel()
     {
-        UIManager.Instance.Close(computerPanel);
+        if (UIManager.Instance != null)
+            UIManager.Instance.Close(computerPanel);
         panelOpen = false;
     }
 }

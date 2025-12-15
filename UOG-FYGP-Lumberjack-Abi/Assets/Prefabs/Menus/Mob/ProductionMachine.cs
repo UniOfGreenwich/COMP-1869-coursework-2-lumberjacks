@@ -106,6 +106,14 @@ public class ProductionMachine : MonoBehaviour
 
         if (timerCanvas && blimpRoot)
             timerCanvas.transform.position = blimpRoot.position + timerOffset;
+        if (Input.touchCount > 0)
+        {
+            Touch touch = Input.GetTouch(0);
+            if (touch.phase == TouchPhase.Began)
+            {
+                HandleTapOrClick(touch.position);
+            }
+        }
     }
 
     void OnMouseDown()
@@ -142,6 +150,63 @@ public class ProductionMachine : MonoBehaviour
         PlayerController.IsInputLocked = true;
 
     }
+
+    void HandleTapOrClick(Vector2 screenPosition)
+    {
+        if (PlayerController.IsInputLocked) return;
+
+        // Check if tapping on UI
+        if (EventSystem.current != null && IsPointerOverUI(screenPosition)) return;
+
+        // Raycast to check if this object was tapped
+        Ray ray = Camera.main.ScreenPointToRay(screenPosition);
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f))
+        {
+            if (hit.collider.gameObject == gameObject || hit.collider.transform.IsChildOf(transform))
+            {
+                TryOpenUI();
+            }
+        }
+    }
+
+    bool IsPointerOverUI(Vector2 screenPosition)
+    {
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = screenPosition;
+
+        var results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, results);
+
+        return results.Count > 0;
+    }
+
+    void TryOpenUI()
+    {
+        if (busy) return;
+        if (placeble && !placeble.placed) return;
+        if (!ui) AutoWireUI();
+        if (!ui) return;
+
+        IList<ProductionRecipeSO> source = recipes;
+
+        if (RecipeUnlockManager.Instance != null)
+            source = RecipeUnlockManager.Instance.FilterUnlocked(recipes);
+
+        int recipeCount = 0;
+        if (source != null)
+        {
+            foreach (var r in source)
+            {
+                if (r != null)
+                    recipeCount++;
+            }
+        }
+
+        ui.gameObject.SetActive(true);
+        ui.Init(this, source);
+        PlayerController.IsInputLocked = true;
+    }
+
 
 
     public void OnAssemble(ProductionRecipeSO recipe, int errors)
