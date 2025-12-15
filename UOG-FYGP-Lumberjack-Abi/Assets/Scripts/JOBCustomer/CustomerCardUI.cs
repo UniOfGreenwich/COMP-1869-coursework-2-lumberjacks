@@ -35,11 +35,12 @@ public class CustomerCardUI : MonoBehaviour
         if (jobManager == null || job == null)
         {
             Hide();
+            Debug.Log("job mananger or job was null in customer card UI");
             return;
         }
 
         if (!rootPanel) rootPanel = gameObject;
-        rootPanel.SetActive(true); OnShown?.Invoke();
+        rootPanel.SetActive(true);
 
         if (customerNameText)
         {
@@ -87,6 +88,7 @@ public class CustomerCardUI : MonoBehaviour
             closeButton.onClick.RemoveAllListeners();
             closeButton.onClick.AddListener(Hide);
         }
+        OnShown?.Invoke();
     }
 
     public void Hide()

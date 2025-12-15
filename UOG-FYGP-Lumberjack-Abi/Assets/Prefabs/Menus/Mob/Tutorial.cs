@@ -25,8 +25,8 @@ public class Tutorial : MonoBehaviour
     [SerializeField] private GameObject doorFromStorageRoom;
 
     [Header("Customer tutorial arrows")]
-    [SerializeField] private GameObject customer;
     [SerializeField] private GameObject customerUI;
+    [SerializeField] private ItemSO chairItemSO;
 
     [Header("Job Board tutorial arrows")]
     [SerializeField] private GameObject jobBoard;
@@ -35,9 +35,6 @@ public class Tutorial : MonoBehaviour
     [Header("Computer/Shop tutorial arrows")]
     [SerializeField] private GameObject computer;
     [SerializeField] private GameObject computerUI;
-    [SerializeField] private ItemSO chairItemSO;
-
-
 
     //Stage 1 tasks
     private bool stage1IntroDialogueComplete = false;
@@ -102,10 +99,10 @@ public class Tutorial : MonoBehaviour
             Stage1Intro();
 
             //stage 2 trigger setup
-            customer.SetActive(false);
             customerUI.GetComponentInChildren<CustomerCardUI>(true).OnShown.AddListener(CustomerTutorialTrigger);
             jobBoardUI.GetComponentInChildren<TogglePanel>(true).Activated.AddListener(JobBoardTutorialTrigger);
             computerUI.GetComponentInChildren<TogglePanel>(true).Activated.AddListener(ShopTutorial);
+            customerUI.transform.Find("Accept").gameObject.GetComponent<Button>().onClick.AddListener(() =>  { if (visitedCustomer) JobBoardIntro();});
         }
     }
 
@@ -149,32 +146,11 @@ public class Tutorial : MonoBehaviour
                         StorageRoomTutorial();
                         return;
                     }
-                    if(currentRoom != "Workshop" && stage1Complete == false)
+                    if(currentRoom != "Workshop" && !stage1Complete )
                     {
                         Stage1CompleteCheck();
                         return;
                     }
-                }
-                //this is to have one spawner at start one tutrial complete true it will get you 3 spawners
-                var jobManager = FindFirstObjectByType<JobManager>();
-                if (jobManager != null)
-                {
-                    jobManager.customerSlots = 1;
-                    jobManager.GenerateInitialJobs(); 
-                    var tutorialJob = new JobOrder
-                    {
-                        id = "JOB_TUTORIAL",
-                        customer = CustomerKind.Charlie,
-                        deadlineSeconds = 3 * 60 * 2, 
-                        goldReward = 50,
-                        xpReward = 0
-                    };
-                    tutorialJob.lines.Add(new JobLine
-                    {
-                        product = chairItemSO,
-                        quantity = 1
-                    });
-                    jobManager.AddJob(tutorialJob); 
                 }
 
                 if (currentStage == 2)
@@ -254,7 +230,7 @@ public class Tutorial : MonoBehaviour
         }
     }
 
-void LoadingBayEnter()
+    void LoadingBayEnter()
     {
         if (currentStage == 1)
         {           
@@ -378,8 +354,34 @@ void LoadingBayEnter()
             {
                 stage1Complete = true;
                 currentStage = 2;
+                NPCSpawn();
                 Stage2Intro();
             }
+        }
+    }
+
+    void NPCSpawn()
+    {
+        //this is to have one spawner at start one tutrial complete true it will get you 3 spawners
+        var jobManager = FindFirstObjectByType<JobManager>();
+        if (jobManager != null)
+        {
+            jobManager.customerSlots = 1;
+            jobManager.GenerateInitialJobs(); 
+            var tutorialJob = new JobOrder
+            {
+                id = "JOB_TUTORIAL",
+                customer = CustomerKind.Charlie,
+                deadlineSeconds = 3 * 60 * 2, 
+                goldReward = 50,
+                xpReward = 0
+            };
+            tutorialJob.lines.Add(new JobLine
+            {
+                product = chairItemSO,
+                quantity = 1
+            });
+            jobManager.AddJob(tutorialJob); 
         }
     }
 
@@ -390,7 +392,6 @@ void LoadingBayEnter()
         {
             if(dialogueIndex == 1)
             {
-                customer.SetActive(true);
                 textPanel.SetActive(true);
                 tutorialTextActive = true;
                 tutorialText.text = "Oh look! A customer, let's talk to them and see what they want us to make for them.";
@@ -407,12 +408,12 @@ void LoadingBayEnter()
 
     void CustomerTutorialTrigger()
     {
-        if(currentStage == 2 && !visitedCustomer)
+        if(currentStage == 2)
         {
-            customer.GetComponentInChildren<CustomerCardUI>(true).OnShown.RemoveListener(CustomerTutorialTrigger);
-            customerUI.transform.Find("Canvas/Tutorial_Arrow").gameObject.SetActive(true);
+            customerUI.transform.Find("Tutorial_Arrow").gameObject.SetActive(true);
+            customerUI.GetComponentInChildren<CustomerCardUI>(true).OnShown.RemoveListener(CustomerTutorialTrigger);
+            dialogueIndex = 1;
             CustomerTutorial();
-
         }
     }
 
@@ -425,7 +426,6 @@ void LoadingBayEnter()
                 textPanel.SetActive(true);
                 tutorialTextActive = true;
                 tutorialText.text = "This is the customer's order, here you can see what they want, how much they are willing to pay and the deadline for when they need it by.";
-                //TODO: make customer want a chair and will pay £50, deadline in 3 hours
             }
             if(dialogueIndex == 2)
             {
@@ -438,17 +438,17 @@ void LoadingBayEnter()
                 tutorialTextActive = false;
                 visitedCustomer = true;
                 dialogueIndex = 1;
-                customerUI.transform.Find("Canvas/Tutorial_Arrow").gameObject.SetActive(false);
-                JobBoardIntro();
             }
         }
     }
+
     void JobBoardIntro()
     {
         if(currentStage == 2)
         {
             if(dialogueIndex == 1)
             {
+                customerUI.transform.Find("Tutorial_Arrow").gameObject.SetActive(false);
                 textPanel.SetActive(true);
                 tutorialTextActive = true;
                 tutorialText.text = "Great! Now that we've talked to the customer, let's check the job board to get the full details of the item we need to make for them."; 
