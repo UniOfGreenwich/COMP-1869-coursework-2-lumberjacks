@@ -880,6 +880,8 @@ MonoBehaviour:
   panelParentOverride: {fileID: 0}
   openButton: {fileID: 6670522224682708573}
   toggleKey: 27
+  tapOutsideToClose: 1
+  useAndroidBackButton: 1
   mixer: {fileID: 24100000, guid: 98fcd459ad6782b42a9cd3fa336f2e62, type: 2}
   musicParam: MusicVol
   sfxParam: SFXVol
@@ -956,17 +958,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 761137486606012168, guid: 0688e27e9f6f10b4cb443dfee8365fb8, type: 3}
   m_PrefabInstance: {fileID: 581108218}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &639515959 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4251408835322915084, guid: f5febf8a32892934ba2b594040108ca5, type: 3}
-  m_PrefabInstance: {fileID: 118547076689700767}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &643244017
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1328,7 +1319,7 @@ PrefabInstance:
     - target: {fileID: 7150994919125799440, guid: 5ad52676a2136524ebd1f0d021172194, type: 3}
       propertyPath: timeLabel
       value: 
-      objectReference: {fileID: 639515959}
+      objectReference: {fileID: 0}
     - target: {fileID: 7150994919125799440, guid: 5ad52676a2136524ebd1f0d021172194, type: 3}
       propertyPath: statusText
       value: 
@@ -2762,6 +2753,13 @@ MonoBehaviour:
   minZoom: 5
   maxZoom: 5
   rotationSpeed: 1
+  rooms: []
+  currentRoomIndex: 0
+  useManualBounds: 0
+  manualRoomSize: {x: 20, y: 20}
+  roomCenters: []
+  smoothTransition: 1
+  transitionSpeed: 5
   mapObject: {fileID: 0}
   mapWidth: 25
   mapHeight: 10
@@ -7944,14 +7942,54 @@ PrefabInstance:
       propertyPath: inventory
       value: 
       objectReference: {fileID: 7972494505671464387}
+    - target: {fileID: 2829510612880265062, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
+      propertyPath: m_Colors.m_SelectedColor.b
+      value: 0.2784314
+      objectReference: {fileID: 0}
+    - target: {fileID: 2829510612880265062, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
+      propertyPath: m_Colors.m_SelectedColor.g
+      value: 0.37254903
+      objectReference: {fileID: 0}
+    - target: {fileID: 2829510612880265062, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
+      propertyPath: m_Colors.m_SelectedColor.r
+      value: 0.98823535
+      objectReference: {fileID: 0}
+    - target: {fileID: 2829510612880265062, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
+      propertyPath: m_Colors.m_HighlightedColor.b
+      value: 0.5518868
+      objectReference: {fileID: 0}
+    - target: {fileID: 2829510612880265062, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
+      propertyPath: m_Colors.m_HighlightedColor.g
+      value: 0.6113051
+      objectReference: {fileID: 0}
+    - target: {fileID: 2829510612880265062, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
+      propertyPath: m_Colors.m_HighlightedColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2829510612880265062, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 8688276115930336233}
+    - target: {fileID: 2829510612880265062, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ToggleComputerPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 2829510612880265062, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: WorkshopComputer, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 4287548637213982311, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
       propertyPath: m_Name
       value: Computer_UI
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2399618792422097511, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4287548637213982311, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8688276115930336233}
   m_SourcePrefab: {fileID: 100100000, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
 --- !u!114 &8028677296480433386
 MonoBehaviour:
@@ -8449,6 +8487,24 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 702879939758844648, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
   m_PrefabInstance: {fileID: 8009082995279737603}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8688276115930336233
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5391857999436472170}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9e89e05fc3d171419a9c8111eb2d4ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  computerPanel: {fileID: 5391857999436472170}
+  shopPanel: {fileID: 9143664797217872784}
+  stockMarket: {fileID: 7312901002185521089}
+  Opened:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &8716927177604590504
 MonoBehaviour:
   m_ObjectHideFlags: 0
