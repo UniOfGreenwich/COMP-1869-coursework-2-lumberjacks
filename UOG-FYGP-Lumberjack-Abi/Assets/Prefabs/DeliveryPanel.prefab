@@ -108,8 +108,9 @@ MonoBehaviour:
   jobManager: {fileID: 0}
   jobListRoot: {fileID: 4505908196082933003}
   jobRowPrefab: {fileID: 1298667867974355125, guid: 70895d1ec76aeb24fbae8c94f2f9b805, type: 3}
+  slotPrefab: {fileID: 0}
   closeButton: {fileID: 679849991913385955}
-  storage: {fileID: 0}
+  globalStatusText: {fileID: 0}
 --- !u!1 &3142113529262082155
 GameObject:
   m_ObjectHideFlags: 0
