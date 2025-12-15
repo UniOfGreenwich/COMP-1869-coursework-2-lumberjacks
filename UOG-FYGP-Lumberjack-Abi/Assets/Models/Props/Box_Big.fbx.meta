@@ -1,14 +1,9 @@
 fileFormatVersion: 2
-guid: b40b9a1289896af4782e58005eac9d3e
+guid: 28946d64b84092646bba2ab630d2caa9
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Procedural Cardboard
-    second: {fileID: 2100000, guid: 3a8518e13916c54459eb9a4ed45d7b40, type: 2}
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0

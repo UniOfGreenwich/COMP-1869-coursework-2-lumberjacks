@@ -408,11 +408,11 @@ public class Tutorial : MonoBehaviour
 
     void CustomerTutorialTrigger()
     {
-        if(currentStage == 2 && stage2IntroDialogueComplete)
+        if(currentStage == 2)
         {
-            Debug.Log("customer tutorial triggered!");
-            customerUI.GetComponentInChildren<CustomerCardUI>(true).OnShown.RemoveListener(CustomerTutorialTrigger);
             customerUI.transform.Find("Tutorial_Arrow").gameObject.SetActive(true);
+            customerUI.GetComponentInChildren<CustomerCardUI>(true).OnShown.RemoveListener(CustomerTutorialTrigger);
+            dialogueIndex = 1;
             CustomerTutorial();
         }
     }

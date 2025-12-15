@@ -35,6 +35,7 @@ public class CustomerCardUI : MonoBehaviour
         if (jobManager == null || job == null)
         {
             Hide();
+            Debug.Log("job mananger or job was null in customer card UI");
             return;
         }
 
