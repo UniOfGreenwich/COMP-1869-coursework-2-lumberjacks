@@ -982,6 +982,8 @@ MonoBehaviour:
   panelParentOverride: {fileID: 0}
   openButton: {fileID: 6670522224682708573}
   toggleKey: 27
+  tapOutsideToClose: 1
+  useAndroidBackButton: 1
   mixer: {fileID: 24100000, guid: 98fcd459ad6782b42a9cd3fa336f2e62, type: 2}
   musicParam: MusicVol
   sfxParam: SFXVol
@@ -1883,10 +1885,10 @@ RectTransform:
   m_LocalScale: {x: 1.2869747, y: 1.2869747, z: 1.2869747}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 411482329}
   - {fileID: 1813757867}
   - {fileID: 7488994504530284995}
   - {fileID: 924482542}
-  - {fileID: 411482329}
   m_Father: {fileID: 560696728}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -2898,6 +2900,13 @@ MonoBehaviour:
   minZoom: 5
   maxZoom: 5
   rotationSpeed: 1
+  rooms: []
+  currentRoomIndex: 0
+  useManualBounds: 0
+  manualRoomSize: {x: 20, y: 20}
+  roomCenters: []
+  smoothTransition: 1
+  transitionSpeed: 5
   mapObject: {fileID: 0}
   mapWidth: 25
   mapHeight: 10
@@ -8191,9 +8200,21 @@ PrefabInstance:
       propertyPath: items.Array.size
       value: 24
       objectReference: {fileID: 0}
+    - target: {fileID: 2813234838049401819, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4124147662966646329, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 14
+      objectReference: {fileID: 0}
     - target: {fileID: 4287548637213982311, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
       propertyPath: m_Name
       value: Computer_UI
+      objectReference: {fileID: 0}
+    - target: {fileID: 8471549372785021824, guid: 5029f42909c44eb4f82512c081fc2f73, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -12.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
