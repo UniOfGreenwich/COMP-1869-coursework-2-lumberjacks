@@ -27,7 +27,14 @@ public class Tutorial : MonoBehaviour
     [Header("Customer tutorial arrows")]
     [SerializeField] private GameObject customer;
     [SerializeField] private GameObject customerUI;
+
+    [Header("Job Board tutorial arrows")]
     [SerializeField] private GameObject jobBoard;
+    [SerializeField] private GameObject jobBoardUI;
+
+    [Header("Computer/Shop tutorial arrows")]
+    [SerializeField] private GameObject computer;
+    [SerializeField] private GameObject computerUI;
 
     //Stage 1 tasks
     private bool stage1IntroDialogueComplete = false;
@@ -41,8 +48,9 @@ public class Tutorial : MonoBehaviour
     private bool visitedCustomer = false;
     private bool jobBoardIntroComplete = false;
     private bool visitedJobBoard = false;
-    private bool visitedStockMarket = false;
+    private bool ShopIntroComplete = false;
     private bool visitedShop = false;
+    private bool visitedStockMarket = false;
     private bool stage2Complete = false;
 
     //stage 3 tasks
@@ -80,7 +88,8 @@ public class Tutorial : MonoBehaviour
             //stage 2 trigger setup
             customer.SetActive(false);
             customerUI.GetComponentInChildren<CustomerCardUI>(true).OnShown.AddListener(CustomerTutorialTrigger);
-            jobBoard.GetComponentInChildren<TogglePanel>(true).Activated.AddListener(JobBoardTutorialTrigger);
+            jobBoardUI.GetComponentInChildren<TogglePanel>(true).Activated.AddListener(JobBoardTutorialTrigger);
+            computerUI.GetComponentInChildren<TogglePanel>(true).Activated.AddListener(ShopTutorial);
         }
     }
 
@@ -151,6 +160,11 @@ public class Tutorial : MonoBehaviour
                     if(!visitedJobBoard)
                     {
                         JobBoardTutorial();
+                        return;
+                    }
+                    if(!ShopIntroComplete)
+                    {
+                        ShopIntro();
                         return;
                     }
                     if(!visitedShop)
@@ -418,7 +432,7 @@ public class Tutorial : MonoBehaviour
         if(currentStage == 2 && !visitedJobBoard)
         {
             JobBoardTutorial();
-            jobBoard.GetComponentInChildren<TogglePanel>(true).Activated.RemoveListener(JobBoardTutorialTrigger);
+            jobBoardUI.GetComponentInChildren<TogglePanel>(true).Activated.RemoveListener(JobBoardTutorialTrigger);
             jobBoard.transform.Find("Canvas/Tutorial_Arrow").gameObject.SetActive(false);
             Debug.Log("Job Board Tutorial Triggered");
         }
@@ -447,6 +461,28 @@ public class Tutorial : MonoBehaviour
                 tutorialTextActive = false;
                 visitedJobBoard = true;
                 dialogueIndex = 1;
+                ShopIntro();
+            }
+        }
+    }
+
+    void ShopIntro()
+    {
+        if(currentStage == 2)
+        {
+            if(dialogueIndex == 1)
+            {
+                textPanel.SetActive(true);
+                tutorialTextActive = true;
+                tutorialText.text = "Now that we know what item we need to make, let's head to the shop on the computer to buy the blueprints and machines we need.";
+            }
+            if (dialogueIndex > 1)
+            {
+                textPanel.SetActive(false);
+                tutorialTextActive = false;
+                ShopIntroComplete = true;
+                dialogueIndex = 1;
+                computer.transform.Find("Canvas/Tutorial_Arrow").gameObject.SetActive(true);
             }
         }
     }
@@ -457,31 +493,30 @@ public class Tutorial : MonoBehaviour
         {
             if(dialogueIndex == 1)
             {
+                computerUI.GetComponentInChildren<TogglePanel>(true).Activated.RemoveListener(ShopTutorial);
+                computerUI.transform.Find("Canvas/Tutorial_Arrow").gameObject.SetActive(true);
                 textPanel.SetActive(true);
                 tutorialTextActive = true;
-                tutorialText.text = "Now that we know what item we need to make, let's head to the shop on the computer to buy the blueprints and machines we need.";
+                computer.transform.Find("Canvas/Tutorial_Arrow").gameObject.SetActive(false);
+                tutorialText.text = "first, click on the shop icon to open the app";
             }
             if(dialogueIndex == 2)
             {
-                tutorialText.text = "first, click on the shop icon to open the app";
+                tutorialText.text = "There's two tabs, let's go to the blueprints tab first to purchase the design for the chair";
             }
             if(dialogueIndex == 3)
             {
-                tutorialText.text = "There's two tabs, let's go to the blueprints tab first to purchase the design for the chair";
+                tutorialText.text = "Great! Now let's go to the machines tab to purchase the machines we need to make the chair";
             }
             if(dialogueIndex == 4)
             {
-                tutorialText.text = "Great! Now let's go to the machines tab to purchase the machines we need to make the chair";
+                tutorialText.text = "We need a Table Saw to roughly cut the wood, a Laser Cutter to make more precise cuts and an assembly station to put it all together";
             }
             if(dialogueIndex == 5)
             {
-                tutorialText.text = "We need a Table Saw to roughly cut the wood, a Laser Cutter to make more precise cuts and an assembly station to put it all together";
-            }
-            if(dialogueIndex == 6)
-            {
                 tutorialText.text = "As customers begin to ask for more complex items, we'll need to upgrade our machines so come back here often to check for new blueprints and machine upgrades!";
             }
-            if(dialogueIndex > 6)
+            if(dialogueIndex > 5)
             {
                 textPanel.SetActive(false);
                 tutorialTextActive = false;
