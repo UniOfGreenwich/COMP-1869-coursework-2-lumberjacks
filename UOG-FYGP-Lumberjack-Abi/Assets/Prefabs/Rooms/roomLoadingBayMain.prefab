@@ -82,6 +82,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 85d49e30ebd04ab49859df4973980d3a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 103c0222b0460064fbf88ba017274078, type: 2}
     - target: {fileID: 919132149155446097, guid: 85d49e30ebd04ab49859df4973980d3a, type: 3}
       propertyPath: m_Name
       value: Fence
@@ -140,6 +144,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6695583806432705776, guid: 813fbc85274298444994eb0594de2f54, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 103c0222b0460064fbf88ba017274078, type: 2}
     - target: {fileID: 9017356466355657300, guid: 813fbc85274298444994eb0594de2f54, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -180,6 +188,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9166646582852015926, guid: 813fbc85274298444994eb0594de2f54, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 103c0222b0460064fbf88ba017274078, type: 2}
+    - target: {fileID: 9166646582852015926, guid: 813fbc85274298444994eb0594de2f54, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f26e50e8dcde1de4f982eba2173c43b7, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -250,10 +266,38 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8597986291664867915, guid: b5f6de66c2c60d64d971beb9ba943103, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d8044ef9b3762794b86c74638e187961, type: 2}
+    - target: {fileID: -8588676816349863987, guid: b5f6de66c2c60d64d971beb9ba943103, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d8044ef9b3762794b86c74638e187961, type: 2}
+    - target: {fileID: -7838388321878971764, guid: b5f6de66c2c60d64d971beb9ba943103, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d8044ef9b3762794b86c74638e187961, type: 2}
+    - target: {fileID: -7511558181221131132, guid: b5f6de66c2c60d64d971beb9ba943103, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 7d2cb3432be0714429e9087b7ce773dd, type: 2}
+    - target: {fileID: 628544012466719457, guid: b5f6de66c2c60d64d971beb9ba943103, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f26e50e8dcde1de4f982eba2173c43b7, type: 2}
+    - target: {fileID: 848268753225684198, guid: b5f6de66c2c60d64d971beb9ba943103, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d8044ef9b3762794b86c74638e187961, type: 2}
     - target: {fileID: 919132149155446097, guid: b5f6de66c2c60d64d971beb9ba943103, type: 3}
       propertyPath: m_Name
       value: ForkliftBody
       objectReference: {fileID: 0}
+    - target: {fileID: 1879399118122491490, guid: b5f6de66c2c60d64d971beb9ba943103, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d8044ef9b3762794b86c74638e187961, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -324,10 +368,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: be8d0096ce51dd245a3b9c1ea17d25ff, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 7d2cb3432be0714429e9087b7ce773dd, type: 2}
     - target: {fileID: 919132149155446097, guid: be8d0096ce51dd245a3b9c1ea17d25ff, type: 3}
       propertyPath: m_Name
       value: WheelyBinYellow
       objectReference: {fileID: 0}
+    - target: {fileID: 3800279082292230890, guid: be8d0096ce51dd245a3b9c1ea17d25ff, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d8044ef9b3762794b86c74638e187961, type: 2}
+    - target: {fileID: 4081655463309793899, guid: be8d0096ce51dd245a3b9c1ea17d25ff, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 7d2cb3432be0714429e9087b7ce773dd, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -346,6 +402,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3368914652249514837}
     m_Modifications:
+    - target: {fileID: -9147215747170044923, guid: 999c601deb7b7e4449dfe01c980826b4, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 7a2ac609d26c5ad4c9f7c65bcbb5e8b8, type: 2}
     - target: {fileID: -8679921383154817045, guid: 999c601deb7b7e4449dfe01c980826b4, type: 3}
       propertyPath: m_LocalScale.x
       value: 22.853819
@@ -398,6 +458,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: -3845022293321607061, guid: 999c601deb7b7e4449dfe01c980826b4, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d8044ef9b3762794b86c74638e187961, type: 2}
     - target: {fileID: 919132149155446097, guid: 999c601deb7b7e4449dfe01c980826b4, type: 3}
       propertyPath: m_Name
       value: WheelyBinGreen

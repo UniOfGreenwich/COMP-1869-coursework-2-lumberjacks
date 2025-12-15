@@ -244,6 +244,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 7f72175e15c54054b865ffa839b985d0, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 103c0222b0460064fbf88ba017274078, type: 2}
     - target: {fileID: 919132149155446097, guid: 7f72175e15c54054b865ffa839b985d0, type: 3}
       propertyPath: m_Name
       value: SM_Crate (1)
@@ -715,10 +719,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -3135069898596643758, guid: f91061c01c5811b46a7cd4b3ca03680a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 103c0222b0460064fbf88ba017274078, type: 2}
     - target: {fileID: 919132149155446097, guid: f91061c01c5811b46a7cd4b3ca03680a, type: 3}
       propertyPath: m_Name
       value: WorkshopPallets
       objectReference: {fileID: 0}
+    - target: {fileID: 4288922775436591884, guid: f91061c01c5811b46a7cd4b3ca03680a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 103c0222b0460064fbf88ba017274078, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1082,10 +1094,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 28d2f010be7737745b43212bea4eae14, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f1753549db93cf4408b593ba3805e246, type: 2}
+    - target: {fileID: -6138851664611231527, guid: 28d2f010be7737745b43212bea4eae14, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d8044ef9b3762794b86c74638e187961, type: 2}
     - target: {fileID: 919132149155446097, guid: 28d2f010be7737745b43212bea4eae14, type: 3}
       propertyPath: m_Name
       value: FireExtinguisherBig
       objectReference: {fileID: 0}
+    - target: {fileID: 6918666761554073666, guid: 28d2f010be7737745b43212bea4eae14, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d8044ef9b3762794b86c74638e187961, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1144,6 +1168,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 7f72175e15c54054b865ffa839b985d0, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 103c0222b0460064fbf88ba017274078, type: 2}
     - target: {fileID: 919132149155446097, guid: 7f72175e15c54054b865ffa839b985d0, type: 3}
       propertyPath: m_Name
       value: SM_Crate (2)
@@ -1268,6 +1296,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -2028012778009828736, guid: b3997c0e3475da745b5aa3ccee7b82d7, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f26e50e8dcde1de4f982eba2173c43b7, type: 2}
     - target: {fileID: 919132149155446097, guid: b3997c0e3475da745b5aa3ccee7b82d7, type: 3}
       propertyPath: m_Name
       value: WorkshopShelves (5)
@@ -1392,6 +1424,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 7f72175e15c54054b865ffa839b985d0, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 103c0222b0460064fbf88ba017274078, type: 2}
     - target: {fileID: 919132149155446097, guid: 7f72175e15c54054b865ffa839b985d0, type: 3}
       propertyPath: m_Name
       value: SM_Crate
@@ -1476,6 +1512,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2114269348476337229}
     m_Modifications:
+    - target: {fileID: 2346758995062508908, guid: d2c7143b3419595499897bf1a3cc6ffe, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 103c0222b0460064fbf88ba017274078, type: 2}
     - target: {fileID: 4384687726793664281, guid: d2c7143b3419595499897bf1a3cc6ffe, type: 3}
       propertyPath: m_Name
       value: Storage
@@ -1552,10 +1592,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startingItems:
   - item: {fileID: 11400000, guid: f311d6627e17d20419101a8823e10a02, type: 2}
-    count: 2
+    count: 10
   - item: {fileID: 11400000, guid: 777eb4c0e0642d045b5077f1db84c59d, type: 2}
     count: 20
   - item: {fileID: 11400000, guid: 9fa7d8845649900449c74ac02b04aa97, type: 2}
+    count: 10
+  - item: {fileID: 11400000, guid: 1be185f2966a90b49a3bf83e60ece9a4, type: 2}
     count: 10
 --- !u!1001 &9118949739648554357
 PrefabInstance:

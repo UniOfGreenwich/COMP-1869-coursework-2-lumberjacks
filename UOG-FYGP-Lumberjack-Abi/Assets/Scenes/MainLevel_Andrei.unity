@@ -1333,10 +1333,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: 103c0222b0460064fbf88ba017274078, type: 2}
     - target: {fileID: 7150994919125799440, guid: 5ad52676a2136524ebd1f0d021172194, type: 3}
-      propertyPath: timeLabel
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 7150994919125799440, guid: 5ad52676a2136524ebd1f0d021172194, type: 3}
       propertyPath: statusText
       value: 
       objectReference: {fileID: 255896451}
