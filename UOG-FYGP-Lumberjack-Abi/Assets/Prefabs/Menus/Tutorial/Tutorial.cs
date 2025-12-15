@@ -269,7 +269,7 @@ void LoadingBayEnter()
                 tutorialTextActive = false;
                 visitedLoadingBay = true;
                 dialogueIndex = 1;
-                doorLoadingBay.GetComponentInChildren<Button>().onClick.RemoveListener(LoadingBayEnter);
+                doorLoadingBay.GetComponentInChildren<Button>(true).onClick.RemoveListener(LoadingBayEnter);
                 Stage1CompleteCheck();
             }
         }
@@ -308,7 +308,7 @@ void LoadingBayEnter()
                 textPanel.SetActive(false);
                 tutorialTextActive = false;
                 visitedLumberYard = true;
-                doorLumberYard.GetComponentInChildren<Button>().onClick.RemoveListener(LumberYardEnter);
+                doorLumberYard.GetComponentInChildren<Button>(true).onClick.RemoveListener(LumberYardEnter);
                 dialogueIndex = 1;
                 Stage1CompleteCheck();
             }                    
@@ -340,7 +340,7 @@ void LoadingBayEnter()
                 textPanel.SetActive(false);
                 tutorialTextActive = false;
                 visitedStorageRoom = true;
-                doorStorageRoom.GetComponentInChildren<Button>().onClick.RemoveListener(StorageRoomEnter);
+                doorStorageRoom.GetComponentInChildren<Button>(true).onClick.RemoveListener(StorageRoomEnter);
                 dialogueIndex = 1;
                 Stage1CompleteCheck();
             }
